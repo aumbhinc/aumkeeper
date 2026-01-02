@@ -1,0 +1,77 @@
+{{ define "content" }}
+<section class="hero container" role="main" aria-label="AumKeeper ERP overview">
+  <!-- Headline -->
+  <h1 class="headline" style="font-weight: 700; font-size: 2rem; margin-bottom: 1rem; color: var(--color-text);">
+    🚀 Run Your Entire Business from One Dashboard  
+    <br>
+    <span class="highlight" style="color: var(--color-primary); font-weight: 700;">
+      Simple. Powerful. Built for Small & Medium Businesses.
+    </span>
+  </h1>
+
+  <!-- Subheadline -->
+  <p class="subtext" style="font-size: 1.1rem; color: var(--color-muted); max-width: 650px; margin-bottom: 2rem;">
+    AumKeeper is a modern, all-in-one SaaS ERP platform designed to help small and medium-sized businesses manage operations, inventory, finances, staff, and customer relationships from a single, easy-to-use dashboard.
+    Gain microscopic control over daily tasks and macroscopic insight into your business performance — anytime, anywhere.
+  </p>
+
+  <!-- Email Signup Form -->
+  <form
+    method="POST"
+    action="/signup"
+    class="w-full max-w-xl flex flex-col sm:flex-row sm:justify-center sm:items-center gap-4"
+  >
+    <input
+      type="email"
+      id="email"
+      name="email"
+      class="w-full sm:flex-grow px-4 py-3 rounded-lg text-sm text-black border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+      placeholder="Enter your business email"
+      aria-label="Enter your email"
+      required
+    />
+    <button
+      type="submit"
+      class="button primary px-6 py-3 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+    >
+      Get Early Access
+    </button>
+  </form>
+
+  <!-- Trust Microcopy -->
+  <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--color-muted); max-width: 540px;">
+    🔐 Your information is secure. No spam. No obligation.
+  </p>
+
+  <!-- Pricing -->
+  <section class="pricing-line" role="region" aria-label="Pricing plans" style="font-weight: 600; font-size: 1.1rem; margin-top: 2rem; margin-bottom: 0.5rem; color: var(--color-text);">
+    Affordable, scalable pricing — designed for growing businesses
+  </section>
+
+  <!-- What You Get -->
+  <section class="pricing-benefits" style="font-size: 0.95rem; color: var(--color-muted); max-width: 600px; line-height: 1.5;">
+    ✅ Unified Business Dashboard<br>
+    ✅ Staff & Role Management<br>
+    ✅ Inventory & Supply Tracking<br>
+    ✅ Financial Management & Reporting<br>
+    ✅ Customer Relationship Management (CRM)<br>
+    ✅ Real-Time Business Insights & Analytics<br>
+    ✅ Web & Mobile Access Anywhere
+  </section>
+
+  <!-- Product Assurance -->
+  <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--color-muted); max-width: 540px;">
+    ⚙️ Built on modern, scalable technology with security, performance, and ease-of-use at its core.
+    Designed specifically for U.S. small and medium-sized businesses.
+  </p>
+</section>
+
+<!-- Fallback warning for no-JS -->
+<noscript>
+  <div style="color: red; margin-top: 1em;">
+    JavaScript is required for full dashboard functionality.
+  </div>
+</noscript>
+
+<script src="/static/js/home.js" defer></script>
+{{ end }}

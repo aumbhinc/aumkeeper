@@ -1,0 +1,251 @@
+/* === Root Design Tokens === */
+:root {
+  --color-bg: #ffffff;
+  --color-text: #111827;
+  --color-primary: #10b981;
+  --color-primary-hover: #059669;
+  --color-secondary: #0f766e;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-footer-bg: #f9fafb;
+
+  --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --transition-fast: 0.2s ease-in-out;
+
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: var(--font-base);
+  font-size: 16px;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+/* === Typography === */
+h1, h2, h3 {
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-muted);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* === Layout Utilities === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+main {
+  padding: var(--spacing-lg) var(--spacing-md);
+}
+
+/* === Navbar === */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #000;
+  color: #fff;
+  box-shadow: var(--shadow-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+header nav {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-md);
+}
+
+/* Brand Text */
+.nav-brand {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.nav-subtitle {
+  color: var(--color-muted);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* === Email Signup Form === */
+form[role="search"] {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+@media (min-width: 640px) {
+  form[role="search"] {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.input-email {
+  flex-grow: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: #000;
+  background: #fff;
+  transition: border var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input-email::placeholder {
+  color: var(--color-muted);
+}
+
+.input-email:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+  outline: none;
+}
+
+.button {
+  background-color: var(--color-primary);
+  color: #fff;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform 0.1s ease;
+}
+
+.button:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5);
+}
+
+/* === Footer === */
+footer {
+  background-color: var(--color-footer-bg);
+  padding: var(--spacing-lg) var(--spacing-md);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-links a {
+  margin: 0 var(--spacing-xs);
+  color: var(--color-muted);
+}
+
+.footer-links a:hover {
+  color: var(--color-primary);
+}
+
+/* === Tables === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--spacing-md);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+th, td {
+  padding: var(--spacing-sm);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+/* === Forms (Generic) === */
+input, select, textarea {
+  font-family: var(--font-base);
+  font-size: 1rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+  outline: none;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  form[role="search"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-email, .button {
+    width: 100%;
+  }
+
+  header nav {
+    padding: var(--spacing-md);
+  }
+}
