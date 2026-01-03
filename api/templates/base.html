@@ -2,54 +2,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Core Meta -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}AumKeeper is a modern all-in-one SaaS ERP platform.{{ end }}" />
   <meta name="author" content="AumKeeper, Inc." />
   <meta name="robots" content="index, follow" />
 
-  <title>{{ if .Title }}{{ .Title }} | AumKeeper{{ else }}AumKeeper | ERP Dashboard{{ end }}</title>
+  <!-- Title -->
+  <title>
+    {{ if .Title }}
+      {{ .Title }} | AumKeeper
+    {{ else }}
+      AumKeeper | ERP Dashboard
+    {{ end }}
+  </title>
 
-  <!-- Favicon -->
+  <!-- Icons -->
   <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
 
-  <!-- Global Styles -->
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
+
+  <!-- Base Styles -->
   <link rel="stylesheet" href="/static/css/base.css" />
-  <link rel="stylesheet" href="/static/css/home.css" />
+
+  <!-- Home Styles (HOME ONLY) -->
+  {{ if not .IncludeDashboardJS }}
+    <link rel="stylesheet" href="/static/css/home.css" />
+  {{ end }}
 
   <!-- Dashboard Styles -->
   {{ if .IncludeDashboardJS }}
     <link rel="stylesheet" href="/static/css/dashboard.css" />
   {{ end }}
 
+  <!-- Head Extension -->
   {{ block "head" . }}{{ end }}
 </head>
 
-<body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else }}min-h-screen flex flex-col bg-white text-gray-900 font-sans{{ end }}">
+<body
+  class="{{ if .IncludeDashboardJS }}
+    dashboard-page
+  {{ else }}
+    min-h-screen flex flex-col bg-white text-gray-900 font-sans
+  {{ end }}"
+>
 
+  <!-- Optional Header -->
   {{ block "header" . }}{{ end }}
+
+  <!-- Flash Messages -->
   {{ block "flash" . }}{{ end }}
 
-  <main class="{{ if .IncludeDashboardJS }}dashboard-main{{ else }}flex-grow container mx-auto px-4 py-8{{ end }}">
-    {{ block "content" . }}{{ end }}
+  <!-- Main Content -->
+  <main
+    class="{{ if .IncludeDashboardJS }}
+      dashboard-main
+    {{ else }}
+      flex-grow container mx-auto px-4 py-8
+    {{ end }}"
+  >
+    {{ block "content" . }}
+      <!-- Safe fallback: prevents white screen if content block missing -->
+      <section style="padding:2rem;color:#b91c1c;font-weight:500">
+        Template error: <code>content</code> block not defined.
+      </section>
+    {{ end }}
   </main>
 
+  <!-- Footer -->
   <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
     <div class="container mx-auto px-4 text-center max-w-4xl">
-      <nav class="mb-2">
-        <a href="/" class="hover:underline">Home</a> |
-        <a href="/contact" class="hover:underline">Contact</a> |
-        <a href="/privacy" class="hover:underline">Privacy</a> |
+      <nav class="mb-2 space-x-3">
+        <a href="/" class="hover:underline">Home</a>
+        <span>|</span>
+        <a href="/contact" class="hover:underline">Contact</a>
+        <span>|</span>
+        <a href="/privacy" class="hover:underline">Privacy</a>
+        <span>|</span>
         <a href="/blog" class="hover:underline">Resources</a>
       </nav>
       <p>© {{ .Year }} AumKeeper, Inc. — All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- Global JS -->
+  <!-- Base JS -->
   <script defer src="/static/js/main.js"></script>
 
+  <!-- Page Scripts -->
   {{ block "scripts" . }}{{ end }}
 
   <!-- Dashboard JS -->

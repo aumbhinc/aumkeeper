@@ -1,3 +1,7 @@
+{{ define "dashboard" }}
+  {{ template "base" . }}
+{{ end }}
+
 {{ define "content" }}
 
 <div class="container">
@@ -5,84 +9,106 @@
   <!-- Sidebar -->
   <aside>
     <div class="logo">
-      <img src="/static/img/dashboard/logo1.svg" alt="Logo">
+      <img src="/static/img/dashboard/logo1.svg" alt="AumKeeper Logo">
       <h2>AUMBH</h2>
     </div>
-    <div class="sidebar">
+
+    <nav class="sidebar">
       <a class="active"><span class="material-icons-sharp">grid_view</span>Dashboard</a>
       <a><span class="material-icons-sharp">leaderboard</span>Executive</a>
       <a><span class="material-icons-sharp">group_add</span>Customers</a>
       <a><span class="material-icons-sharp">inventory_2</span>Products</a>
       <a><span class="material-icons-sharp">shopping_cart</span>Orders</a>
       <a><span class="material-icons-sharp">add_business</span>Markets</a>
-      <a><span class="material-icons-sharp">logout</span>Vendors</a>
       <a><span class="material-icons-sharp">warehouse</span>Purchase Orders</a>
-      <a><span class="material-icons-sharp">badge</span>Staffs</a>
+      <a><span class="material-icons-sharp">badge</span>Staff</a>
       <a><span class="material-icons-sharp">add_task</span>Tasks</a>
       <a><span class="material-icons-sharp">settings</span>Settings</a>
-    </div>
+    </nav>
   </aside>
 
   <!-- Main -->
   <main>
     <h1>Dashboard</h1>
-    <div class="date"><input type="date"></div>
-
-    <div class="stats-wrapper">
-      <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">account_balance</span></div><div class="stat-info"><h3>Net Worth</h3><div class="value">$100MM</div><small class="change">+5%</small></div></div>
-      <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">account_balance_wallet</span></div><div class="stat-info"><h3>Total Assets</h3><div class="value">$100MM</div><small class="change">+3%</small></div></div>
-      <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">request_page</span></div><div class="stat-info"><h3>Total Liabilities</h3><div class="value">$100MM</div><small class="change">-2%</small></div></div>
-      <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">error_outline</span></div><div class="stat-info"><h3>Ledger Exceptions</h3><div class="value">3</div><small class="change">-1</small></div></div>
+    <div class="date">
+      <input type="date" />
     </div>
 
-    <div class="charts-wrapper">
+    <section class="stats-wrapper">
+      <div class="stat-card">
+        <span class="material-icons-sharp">account_balance</span>
+        <div>
+          <h3>Net Worth</h3>
+          <strong>$100MM</strong>
+          <small class="success">+5%</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="material-icons-sharp">account_balance_wallet</span>
+        <div>
+          <h3>Total Assets</h3>
+          <strong>$100MM</strong>
+          <small class="success">+3%</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="material-icons-sharp">request_page</span>
+        <div>
+          <h3>Liabilities</h3>
+          <strong>$100MM</strong>
+          <small class="warn">-2%</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="material-icons-sharp">error_outline</span>
+        <div>
+          <h3>Ledger Exceptions</h3>
+          <strong>3</strong>
+          <small class="warn">-1</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="charts-wrapper">
       <div class="chart-container"><canvas id="salesChart"></canvas></div>
       <div class="chart-container"><canvas id="accountsChart"></canvas></div>
-    </div>
+    </section>
 
-    <div class="recent-order">
+    <section class="recent-order">
       <h2>Recent Orders</h2>
       <table>
-        <thead><tr><th>Customer</th><th>Order #</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Order #</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr><td>Kiley Ying</td><td>123456</td><td>Unpaid</td><td class="badge warn">Unfulfilled</td><td class="badge success">Details</td></tr>
-          <tr><td>Northwind LLC</td><td>123457</td><td>Paid</td><td class="badge success">Fulfilled</td><td class="badge success">Details</td></tr>
+          <tr>
+            <td>Kiley Ying</td>
+            <td>123456</td>
+            <td>Unpaid</td>
+            <td class="badge warn">Unfulfilled</td>
+            <td class="badge success">Details</td>
+          </tr>
+          <tr>
+            <td>Northwind LLC</td>
+            <td>123457</td>
+            <td>Paid</td>
+            <td class="badge success">Fulfilled</td>
+            <td class="badge success">Details</td>
+          </tr>
         </tbody>
       </table>
-      <a href="#">Show All</a>
-    </div>
+    </section>
   </main>
 
-  <!-- Right Panel -->
-  <div class="right">
-    <div class="top">
-      <button id="menu-btn">Menu</button>
-      <div class="theme-toggler"><span class="material-icons-sharp active">light_mode</span><span class="material-icons-sharp">dark_mode</span></div>
-      <div class="profile-container"><div class="info"><p>Hey, <b>Lax</b></p><small class="text-muted">Admin</small></div><div class="profile-photo"><img src="/static/img/dashboard/logo1.svg"></div></div>
-    </div>
-
-    <div class="collapsible">Accounts <span class="material-icons-sharp">expand_more</span></div>
-    <div class="content">
-      <div class="func-btn"><span class="icon material-icons-sharp">savings</span>Asset Accounts <span class="alert success">+39%</span></div>
-      <div class="func-btn"><span class="icon material-icons-sharp">payments</span>Liability Accounts <span class="alert warn">-9%</span></div>
-      <div class="func-btn"><span class="icon material-icons-sharp">monetization_on</span>Revenue Accounts <span class="alert success">+21%</span></div>
-      <div class="func-btn"><span class="icon material-icons-sharp">monetization_on</span>Equity Accounts <span class="alert success">+12%</span></div>
-      <div class="func-btn"><span class="icon material-icons-sharp">monetization_on</span>Expense Accounts <span class="alert success">+7%</span></div>
-      <div class="func-btn"><span class="icon material-icons-sharp">monetization_on</span>Contra Accounts <span class="alert success">+3%</span></div>
-    </div>
-
-    <div class="collapsible">Operations <span class="material-icons-sharp">expand_more</span></div>
-    <div class="content">
-      <div class="func-btn"><span class="icon material-icons-sharp">add</span>Pay Out <span class="alert warn">2 pending</span></div>
-      <div class="func-btn"><span class="icon material-icons-sharp">add</span>Add Product</div>
-    </div>
-
-    <div class="collapsible">Sales Analytics <span class="material-icons-sharp">expand_more</span></div>
-    <div class="content">
-      <div class="func-btn"><span class="icon material-icons-sharp">shopping_cart</span>Online Orders <span class="alert warn">5 unfulfilled</span></div>
-      <div class="func-btn"><span class="icon material-icons-sharp">person</span>New Customers <span class="alert success">+12%</span></div>
-    </div>
-  </div>
 </div>
 
 {{ end }}

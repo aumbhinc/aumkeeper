@@ -14,36 +14,37 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// templates holds all parsed HTML templates
+/*
+   --------------------------------------------------
+   Global Template Registry
+   --------------------------------------------------
+*/
 var templates *template.Template
 
 func main() {
-	fmt.Println("🔄 Starting AumKeeper server...")
+	log.Println("🔄 Starting AumKeeper server...")
 
-	// Load .env if present
+	// Load .env if present (safe in prod)
 	if err := godotenv.Load(); err != nil {
-		log.Println("⚠️ No .env file found or failed to load")
+		log.Println("⚠️ No .env file found (ok in prod)")
 	}
 
 	// Graceful shutdown context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// OS signal handling for shutdown
 	go handleSignals(cancel)
 
-	// Load templates once
-	loadTemplates("api/templates/*.html")
+	// Load all templates once
+	loadTemplates()
 
-	// Setup router
+	// Router
 	mux := http.NewServeMux()
 	setupRoutes(mux)
 
-	// Determine port
-	port := getPort()
-
+	// Server
 	server := &http.Server{
-		Addr:              ":" + port,
+		Addr:              ":" + getPort(),
 		Handler:           mux,
 		ReadHeaderTimeout: 5 * time.Second,
 		WriteTimeout:      10 * time.Second,
@@ -52,47 +53,94 @@ func main() {
 
 	// Start server
 	go func() {
-		log.Printf("🌐 Server listening on :%s", port)
+		log.Printf("🌐 Listening on :%s", getPort())
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("❌ Server failed: %v", err)
+			log.Fatalf("❌ Server error: %v", err)
 		}
 	}()
 
-	// Wait for shutdown signal
 	<-ctx.Done()
 	gracefulShutdown(server, 10*time.Second)
 }
 
-/* -------------------- Helper Functions -------------------- */
+/*
+   --------------------------------------------------
+   Template Loading
+   --------------------------------------------------
+*/
 
-func handleSignals(cancel context.CancelFunc) {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-	sig := <-c
-	log.Printf("🛑 Received signal: %v", sig)
-	cancel()
-}
-
-func loadTemplates(pattern string) {
+func loadTemplates() {
 	var err error
-	templates, err = template.ParseGlob(pattern)
+
+	templates, err = template.ParseGlob("api/templates/*.html")
 	if err != nil {
-		log.Fatalf("❌ Failed to parse templates: %v", err)
+		log.Fatalf("❌ Template parse failure: %v", err)
 	}
+
 	log.Println("✅ Templates loaded")
 }
 
-func setupRoutes(mux *http.ServeMux) {
-	// Static assets
-	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("api/static")))
-	mux.Handle("/static/", cacheControlMiddleware(staticHandler))
+/*
+   --------------------------------------------------
+   Routing
+   --------------------------------------------------
+*/
 
-	// Health check
+func setupRoutes(mux *http.ServeMux) {
+	// Static files
+	static := http.StripPrefix(
+		"/static/",
+		http.FileServer(http.Dir("api/static")),
+	)
+	mux.Handle("/static/", cacheControlMiddleware(static))
+
+	// Health
 	mux.HandleFunc("/healthz", healthHandler)
 
 	// Pages
 	mux.HandleFunc("/", homeHandler)
 	mux.HandleFunc("/dashboard", dashboardHandler)
+}
+
+/*
+   --------------------------------------------------
+   Handlers
+   --------------------------------------------------
+*/
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "home", map[string]interface{}{
+		"Title":              "Home",
+		"Description":        "Anonymous LLCs and Registered Agent services for modern founders.",
+		"Year":               time.Now().Year(),
+		"IncludeDashboardJS": false,
+	})
+}
+
+func dashboardHandler(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "dashboard", map[string]interface{}{
+		"Title":              "Dashboard",
+		"Year":               time.Now().Year(),
+		"IncludeDashboardJS": true,
+	})
+}
+
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "ok")
+}
+
+/*
+   --------------------------------------------------
+   Utilities
+   --------------------------------------------------
+*/
+
+func renderTemplate(w http.ResponseWriter, name string, data map[string]interface{}) {
+	if err := templates.ExecuteTemplate(w, name, data); err != nil {
+		log.Printf("❌ Template render error (%s): %v", name, err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 func getPort() string {
@@ -102,54 +150,40 @@ func getPort() string {
 	return "8080"
 }
 
+/*
+   --------------------------------------------------
+   Graceful Shutdown
+   --------------------------------------------------
+*/
+
+func handleSignals(cancel context.CancelFunc) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+	sig := <-c
+	log.Printf("🛑 Shutdown signal: %v", sig)
+	cancel()
+}
+
 func gracefulShutdown(server *http.Server, timeout time.Duration) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
+
 	log.Println("🔽 Shutting down server...")
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("❌ Graceful shutdown failed: %v", err)
+		log.Fatalf("❌ Shutdown failed: %v", err)
 	}
 	log.Println("✅ Server stopped cleanly")
 }
 
-/* -------------------- Handlers -------------------- */
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "ok")
-}
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "base", map[string]interface{}{
-		"Title":              "Home",
-		"Year":               time.Now().Year(),
-		"Description":        "Anonymous LLCs and Registered Agent services for solopreneurs who disrupt the status quo.",
-		"IncludeDashboardJS": false,
-	})
-}
-
-func dashboardHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "base", map[string]interface{}{
-		"Title":              "Dashboard",
-		"Year":               time.Now().Year(),
-		"IncludeDashboardJS": true,
-	})
-}
-
-/* -------------------- Middleware -------------------- */
+/*
+   --------------------------------------------------
+   Middleware
+   --------------------------------------------------
+*/
 
 func cacheControlMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "public, max-age=604800, immutable") // 7 days
+		w.Header().Set("Cache-Control", "public, max-age=604800, immutable")
 		next.ServeHTTP(w, r)
 	})
-}
-
-/* -------------------- Utility -------------------- */
-
-func renderTemplate(w http.ResponseWriter, tmpl string, data map[string]interface{}) {
-	if err := templates.ExecuteTemplate(w, tmpl, data); err != nil {
-		log.Printf("❌ Template execution error: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
 }
