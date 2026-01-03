@@ -1,81 +1,63 @@
 {{ define "base" }}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}AumKeeper is a modern all-in-one SaaS ERP platform.{{ end }}" />
+  <meta name="author" content="AumKeeper, Inc." />
+  <meta name="robots" content="index, follow" />
 
-    <meta
-      name="description"
-      content="{{ if .Description }}{{ .Description }}{{ else }}AumKeeper is a modern, all-in-one SaaS ERP platform designed to help small and medium-sized businesses manage operations, finances, inventory, staff, and customers from a single dashboard.{{ end }}"
-    />
+  <title>{{ if .Title }}{{ .Title }} | AumKeeper{{ else }}AumKeeper | ERP Dashboard{{ end }}</title>
 
-    <meta name="author" content="Aumkeeper, Inc. — ERP Software for Modern Businesses" />
-    <meta name="robots" content="index, follow" />
+  <!-- Favicon -->
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
 
-    <title>
-      {{ if .Title }}
-        {{ .Title }} | AumKeeper
-      {{ else }}
-        AumKeeper | All-in-One ERP for Small & Medium Businesses
-      {{ end }}
-    </title>
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="/static/css/base.css" />
+  <link rel="stylesheet" href="/static/css/home.css" />
 
-    <!-- Favicon -->
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+  <!-- Dashboard Styles -->
+  {{ if .IncludeDashboardJS }}
+    <link rel="stylesheet" href="/static/css/dashboard.css" />
+  {{ end }}
 
-    <!-- Global Styles -->
-    <link rel="stylesheet" href="/static/css/base.css" />
-    <link rel="stylesheet" href="/static/css/home.css" />
+  {{ block "head" . }}{{ end }}
+</head>
 
-    <!-- Dashboard-specific Styles -->
-    {{ if .IncludeDashboardJS }}
-      <link rel="stylesheet" href="/static/css/dashboard.css" />
-    {{ end }}
+<body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else }}min-h-screen flex flex-col bg-white text-gray-900 font-sans{{ end }}">
 
-    <!-- Optional Page-Specific Head -->
-    {{ block "head" . }}{{ end }}
-  </head>
+  {{ block "header" . }}{{ end }}
+  {{ block "flash" . }}{{ end }}
 
-  <body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else }}min-h-screen flex flex-col bg-white text-gray-900 font-sans{{ end }}">
+  <main class="{{ if .IncludeDashboardJS }}dashboard-main{{ else }}flex-grow container mx-auto px-4 py-8{{ end }}">
+    {{ block "content" . }}{{ end }}
+  </main>
 
-    <!-- Header / Navbar -->
-    {{ block "header" . }}{{ end }}
+  <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
+    <div class="container mx-auto px-4 text-center max-w-4xl">
+      <nav class="mb-2">
+        <a href="/" class="hover:underline">Home</a> |
+        <a href="/contact" class="hover:underline">Contact</a> |
+        <a href="/privacy" class="hover:underline">Privacy</a> |
+        <a href="/blog" class="hover:underline">Resources</a>
+      </nav>
+      <p>© {{ .Year }} AumKeeper, Inc. — All rights reserved.</p>
+    </div>
+  </footer>
 
-    <!-- Flash / Notifications -->
-    {{ block "flash" . }}{{ end }}
+  <!-- Global JS -->
+  <script defer src="/static/js/main.js"></script>
 
-    <!-- Main Page Content -->
-    <main class="{{ if .IncludeDashboardJS }}dashboard-main{{ else }}flex-grow container mx-auto px-4 py-8{{ end }}">
-      {{ template "content" . }}
-    </main>
+  {{ block "scripts" . }}{{ end }}
 
-    <!-- Footer -->
-    <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
-      <div class="container mx-auto px-4 text-center max-w-4xl">
-        <nav class="mb-2">
-          <a href="/" class="hover:underline">Home</a> |
-          <a href="/contact" class="hover:underline">Contact</a> |
-          <a href="/privacy" class="hover:underline">Privacy</a> |
-          <a href="/blog" class="hover:underline">Resources</a>
-        </nav>
-        <p>© {{ .Year }} Aumkeeper, Inc. — All rights reserved.</p>
-      </div>
-    </footer>
+  <!-- Dashboard JS -->
+  {{ if .IncludeDashboardJS }}
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="/static/js/dashboard.js"></script>
+  {{ end }}
 
-    <!-- Global Scripts -->
-    <script defer src="/static/js/main.js"></script>
-
-    <!-- Optional Page-Specific Scripts -->
-    {{ block "scripts" . }}{{ end }}
-
-    <!-- Conditional Dashboard JS -->
-    {{ if .IncludeDashboardJS }}
-      <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script defer src="/static/js/dashboard.js"></script>
-    {{ end }}
-
-  </body>
+</body>
 </html>
 {{ end }}
