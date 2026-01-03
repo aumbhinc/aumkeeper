@@ -25,16 +25,20 @@
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
 
-    <!-- Styles -->
+    <!-- Global Styles -->
     <link rel="stylesheet" href="/static/css/base.css" />
     <link rel="stylesheet" href="/static/css/home.css" />
-    <link rel="stylesheet" href="/static/css/dashboard.css" />
+
+    <!-- Dashboard-specific Styles -->
+    {{ if .IncludeDashboardJS }}
+      <link rel="stylesheet" href="/static/css/dashboard.css" />
+    {{ end }}
 
     <!-- Optional Page-Specific Head -->
     {{ block "head" . }}{{ end }}
   </head>
 
-  <body class="min-h-screen flex flex-col bg-white text-gray-900 font-sans">
+  <body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else }}min-h-screen flex flex-col bg-white text-gray-900 font-sans{{ end }}">
 
     <!-- Header / Navbar -->
     {{ block "header" . }}{{ end }}
@@ -42,12 +46,9 @@
     <!-- Flash / Notifications -->
     {{ block "flash" . }}{{ end }}
 
-
     <!-- Main Page Content -->
-    <main class="flex-grow container mx-auto px-4 py-8">
+    <main class="{{ if .IncludeDashboardJS }}dashboard-main{{ else }}flex-grow container mx-auto px-4 py-8{{ end }}">
       {{ template "content" . }}
-
-
     </main>
 
     <!-- Footer -->
@@ -59,9 +60,7 @@
           <a href="/privacy" class="hover:underline">Privacy</a> |
           <a href="/blog" class="hover:underline">Resources</a>
         </nav>
-        <p>
-          © {{ .Year }} Aumkeeper, Inc. — All rights reserved.
-        </p>
+        <p>© {{ .Year }} Aumkeeper, Inc. — All rights reserved.</p>
       </div>
     </footer>
 
@@ -73,6 +72,7 @@
 
     <!-- Conditional Dashboard JS -->
     {{ if .IncludeDashboardJS }}
+      <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script defer src="/static/js/dashboard.js"></script>
     {{ end }}
 
