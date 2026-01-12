@@ -15,9 +15,9 @@ import (
 )
 
 /*
-   --------------------------------------------------
-   Global Template Registry
-   --------------------------------------------------
+--------------------------------------------------
+Global Template Registry
+--------------------------------------------------
 */
 var templates *template.Template
 
@@ -35,14 +35,14 @@ func main() {
 
 	go handleSignals(cancel)
 
-	// Load all templates once
+	// Load templates once at startup
 	loadTemplates()
 
 	// Router
 	mux := http.NewServeMux()
 	setupRoutes(mux)
 
-	// Server
+	// HTTP Server
 	server := &http.Server{
 		Addr:              ":" + getPort(),
 		Handler:           mux,
@@ -64,9 +64,9 @@ func main() {
 }
 
 /*
-   --------------------------------------------------
-   Template Loading
-   --------------------------------------------------
+--------------------------------------------------
+Template Loading
+--------------------------------------------------
 */
 
 func loadTemplates() {
@@ -81,20 +81,20 @@ func loadTemplates() {
 }
 
 /*
-   --------------------------------------------------
-   Routing
-   --------------------------------------------------
+--------------------------------------------------
+Routing
+--------------------------------------------------
 */
 
 func setupRoutes(mux *http.ServeMux) {
-	// Static files
+	// Static assets
 	static := http.StripPrefix(
 		"/static/",
 		http.FileServer(http.Dir("api/static")),
 	)
 	mux.Handle("/static/", cacheControlMiddleware(static))
 
-	// Health
+	// Health check
 	mux.HandleFunc("/healthz", healthHandler)
 
 	// Pages
@@ -103,25 +103,35 @@ func setupRoutes(mux *http.ServeMux) {
 }
 
 /*
-   --------------------------------------------------
-   Handlers
-   --------------------------------------------------
+--------------------------------------------------
+Handlers
+--------------------------------------------------
 */
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "home", map[string]interface{}{
-		"Title":              "Home",
-		"Description":        "Anonymous LLCs and Registered Agent services for modern founders.",
-		"Year":               time.Now().Year(),
-		"IncludeDashboardJS": false,
+	if r.Method != http.MethodGet {
+		http.NotFound(w, r)
+		return
+	}
+
+	renderTemplate(w, "home", map[string]any{
+		"Title":       "AumKeeper — Modern ERP for Growing Businesses",
+		"Description": "AumKeeper is a modern all-in-one SaaS ERP platform for SMBs.",
+		"Year":        time.Now().Year(),
+		// Do NOT set IncludeDashboardJS here
 	})
 }
 
 func dashboardHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "dashboard", map[string]interface{}{
+	if r.Method != http.MethodGet {
+		http.NotFound(w, r)
+		return
+	}
+
+	renderTemplate(w, "dashboard", map[string]any{
 		"Title":              "Dashboard",
 		"Year":               time.Now().Year(),
-		"IncludeDashboardJS": true,
+		"IncludeDashboardJS": true, // REQUIRED
 	})
 }
 
@@ -131,12 +141,14 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-   --------------------------------------------------
-   Utilities
-   --------------------------------------------------
+--------------------------------------------------
+Utilities
+--------------------------------------------------
 */
 
-func renderTemplate(w http.ResponseWriter, name string, data map[string]interface{}) {
+func renderTemplate(w http.ResponseWriter, name string, data map[string]any) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 	if err := templates.ExecuteTemplate(w, name, data); err != nil {
 		log.Printf("❌ Template render error (%s): %v", name, err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -151,9 +163,9 @@ func getPort() string {
 }
 
 /*
-   --------------------------------------------------
-   Graceful Shutdown
-   --------------------------------------------------
+--------------------------------------------------
+Graceful Shutdown
+--------------------------------------------------
 */
 
 func handleSignals(cancel context.CancelFunc) {
@@ -176,9 +188,9 @@ func gracefulShutdown(server *http.Server, timeout time.Duration) {
 }
 
 /*
-   --------------------------------------------------
-   Middleware
-   --------------------------------------------------
+--------------------------------------------------
+Middleware
+--------------------------------------------------
 */
 
 func cacheControlMiddleware(next http.Handler) http.Handler {
