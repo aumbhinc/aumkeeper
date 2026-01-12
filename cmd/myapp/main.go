@@ -24,7 +24,7 @@ var templates *template.Template
 func main() {
 	log.Println("🔄 Starting AumKeeper server...")
 
-	// Load .env if present (safe in prod)
+	// Load .env if present
 	if err := godotenv.Load(); err != nil {
 		log.Println("⚠️ No .env file found (ok in prod)")
 	}
@@ -32,10 +32,9 @@ func main() {
 	// Graceful shutdown context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
 	go handleSignals(cancel)
 
-	// Load templates once at startup
+	// Load templates in explicit order
 	loadTemplates()
 
 	// Router
@@ -68,16 +67,27 @@ func main() {
 Template Loading
 --------------------------------------------------
 */
-
 func loadTemplates() {
 	var err error
 
-	templates, err = template.ParseGlob("api/templates/*.html")
+	// Parse base first, then other pages
+	templates, err = template.New("").ParseGlob("api/templates/base.html")
 	if err != nil {
-		log.Fatalf("❌ Template parse failure: %v", err)
+		log.Fatalf("❌ Base template parse failure: %v", err)
 	}
 
-	log.Println("✅ Templates loaded")
+	// Parse other pages
+	templates, err = templates.ParseGlob("api/templates/home.html")
+	if err != nil {
+		log.Fatalf("❌ Home template parse failure: %v", err)
+	}
+
+	templates, err = templates.ParseGlob("api/templates/dashboard.html")
+	if err != nil {
+		log.Fatalf("❌ Dashboard template parse failure: %v", err)
+	}
+
+	log.Println("✅ Templates loaded successfully")
 }
 
 /*
@@ -85,9 +95,8 @@ func loadTemplates() {
 Routing
 --------------------------------------------------
 */
-
 func setupRoutes(mux *http.ServeMux) {
-	// Static assets
+	// Static files
 	static := http.StripPrefix(
 		"/static/",
 		http.FileServer(http.Dir("api/static")),
@@ -107,7 +116,6 @@ func setupRoutes(mux *http.ServeMux) {
 Handlers
 --------------------------------------------------
 */
-
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.NotFound(w, r)
@@ -118,7 +126,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		"Title":       "AumKeeper — Modern ERP for Growing Businesses",
 		"Description": "AumKeeper is a modern all-in-one SaaS ERP platform for SMBs.",
 		"Year":        time.Now().Year(),
-		// Do NOT set IncludeDashboardJS here
+		// No dashboard assets
 	})
 }
 
@@ -131,7 +139,7 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "dashboard", map[string]any{
 		"Title":              "Dashboard",
 		"Year":               time.Now().Year(),
-		"IncludeDashboardJS": true, // REQUIRED
+		"IncludeDashboardJS": true, // critical for dashboard assets
 	})
 }
 
@@ -145,7 +153,6 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 Utilities
 --------------------------------------------------
 */
-
 func renderTemplate(w http.ResponseWriter, name string, data map[string]any) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -167,7 +174,6 @@ func getPort() string {
 Graceful Shutdown
 --------------------------------------------------
 */
-
 func handleSignals(cancel context.CancelFunc) {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
@@ -192,7 +198,6 @@ func gracefulShutdown(server *http.Server, timeout time.Duration) {
 Middleware
 --------------------------------------------------
 */
-
 func cacheControlMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=604800, immutable")
