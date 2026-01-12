@@ -80,7 +80,7 @@ func loadTemplates() {
 	pageTemplates := []string{
 		"api/templates/home.html",
 		"api/templates/dashboard.html",
-		"api/templates/staffs.html",
+		"api/templates/staffs.html", // added staffs page
 	}
 
 	for _, tpl := range pageTemplates {
@@ -100,19 +100,16 @@ Routing
 */
 func setupRoutes(mux *http.ServeMux) {
 	// Static files
-	static := http.StripPrefix(
-		"/static/",
-		http.FileServer(http.Dir("api/static")),
-	)
+	static := http.StripPrefix("/static/", http.FileServer(http.Dir("api/static")))
 	mux.Handle("/static/", cacheControlMiddleware(static))
 
 	// Health check
 	mux.HandleFunc("/healthz", healthHandler)
 
 	// Pages
-	mux.HandleFunc("/", homeHandler)
+	mux.HandleFunc("/staffs", staffsHandler)    // ✅ STAFFS page first
 	mux.HandleFunc("/dashboard", dashboardHandler)
-	mux.HandleFunc("/staffs", staffsHandler)
+	mux.HandleFunc("/", homeHandler)            // root last
 }
 
 /*
@@ -142,11 +139,11 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "dashboard", map[string]any{
 		"Title":              "Dashboard",
 		"Year":               time.Now().Year(),
-		"IncludeDashboardJS": true, // critical for dashboard assets
+		"IncludeDashboardJS": true,
 	})
 }
 
-// New: Staffs page handler
+// STAFFS handler
 func staffsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.NotFound(w, r)
@@ -156,7 +153,7 @@ func staffsHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "staffs", map[string]any{
 		"Title":          "Staff Manager",
 		"Year":           time.Now().Year(),
-		"IncludeStaffJS": true, // load staffs CSS & JS
+		"IncludeStaffJS": true, // load staffs CSS & JS conditionally
 	})
 }
 
