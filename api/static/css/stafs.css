@@ -1,0 +1,159 @@
+/* -------------------------------
+   Root Variables
+---------------------------------*/
+:root {
+    --color-midnightblue: #2c3e50;
+    --color-clouds: #ecf0f1;
+    --color-silver: #bdc3c7;
+    --color-sunflower: #f39c12;
+    --color-pomegranate: #c0392b;
+}
+
+/* -------------------------------
+   Reset Default Styles
+---------------------------------*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* -------------------------------
+   Body
+---------------------------------*/
+body {
+    font-family: Arial, sans-serif;
+    background: var(--color-clouds);
+    color: var(--color-midnightblue);
+    min-height: 100vh;
+}
+
+/* -------------------------------
+   Header & Title
+---------------------------------*/
+.center-title {
+    text-align: center;
+    margin: 20px 0;
+    color: var(--color-midnightblue);
+}
+
+/* -------------------------------
+   Search Form
+---------------------------------*/
+.search-form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 20px 20px 20px;
+    gap: 10px;
+}
+
+#search-input {
+    padding: 10px;
+    border: 1px solid var(--color-silver);
+    border-radius: 6px 0 0 6px;
+    width: 200px;
+    max-width: 70%;
+}
+
+#search-button {
+    background-color: var(--color-midnightblue);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#search-button:hover {
+    background-color: #34495e;
+}
+
+/* Add Staff / Action Buttons */
+.add-staff-button {
+    border: 2px solid var(--color-midnightblue);
+    background-color: var(--color-midnightblue);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.add-staff-button:hover {
+    border-color: var(--color-sunflower);
+    background-color: var(--color-midnightblue);
+}
+
+.add-staff-button:active {
+    border-color: var(--color-pomegranate);
+    background-color: var(--color-midnightblue);
+}
+
+/* -------------------------------
+   Staff List
+---------------------------------*/
+#staff-list {
+    list-style: none;
+    padding: 0 20px;
+}
+
+.staff-item {
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.staff-item:hover {
+    background-color: #f2f2f2;
+    transform: translateY(-2px);
+}
+
+.staff-item h3 {
+    margin-top: 10px;
+}
+
+.staff-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    color: var(--color-silver);
+    margin-top: 10px;
+    gap: 10px;
+}
+
+/* -------------------------------
+   Footer
+---------------------------------*/
+footer {
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 20px;
+    color: var(--color-silver);
+}
+
+/* -------------------------------
+   Responsive
+---------------------------------*/
+@media (max-width: 768px) {
+    .staff-details {
+        flex-direction: column;
+    }
+
+    #search-input {
+        width: 100%;
+        border-radius: 6px;
+    }
+
+    #search-button {
+        border-radius: 6px;
+        margin-top: 5px;
+    }
+}

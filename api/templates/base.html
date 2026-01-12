@@ -28,14 +28,19 @@
   <!-- Base Styles -->
   <link rel="stylesheet" href="/static/css/base.css" />
 
-  <!-- Home Styles (HOME ONLY) -->
-  {{ if not .IncludeDashboardJS }}
+  <!-- Home Styles -->
+  {{ if and (not .IncludeDashboardJS) (not .IncludeStaffJS) }}
     <link rel="stylesheet" href="/static/css/home.css" />
   {{ end }}
 
   <!-- Dashboard Styles -->
   {{ if .IncludeDashboardJS }}
     <link rel="stylesheet" href="/static/css/dashboard.css" />
+  {{ end }}
+
+  <!-- Staffs Styles -->
+  {{ if .IncludeStaffJS }}
+    <link rel="stylesheet" href="/static/css/staffs/styles.css" />
   {{ end }}
 
   <!-- Head Extension -->
@@ -45,6 +50,8 @@
 <body
   class="{{ if .IncludeDashboardJS }}
     dashboard-page
+  {{ else if .IncludeStaffJS }}
+    staffs-page
   {{ else }}
     min-h-screen flex flex-col bg-white text-gray-900 font-sans
   {{ end }}"
@@ -60,6 +67,8 @@
   <main
     class="{{ if .IncludeDashboardJS }}
       dashboard-main
+    {{ else if .IncludeStaffJS }}
+      staffs-main container mx-auto px-4 py-6
     {{ else }}
       flex-grow container mx-auto px-4 py-8
     {{ end }}"
@@ -98,6 +107,11 @@
   {{ if .IncludeDashboardJS }}
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="/static/js/dashboard.js"></script>
+  {{ end }}
+
+  <!-- Staffs JS -->
+  {{ if .IncludeStaffJS }}
+    <script defer src="/static/js/staffs/script.js"></script>
   {{ end }}
 
 </body>

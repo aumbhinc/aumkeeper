@@ -34,7 +34,7 @@ func main() {
 	defer cancel()
 	go handleSignals(cancel)
 
-	// Load templates in explicit order
+	// Load templates
 	loadTemplates()
 
 	// Router
@@ -70,21 +70,24 @@ Template Loading
 func loadTemplates() {
 	var err error
 
-	// Parse base first, then other pages
+	// Parse base template first
 	templates, err = template.New("").ParseGlob("api/templates/base.html")
 	if err != nil {
 		log.Fatalf("❌ Base template parse failure: %v", err)
 	}
 
-	// Parse other pages
-	templates, err = templates.ParseGlob("api/templates/home.html")
-	if err != nil {
-		log.Fatalf("❌ Home template parse failure: %v", err)
+	// Parse all other page templates
+	pageTemplates := []string{
+		"api/templates/home.html",
+		"api/templates/dashboard.html",
+		"api/templates/staffs.html",
 	}
 
-	templates, err = templates.ParseGlob("api/templates/dashboard.html")
-	if err != nil {
-		log.Fatalf("❌ Dashboard template parse failure: %v", err)
+	for _, tpl := range pageTemplates {
+		templates, err = templates.ParseGlob(tpl)
+		if err != nil {
+			log.Fatalf("❌ Template parse failure (%s): %v", tpl, err)
+		}
 	}
 
 	log.Println("✅ Templates loaded successfully")
@@ -109,6 +112,7 @@ func setupRoutes(mux *http.ServeMux) {
 	// Pages
 	mux.HandleFunc("/", homeHandler)
 	mux.HandleFunc("/dashboard", dashboardHandler)
+	mux.HandleFunc("/staffs", staffsHandler)
 }
 
 /*
@@ -126,7 +130,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		"Title":       "AumKeeper — Modern ERP for Growing Businesses",
 		"Description": "AumKeeper is a modern all-in-one SaaS ERP platform for SMBs.",
 		"Year":        time.Now().Year(),
-		// No dashboard assets
 	})
 }
 
@@ -140,6 +143,20 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 		"Title":              "Dashboard",
 		"Year":               time.Now().Year(),
 		"IncludeDashboardJS": true, // critical for dashboard assets
+	})
+}
+
+// New: Staffs page handler
+func staffsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.NotFound(w, r)
+		return
+	}
+
+	renderTemplate(w, "staffs", map[string]any{
+		"Title":          "Staff Manager",
+		"Year":           time.Now().Year(),
+		"IncludeStaffJS": true, // load staffs CSS & JS
 	})
 }
 
