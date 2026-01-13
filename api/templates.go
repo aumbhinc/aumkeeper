@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/aumbhinc/aumkeeper/api"
+	"aumkeeper/api"
 	"github.com/joho/godotenv"
 )
 
