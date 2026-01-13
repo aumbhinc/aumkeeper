@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -12,24 +10,51 @@ import (
 	"time"
 
 	"aumkeeper/api"
-	"github.com/joho/godotenv"
-)
+	"aumkeeper/api/handlers"
 
-var templates *template.Template
+	"github.com/joho/godotenv"
+	"html/template"
+)
 
 func main() {
 	log.Println("🔄 Starting AumKeeper server...")
-
 	_ = godotenv.Load()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	go handleSignals(cancel)
 
-	loadTemplates()
+	// Load templates with FuncMap
+	templates := template.New("").Funcs(api.FuncMap())
+	if _, err := templates.ParseGlob("api/templates/*.html"); err != nil {
+		log.Fatalf("❌ Template parse error: %v", err)
+	}
+	log.Println("✅ Templates loaded")
 
 	mux := http.NewServeMux()
-	setupRoutes(mux)
+
+	// Static files
+	static := http.StripPrefix("/static/", http.FileServer(http.Dir("api/static")))
+	mux.Handle("/static/", cacheControlMiddleware(static))
+
+	// Routes
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("ok"))
+	})
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		renderTemplate(w, templates, "home", map[string]any{
+			"Title": "Home",
+			"Year":  time.Now().Year(),
+		})
+	})
+	mux.HandleFunc("/dashboard", func(w http.ResponseWriter, r *http.Request) {
+		renderTemplate(w, templates, "dashboard", map[string]any{
+			"Title":              "Dashboard",
+			"Year":               time.Now().Year(),
+			"IncludeDashboardJS": true,
+		})
+	})
+	mux.Handle("/staffs", handlers.StaffsHandler(templates)) // dynamic staff page
 
 	server := &http.Server{
 		Addr:              ":" + getPort(),
@@ -39,6 +64,7 @@ func main() {
 		IdleTimeout:       120 * time.Second,
 	}
 
+	// Start server
 	go func() {
 		log.Printf("🌐 Listening on :%s", getPort())
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -50,60 +76,11 @@ func main() {
 	gracefulShutdown(server, 10*time.Second)
 }
 
-func loadTemplates() {
-	var err error
+// Helpers
 
-	templates = template.New("").Funcs(api.FuncMap())
-	templates, err = templates.ParseGlob("api/templates/*.html")
-	if err != nil {
-		log.Fatalf("❌ Template parse error: %v", err)
-	}
-
-	log.Println("✅ Templates loaded")
-}
-
-func setupRoutes(mux *http.ServeMux) {
-	static := http.StripPrefix(
-		"/static/",
-		http.FileServer(http.Dir("api/static")),
-	)
-	mux.Handle("/static/", cacheControlMiddleware(static))
-
-	mux.HandleFunc("/healthz", healthHandler)
-	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/dashboard", dashboardHandler)
-	mux.HandleFunc("/staffs", staffsHandler)
-}
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "home", map[string]any{
-		"Title": "Home",
-		"Year":  time.Now().Year(),
-	})
-}
-
-func dashboardHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "dashboard", map[string]any{
-		"Title":              "Dashboard",
-		"Year":               time.Now().Year(),
-		"IncludeDashboardJS": true,
-	})
-}
-
-func staffsHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "staffs", map[string]any{
-		"Title": "Staff Manager",
-		"Year":  time.Now().Year(),
-	})
-}
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "ok")
-}
-
-func renderTemplate(w http.ResponseWriter, name string, data map[string]any) {
+func renderTemplate(w http.ResponseWriter, tmpl *template.Template, name string, data any) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := templates.ExecuteTemplate(w, name, data); err != nil {
+	if err := tmpl.ExecuteTemplate(w, name, data); err != nil {
 		log.Println("❌ Render error:", err)
 		http.Error(w, "Internal Server Error", 500)
 	}
