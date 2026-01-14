@@ -3,16 +3,26 @@ package api
 import (
 	"fmt"
 	"html/template"
-	"strings"
 )
 
-// FuncMap provides reusable template functions
+// FuncMap provides reusable template helpers
 func FuncMap() template.FuncMap {
 	return template.FuncMap{
-		"upper": strings.ToUpper,
-		"lower": strings.ToLower,
-		"currency": func(amount float64) string {
-			return "$" + fmt.Sprintf("%.2f", amount)
+		// dict helper: {{ dict "key" value "key2" value2 }}
+		"dict": func(values ...any) map[string]any {
+			m := make(map[string]any)
+			for i := 0; i < len(values); i += 2 {
+				if i+1 < len(values) {
+					key, _ := values[i].(string)
+					m[key] = values[i+1]
+				}
+			}
+			return m
+		},
+
+		// currency helper
+		"currency": func(v float64) string {
+			return fmt.Sprintf("$%.2f", v)
 		},
 	}
 }
