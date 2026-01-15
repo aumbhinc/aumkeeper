@@ -11,7 +11,8 @@
       <img src="/static/img/dashboard/logo1.svg" alt="Logo">
       <h2>AUMBH</h2>
     </div>
-    <div class="sidebar">
+
+    <nav class="sidebar">
       <a class="active"><span class="material-icons-sharp">grid_view</span>Dashboard</a>
       <a><span class="material-icons-sharp">leaderboard</span>Executive</a>
       <a><span class="material-icons-sharp">group_add</span>Customers</a>
@@ -23,111 +24,129 @@
       <a><span class="material-icons-sharp">badge</span>Staffs</a>
       <a><span class="material-icons-sharp">add_task</span>Tasks</a>
       <a><span class="material-icons-sharp">settings</span>Settings</a>
-    </div>
+    </nav>
   </aside>
 
-  <!-- Main Content -->
+  <!-- Main -->
   <main>
     <h1>Dashboard</h1>
-    <div class="date"><input type="date"></div>
 
-    <!-- Stats Cards -->
-    <div class="stats-wrapper">
-      {{/* Stat Card Template */}}
-      {{ range $i, $stat := slice "Net Worth" "Total Assets" "Total Liabilities" "Ledger Exceptions" }}
+    <div class="date">
+      <input type="date">
+    </div>
+
+    <!-- Stats -->
+    <section class="stats-wrapper">
+
       <div class="stat-card">
-        <div class="stat-icon"><span class="material-icons-sharp">{{ index (slice "account_balance" "account_balance_wallet" "request_page" "error_outline") $i }}</span></div>
+        <div class="stat-icon"><span class="material-icons-sharp">account_balance</span></div>
         <div class="stat-info">
-          <h3>{{ $stat }}</h3>
+          <h3>Net Worth</h3>
           <div class="value">$100MM</div>
-          <small class="change">+5%</small>
+          <small class="change success">+5%</small>
         </div>
       </div>
-      {{ end }}
-    </div>
+
+      <div class="stat-card">
+        <div class="stat-icon"><span class="material-icons-sharp">account_balance_wallet</span></div>
+        <div class="stat-info">
+          <h3>Total Assets</h3>
+          <div class="value">$140MM</div>
+          <small class="change success">+8%</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon"><span class="material-icons-sharp">request_page</span></div>
+        <div class="stat-info">
+          <h3>Liabilities</h3>
+          <div class="value">$40MM</div>
+          <small class="change warn">-2%</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon"><span class="material-icons-sharp">error_outline</span></div>
+        <div class="stat-info">
+          <h3>Ledger Exceptions</h3>
+          <div class="value">12</div>
+          <small class="change warn">+3</small>
+        </div>
+      </div>
+
+    </section>
 
     <!-- Charts -->
-    <div class="charts-wrapper">
-      <div class="chart-container"><canvas id="salesChart"></canvas></div>
-      <div class="chart-container"><canvas id="accountsChart"></canvas></div>
-    </div>
+    <section class="charts-wrapper">
+      <div class="chart-container">
+        <canvas id="salesChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="accountsChart"></canvas>
+      </div>
+    </section>
 
-    <!-- Recent Orders Table -->
-    <div class="recent-order">
+    <!-- Orders -->
+    <section class="recent-order">
       <h2>Recent Orders</h2>
+
       <table>
         <thead>
-          <tr><th>Customer</th><th>Order #</th><th>Payment</th><th>Status</th><th>Action</th></tr>
+          <tr>
+            <th>Customer</th>
+            <th>Order #</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
         </thead>
+
         <tbody>
-          <tr><td>Kiley Ying</td><td>123456</td><td>Unpaid</td><td class="badge warn">Unfulfilled</td><td class="badge success">Details</td></tr>
-          <tr><td>Northwind LLC</td><td>123457</td><td>Paid</td><td class="badge success">Fulfilled</td><td class="badge success">Details</td></tr>
+          <tr>
+            <td>Kiley Ying</td>
+            <td>123456</td>
+            <td>Unpaid</td>
+            <td class="badge warn">Unfulfilled</td>
+            <td class="badge success">Details</td>
+          </tr>
+
+          <tr>
+            <td>Northwind LLC</td>
+            <td>123457</td>
+            <td>Paid</td>
+            <td class="badge success">Fulfilled</td>
+            <td class="badge success">Details</td>
+          </tr>
         </tbody>
       </table>
+
       <a href="#">Show All</a>
-    </div>
+    </section>
   </main>
 
   <!-- Right Panel -->
-  <div class="right">
+  <aside class="right">
     <div class="top">
-      <button id="menu-btn">Menu</button>
+
+      <button id="menu-btn">☰</button>
+
       <div class="theme-toggler">
         <span class="material-icons-sharp active">light_mode</span>
         <span class="material-icons-sharp">dark_mode</span>
       </div>
+
       <div class="profile-container">
-        <div class="info"><p>Hey, <b>Lax</b></p><small class="text-muted">Admin</small></div>
-        <div class="profile-photo"><img src="/static/img/dashboard/logo1.svg"></div>
+        <div class="info">
+          <p>Hey, <b>Lax</b></p>
+          <small class="text-muted">Admin</small>
+        </div>
+        <div class="profile-photo">
+          <img src="/static/img/dashboard/logo1.svg">
+        </div>
       </div>
+
     </div>
+  </aside>
 
-    {{/* Collapsible Sections */}}
-    {{ $sections := dict 
-      "Accounts" (slice (dict "icon" "savings" "label" "Asset Accounts" "alert" "success" "value" "+39%")
-                        (dict "icon" "payments" "label" "Liability Accounts" "alert" "warn" "value" "-9%")
-                        (dict "icon" "monetization_on" "label" "Revenue Accounts" "alert" "success" "value" "+21%")
-                        (dict "icon" "monetization_on" "label" "Equity Accounts" "alert" "success" "value" "+12%")
-                        (dict "icon" "monetization_on" "label" "Expense Accounts" "alert" "success" "value" "+7%")
-                        (dict "icon" "monetization_on" "label" "Contra Accounts" "alert" "success" "value" "+3%"))
-      "Operations" (slice (dict "icon" "add" "label" "Pay Out" "alert" "warn" "value" "2 pending")
-                          (dict "icon" "add" "label" "Add Product"))
-      "Sales Analytics" (slice (dict "icon" "shopping_cart" "label" "Online Orders" "alert" "warn" "value" "5 unfulfilled")
-                               (dict "icon" "person" "label" "New Customers" "alert" "success" "value" "+12%"))
-    }}
-
-    {{ range $section, $items := $sections }}
-      <div class="collapsible">{{ $section }} <span class="material-icons-sharp">expand_more</span></div>
-      <div class="content">
-        {{ range $items }}
-          <div class="func-btn">
-            <span class="icon material-icons-sharp">{{ .icon }}</span>{{ .label }}
-            {{ if .alert }}
-              <span class="alert {{ .alert }}">{{ .value }}</span>
-            {{ end }}
-          </div>
-        {{ end }}
-      </div>
-    {{ end }}
-
-  </div>
 </div>
-
-<script src="/static/js/dashboard.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Light/Dark Toggle
-  const toggler = document.querySelector(".theme-toggler");
-  toggler.addEventListener("click", () => document.body.classList.toggle("glow-theme"));
-
-  // Collapsible Right Panel
-  const collapsibles = document.querySelectorAll(".collapsible");
-  collapsibles.forEach(item => {
-    item.addEventListener("click", () => {
-      const content = item.nextElementSibling;
-      content.style.display = content.style.display === "flex" ? "none" : "flex";
-    });
-  });
-});
-</script>
 {{ end }}

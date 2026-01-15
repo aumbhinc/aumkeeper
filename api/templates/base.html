@@ -43,7 +43,7 @@
     <link rel="stylesheet" href="/static/css/staffs/styles.css" />
   {{ end }}
 
-  <!-- Head Extension -->
+  <!-- Head Extension (page-specific) -->
   {{ block "head" . }}{{ end }}
 </head>
 
@@ -60,10 +60,10 @@
   <!-- Optional Header -->
   {{ block "header" . }}{{ end }}
 
-  <!-- Flash Messages -->
+  <!-- Flash / Toast Messages -->
   {{ block "flash" . }}{{ end }}
 
-  <!-- Main Content -->
+  <!-- Main Page Content -->
   <main
     class="{{ if .IncludeDashboardJS }}
       dashboard-main
@@ -73,10 +73,10 @@
       flex-grow container mx-auto px-4 py-8
     {{ end }}"
   >
-    {{ block "content" . }}
-      <!-- Safe fallback: prevents white screen if content block missing -->
-      <section style="padding:2rem;color:#b91c1c;font-weight:500">
-        Template error: <code>content</code> block not defined.
+    {{ block "page" . }}
+      <!-- SAFE FALLBACK (never white-screen in prod) -->
+      <section style="padding:2rem;color:#b91c1c;font-weight:600">
+        Template error: <code>page</code> block not defined.
       </section>
     {{ end }}
   </main>

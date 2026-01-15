@@ -4,66 +4,75 @@
 
 {{ define "content" }}
 
-<header>
+<section class="staffs-header">
   <h1 class="center-title">Staffs Manager</h1>
 
-  <form class="search-form">
+  <form class="search-form" autocomplete="off">
     <button type="button" id="schedule" class="add-staff-button">Schedule</button>
     <button type="button" id="timeclock" class="add-staff-button">Timeclock</button>
-    <button class="add-staff-button">Hiring</button>
-    <button class="add-staff-button">Payroll</button>
+    <button type="button" class="add-staff-button">Hiring</button>
+    <button type="button" class="add-staff-button">Payroll</button>
     <button type="button" id="reports" class="add-staff-button">Reports</button>
-    <input type="text" id="search-input" placeholder="Search staffs..." />
+
+    <input
+      type="search"
+      id="search-input"
+      placeholder="Search staffs..."
+      aria-label="Search staffs"
+    />
+
     <button type="button" id="search-button">Search</button>
-    <button type="button" id="addstaff" class="add-staff-button">
+
+    <button
+      type="button"
+      id="addstaff"
+      class="add-staff-button"
+      aria-label="Add staff"
+    >
       <span class="material-icons-sharp">person_add</span>
     </button>
   </form>
-</header>
+</section>
 
-<main>
-  <section id="open-tasks">
-    <h2 id="opentasktitle">Active Staffs</h2>
+<section id="open-tasks">
+  <h2 id="opentasktitle">Active Staffs</h2>
 
-    <ul id="staff-list">
-      <li class="staff-item">
-        <div class="staff-details">
-          <p><strong>Staff Name:</strong> John Doe</p>
-          <p><strong>Access Level:</strong> General Manager</p>
-          <p><strong>Task Score:</strong> 90/91</p>
-          <p><strong>Pay Scale:</strong> $9000/month</p>
-        </div>
-        <h3>Task Assigned:</h3>
-        <p>Design the user interface for the new project.</p>
-      </li>
+  <ul id="staff-list">
 
-      <li class="staff-item">
-        <div class="staff-details">
-          <p><strong>Staff Name:</strong> Jane Smith</p>
-          <p><strong>Access Level:</strong> Staff</p>
-          <p><strong>Task Score:</strong> 90/91</p>
-          <p><strong>Pay Scale:</strong> $17/hour</p>
-        </div>
-        <h3>Task Assigned:</h3>
-        <p>Design the user interface for the new project.</p>
-      </li>
+    <li class="staff-item">
+      <div class="staff-details">
+        <p><strong>Staff Name:</strong> John Doe</p>
+        <p><strong>Access Level:</strong> General Manager</p>
+        <p><strong>Task Score:</strong> 90/91</p>
+        <p><strong>Pay Scale:</strong> $9000/month</p>
+      </div>
+      <h3>Task Assigned</h3>
+      <p>Design the user interface for the new project.</p>
+    </li>
 
-      <li class="staff-item">
-        <div class="staff-details">
-          <p><strong>Staff Name:</strong> Rachel Ying</p>
-          <p><strong>Access Level:</strong> Manager</p>
-          <p><strong>Task Score:</strong> 100/91</p>
-          <p><strong>Pay Scale:</strong> $5000/month</p>
-        </div>
-        <h3>Task Assigned:</h3>
-        <p>Design the user interface for the new project.</p>
-      </li>
-    </ul>
-  </section>
-</main>
+    <li class="staff-item">
+      <div class="staff-details">
+        <p><strong>Staff Name:</strong> Jane Smith</p>
+        <p><strong>Access Level:</strong> Staff</p>
+        <p><strong>Task Score:</strong> 90/91</p>
+        <p><strong>Pay Scale:</strong> $17/hour</p>
+      </div>
+      <h3>Task Assigned</h3>
+      <p>Design the user interface for the new project.</p>
+    </li>
 
-<footer>
-  <p>&copy; {{ .Year }} AumKeeper, Inc.</p>
-</footer>
+    <li class="staff-item">
+      <div class="staff-details">
+        <p><strong>Staff Name:</strong> Rachel Ying</p>
+        <p><strong>Access Level:</strong> Manager</p>
+        <p><strong>Task Score:</strong> 100/91</p>
+        <p><strong>Pay Scale:</strong> $5000/month</p>
+      </div>
+      <h3>Task Assigned</h3>
+      <p>Design the user interface for the new project.</p>
+    </li>
+
+  </ul>
+</section>
 
 {{ end }}
