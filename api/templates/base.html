@@ -43,42 +43,26 @@
     <link rel="stylesheet" href="/static/css/staffs/styles.css" />
   {{ end }}
 
-  <!-- Head Extension (page-specific) -->
-  {{ block "head" . }}{{ end }}
+  <!-- Head Extension -->
+  {{ template "head" . }}
 </head>
 
-<body
-  class="{{ if .IncludeDashboardJS }}
-    dashboard-page
-  {{ else if .IncludeStaffJS }}
-    staffs-page
-  {{ else }}
-    min-h-screen flex flex-col bg-white text-gray-900 font-sans
-  {{ end }}"
->
+<body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else if .IncludeStaffJS }}staffs-page{{ else }}site-page{{ end }}">
 
-  <!-- Optional Header -->
-  {{ block "header" . }}{{ end }}
+  {{ template "header" . }}
+  {{ template "flash" . }}
 
-  <!-- Flash / Toast Messages -->
-  {{ block "flash" . }}{{ end }}
+  <main class="{{ if .IncludeDashboardJS }}dashboard-main{{ else if .IncludeStaffJS }}staffs-main container mx-auto px-4 py-6{{ else }}flex-grow container mx-auto px-4 py-8{{ end }}">
 
-  <!-- Main Page Content -->
-  <main
-    class="{{ if .IncludeDashboardJS }}
-      dashboard-main
-    {{ else if .IncludeStaffJS }}
-      staffs-main container mx-auto px-4 py-6
+    {{ if .PageContent }}
+      {{ template .PageContent . }}
     {{ else }}
-      flex-grow container mx-auto px-4 py-8
-    {{ end }}"
-  >
-    {{ block "page" . }}
-      <!-- SAFE FALLBACK (never white-screen in prod) -->
+      <!-- HARD FAIL SAFE -->
       <section style="padding:2rem;color:#b91c1c;font-weight:600">
-        Template error: <code>page</code> block not defined.
+        Template error: PageContent not supplied by handler.
       </section>
     {{ end }}
+
   </main>
 
   <!-- Footer -->
@@ -100,8 +84,7 @@
   <!-- Base JS -->
   <script defer src="/static/js/main.js"></script>
 
-  <!-- Page Scripts -->
-  {{ block "scripts" . }}{{ end }}
+  {{ template "scripts" . }}
 
   <!-- Dashboard JS -->
   {{ if .IncludeDashboardJS }}
