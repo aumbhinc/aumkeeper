@@ -28,37 +28,43 @@
   <!-- Base Styles -->
   <link rel="stylesheet" href="/static/css/base.css" />
 
-  <!-- Page-specific Styles -->
+  <!-- Home Styles -->
   {{ if and (not .IncludeDashboardJS) (not .IncludeStaffJS) }}
     <link rel="stylesheet" href="/static/css/home.css" />
   {{ end }}
+
+  <!-- Dashboard Styles -->
   {{ if .IncludeDashboardJS }}
     <link rel="stylesheet" href="/static/css/dashboard.css" />
   {{ end }}
+
+  <!-- Staffs Styles -->
   {{ if .IncludeStaffJS }}
     <link rel="stylesheet" href="/static/css/staffs/styles.css" />
   {{ end }}
 
-  <!-- Head Extension -->
-  {{ template "head" . }}
+  <!-- Head Extension (page-specific) -->
+  {{ block "head" . }}{{ end }}
 </head>
 
 <body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else if .IncludeStaffJS }}staffs-page{{ else }}site-page{{ end }}">
 
-  {{ template "header" . }}
-  {{ template "flash" . }}
+  <!-- Header -->
+  {{ block "header" . }}{{ end }}
 
+  <!-- Flash / Toast Messages -->
+  {{ block "flash" . }}{{ end }}
+
+  <!-- Main Content -->
   <main class="{{ if .IncludeDashboardJS }}dashboard-main{{ else if .IncludeStaffJS }}staffs-main container mx-auto px-4 py-6{{ else }}flex-grow container mx-auto px-4 py-8{{ end }}">
-
-    {{/* --- Render PageContent as raw HTML --- */}}
     {{ if .PageContent }}
       {{ .PageContent }}
     {{ else }}
+      <!-- HARD FAIL SAFE -->
       <section style="padding:2rem;color:#b91c1c;font-weight:600">
         Template error: PageContent not supplied by handler.
       </section>
     {{ end }}
-
   </main>
 
   <!-- Footer -->
@@ -79,7 +85,9 @@
 
   <!-- Base JS -->
   <script defer src="/static/js/main.js"></script>
-  {{ template "scripts" . }}
+
+  <!-- Page-specific scripts -->
+  {{ block "scripts" . }}{{ end }}
 
   <!-- Dashboard JS -->
   {{ if .IncludeDashboardJS }}
