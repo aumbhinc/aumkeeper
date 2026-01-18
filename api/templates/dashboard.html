@@ -1,8 +1,5 @@
-{{ define "dashboard" }}
-  {{ template "base" . }}
-{{ end }}
+{{ define "dashboard_content" }}
 
-{{ define "content" }}
 <div class="container">
 
   <!-- Sidebar -->
@@ -130,7 +127,6 @@
   </div>
 </div>
 
-<script src="/static/js/dashboard.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // Light/Dark Toggle
@@ -147,4 +143,5 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
 {{ end }}
