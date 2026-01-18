@@ -6,23 +6,12 @@ import (
 	"time"
 )
 
-type DashboardHandler struct {
-	Tmpl *template.Template
-}
-
-func (h *DashboardHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Later: auth check middleware should guard this route
-
-	data := map[string]any{
-		"Title":              "Dashboard",
-		"IncludeDashboardJS": true, // CRITICAL
-		"Year":               time.Now().Year(),
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	err := h.Tmpl.ExecuteTemplate(w, "dashboard", data)
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
+func DashboardHandler(t *template.Template) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.ExecuteTemplate(w, "dashboard", map[string]any{
+			"Title":              "Dashboard",
+			"Year":               time.Now().Year(),
+			"IncludeDashboardJS": true,
+		})
+	})
 }
