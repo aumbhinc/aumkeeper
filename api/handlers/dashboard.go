@@ -5,50 +5,61 @@ import (
 	"bytes"
 	"html/template"
 	"net/http"
-	"time"
 )
 
 func DashboardHandler(t *template.Template) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		page := viewdata.Dashboard{
-			Stats: []viewdata.Stat{
-				{"Net Worth", "$100MM", "+5%", "account_balance"},
-				{"Total Assets", "$72MM", "+3%", "account_balance_wallet"},
-				{"Total Liabilities", "$22MM", "-2%", "request_page"},
-				{"Ledger Exceptions", "12", "-8%", "error_outline"},
+		// Build Dashboard ViewData
+		data := viewdata.Dashboard{
+			Stats: []viewdata.DashboardStat{
+				{Name: "Net Worth", Value: "$128,430", Change: "+12.4%", Icon: "account_balance_wallet"},
+				{Name: "Total Assets", Value: "$542,900", Change: "+8.2%", Icon: "savings"},
+				{Name: "Liabilities", Value: "$214,470", Change: "-3.1%", Icon: "payments"},
+				{Name: "Ledger Exceptions", Value: "3", Change: "-1 today", Icon: "warning"},
 			},
-			RightPanelSections: map[string][]viewdata.PanelItem{
+
+			RightPanelSections: map[string][]viewdata.DashboardPanelItem{
 				"Accounts": {
-					{"savings", "Asset Accounts", "success", "+39%"},
-					{"payments", "Liability Accounts", "warn", "-9%"},
-					{"monetization_on", "Revenue Accounts", "success", "+21%"},
-					{"monetization_on", "Equity Accounts", "success", "+12%"},
-					{"monetization_on", "Expense Accounts", "success", "+7%"},
-					{"monetization_on", "Contra Accounts", "success", "+3%"},
+					{Icon: "savings", Label: "Asset Accounts", Alert: "success", Value: "+39%"},
+					{Icon: "payments", Label: "Liability Accounts", Alert: "warn", Value: "-9%"},
+					{Icon: "monetization_on", Label: "Revenue Accounts", Alert: "success", Value: "+21%"},
+					{Icon: "monetization_on", Label: "Equity Accounts", Alert: "success", Value: "+12%"},
+					{Icon: "monetization_on", Label: "Expense Accounts", Alert: "success", Value: "+7%"},
+					{Icon: "monetization_on", Label: "Contra Accounts", Alert: "success", Value: "+3%"},
 				},
+
 				"Operations": {
-					{"add", "Pay Out", "warn", "2 pending"},
-					{"add", "Add Product", "", ""},
+					{Icon: "add", Label: "Pay Out", Alert: "warn", Value: "2 pending"},
+					{Icon: "add", Label: "Add Product"},
 				},
+
 				"Sales Analytics": {
-					{"shopping_cart", "Online Orders", "warn", "5 unfulfilled"},
-					{"person", "New Customers", "success", "+12%"},
+					{Icon: "shopping_cart", Label: "Online Orders", Alert: "warn", Value: "5 unfulfilled"},
+					{Icon: "person", Label: "New Customers", Alert: "success", Value: "+12%"},
 				},
 			},
 		}
 
+		// Render dashboard content into buffer
 		var buf bytes.Buffer
-		t.ExecuteTemplate(&buf, "dashboard_content", page)
-
-		layout := viewdata.Layout{
-			Title:              "Dashboard",
-			Description:        "AumKeeper Business Control Center",
-			Year:               time.Now().Year(),
-			IncludeDashboardJS: true,
-			PageContent:        template.HTML(buf.String()),
+		err := t.ExecuteTemplate(&buf, "dashboard_content", data)
+		if err != nil {
+			http.Error(w, "Error rendering dashboard content: "+err.Error(), http.StatusInternalServerError)
+			return
 		}
 
-		t.ExecuteTemplate(w, "base", layout)
+		// Inject into base layout
+		layout := viewdata.Layout{
+			Title:       "Dashboard",
+			Description: "AumKeeper Executive Control Panel",
+			PageContent: template.HTML(buf.String()),
+		}
+
+		err = t.ExecuteTemplate(w, "base", layout)
+		if err != nil {
+			http.Error(w, "Error rendering base template: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 	})
 }

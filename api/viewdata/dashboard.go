@@ -1,13 +1,13 @@
 package viewdata
 
-type Stat struct {
+type DashboardStat struct {
 	Name   string
 	Value  string
 	Change string
 	Icon   string
 }
 
-type PanelItem struct {
+type DashboardPanelItem struct {
 	Icon  string
 	Label string
 	Alert string
@@ -15,6 +15,6 @@ type PanelItem struct {
 }
 
 type Dashboard struct {
-	Stats               []Stat
-	RightPanelSections  map[string][]PanelItem
+	Stats              []DashboardStat
+	RightPanelSections map[string][]DashboardPanelItem
 }
