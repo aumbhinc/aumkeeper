@@ -1,11 +1,36 @@
 {{ define "dashboard_content" }}
 
 <div class="container">
-  <!-- Sidebar, Main content, Charts, Recent Orders omitted for brevity -->
 
-  <!-- Stats Cards -->
-  <div class="stats-wrapper">
-    {{ range .Stats }}
+  <!-- Sidebar -->
+  <aside>
+    <div class="logo">
+      <img src="/static/img/dashboard/logo1.svg" alt="Logo">
+      <h2>AUMBH</h2>
+    </div>
+    <div class="sidebar">
+      <a class="active"><span class="material-icons-sharp">grid_view</span>Dashboard</a>
+      <a><span class="material-icons-sharp">leaderboard</span>Executive</a>
+      <a><span class="material-icons-sharp">group_add</span>Customers</a>
+      <a><span class="material-icons-sharp">inventory_2</span>Products</a>
+      <a><span class="material-icons-sharp">shopping_cart</span>Orders</a>
+      <a><span class="material-icons-sharp">add_business</span>Markets</a>
+      <a><span class="material-icons-sharp">logout</span>Vendors</a>
+      <a><span class="material-icons-sharp">warehouse</span>Purchase Orders</a>
+      <a><span class="material-icons-sharp">badge</span>Staffs</a>
+      <a><span class="material-icons-sharp">add_task</span>Tasks</a>
+      <a><span class="material-icons-sharp">settings</span>Settings</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <h1>Dashboard</h1>
+    <div class="date"><input type="date"></div>
+
+    <!-- Stats Cards -->
+    <div class="stats-wrapper">
+      {{ range .Stats }}
       <div class="stat-card">
         <div class="stat-icon"><span class="material-icons-sharp">{{ .Icon }}</span></div>
         <div class="stat-info">
@@ -14,11 +39,64 @@
           <small class="change">{{ .Change }}</small>
         </div>
       </div>
-    {{ end }}
-  </div>
+      {{ end }}
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-wrapper">
+      <div class="chart-container"><canvas id="salesChart"></canvas></div>
+      <div class="chart-container"><canvas id="accountsChart"></canvas></div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="recent-order">
+      <h2>Recent Orders</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Order #</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Kiley Ying</td>
+            <td>123456</td>
+            <td>Unpaid</td>
+            <td class="badge warn">Unfulfilled</td>
+            <td class="badge success">Details</td>
+          </tr>
+          <tr>
+            <td>Northwind LLC</td>
+            <td>123457</td>
+            <td>Paid</td>
+            <td class="badge success">Fulfilled</td>
+            <td class="badge success">Details</td>
+          </tr>
+        </tbody>
+      </table>
+      <a href="#">Show All</a>
+    </div>
+  </main>
 
   <!-- Right Panel -->
   <div class="right">
+    <div class="top">
+      <button id="menu-btn">Menu</button>
+      <div class="theme-toggler">
+        <span class="material-icons-sharp active">light_mode</span>
+        <span class="material-icons-sharp">dark_mode</span>
+      </div>
+      <div class="profile-container">
+        <div class="info"><p>Hey, <b>Lax</b></p><small class="text-muted">Admin</small></div>
+        <div class="profile-photo"><img src="/static/img/dashboard/logo1.svg"></div>
+      </div>
+    </div>
+
+    <!-- Collapsible Right Panel Sections -->
     {{ range $section, $items := .RightPanelSections }}
       <div class="collapsible">{{ $section }} <span class="material-icons-sharp">expand_more</span></div>
       <div class="content">
@@ -30,6 +108,7 @@
         {{ end }}
       </div>
     {{ end }}
+
   </div>
 </div>
 
