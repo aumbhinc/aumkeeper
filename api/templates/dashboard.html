@@ -30,13 +30,13 @@
 
     <!-- Stats Cards -->
     <div class="stats-wrapper">
-      {{ range $i, $stat := slice "Net Worth" "Total Assets" "Total Liabilities" "Ledger Exceptions" }}
+      {{ range .Stats }}
       <div class="stat-card">
-        <div class="stat-icon"><span class="material-icons-sharp">{{ index (slice "account_balance" "account_balance_wallet" "request_page" "error_outline") $i }}</span></div>
+        <div class="stat-icon"><span class="material-icons-sharp">{{ .Icon }}</span></div>
         <div class="stat-info">
-          <h3>{{ $stat }}</h3>
-          <div class="value">$100MM</div>
-          <small class="change">+5%</small>
+          <h3>{{ .Name }}</h3>
+          <div class="value">{{ .Value }}</div>
+          <small class="change">{{ .Change }}</small>
         </div>
       </div>
       {{ end }}
@@ -127,13 +127,12 @@
   </div>
 </div>
 
+<script src="/static/js/dashboard.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // Light/Dark Toggle
   const toggler = document.querySelector(".theme-toggler");
   toggler.addEventListener("click", () => document.body.classList.toggle("glow-theme"));
 
-  // Collapsible Right Panel
   const collapsibles = document.querySelectorAll(".collapsible");
   collapsibles.forEach(item => {
     item.addEventListener("click", () => {
