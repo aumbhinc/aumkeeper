@@ -10,21 +10,15 @@ import (
 
 func DashboardHandler(t *template.Template) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var buf bytes.Buffer
-		t.ExecuteTemplate(&buf, "dashboard_content", nil)
 
-		data := viewdata.Layout{
-			Title:       "Dashboard",
-			Description: "AumKeeper ERP Dashboard",
-			Year:        time.Now().Year(),
-			PageContent: template.HTML(buf.String()),
-			Stats: []viewdata.StatCard{
-				{"Net Worth", "account_balance", "$100MM", "+5%"},
-				{"Total Assets", "account_balance_wallet", "$100MM", "+5%"},
-				{"Total Liabilities", "request_page", "$100MM", "+5%"},
-				{"Ledger Exceptions", "error_outline", "$100MM", "+5%"},
+		page := viewdata.Dashboard{
+			Stats: []viewdata.Stat{
+				{"Net Worth", "$100MM", "+5%", "account_balance"},
+				{"Total Assets", "$72MM", "+3%", "account_balance_wallet"},
+				{"Total Liabilities", "$22MM", "-2%", "request_page"},
+				{"Ledger Exceptions", "12", "-8%", "error_outline"},
 			},
-			RightPanelSections: map[string][]viewdata.FuncButton{
+			RightPanelSections: map[string][]viewdata.PanelItem{
 				"Accounts": {
 					{"savings", "Asset Accounts", "success", "+39%"},
 					{"payments", "Liability Accounts", "warn", "-9%"},
@@ -44,6 +38,17 @@ func DashboardHandler(t *template.Template) http.Handler {
 			},
 		}
 
-		t.ExecuteTemplate(w, "base", data)
+		var buf bytes.Buffer
+		t.ExecuteTemplate(&buf, "dashboard_content", page)
+
+		layout := viewdata.Layout{
+			Title:              "Dashboard",
+			Description:        "AumKeeper Business Control Center",
+			Year:               time.Now().Year(),
+			IncludeDashboardJS: true,
+			PageContent:        template.HTML(buf.String()),
+		}
+
+		t.ExecuteTemplate(w, "base", layout)
 	})
 }

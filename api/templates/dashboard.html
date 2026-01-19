@@ -1,11 +1,9 @@
 {{ define "dashboard_content" }}
 
 <div class="container">
-
-  <!-- Sidebar -->
   <aside>
     <div class="logo">
-      <img src="/static/img/dashboard/logo1.svg" alt="Logo">
+      <img src="/static/img/dashboard/logo1.svg">
       <h2>AUMBH</h2>
     </div>
     <div class="sidebar">
@@ -23,109 +21,42 @@
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main>
     <h1>Dashboard</h1>
-    <div class="date"><input type="date"></div>
 
-    <!-- Stats Cards -->
     <div class="stats-wrapper">
       {{ range .Stats }}
       <div class="stat-card">
-        <div class="stat-icon"><span class="material-icons-sharp">{{ .Icon }}</span></div>
-        <div class="stat-info">
-          <h3>{{ .Name }}</h3>
-          <div class="value">{{ .Value }}</div>
-          <small class="change">{{ .Change }}</small>
-        </div>
+        <span class="material-icons-sharp">{{ .Icon }}</span>
+        <h3>{{ .Name }}</h3>
+        <div>{{ .Value }}</div>
+        <small>{{ .Change }}</small>
       </div>
       {{ end }}
     </div>
 
-    <!-- Charts -->
     <div class="charts-wrapper">
-      <div class="chart-container"><canvas id="salesChart"></canvas></div>
-      <div class="chart-container"><canvas id="accountsChart"></canvas></div>
-    </div>
-
-    <!-- Recent Orders Table -->
-    <div class="recent-order">
-      <h2>Recent Orders</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Order #</th>
-            <th>Payment</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Kiley Ying</td>
-            <td>123456</td>
-            <td>Unpaid</td>
-            <td class="badge warn">Unfulfilled</td>
-            <td class="badge success">Details</td>
-          </tr>
-          <tr>
-            <td>Northwind LLC</td>
-            <td>123457</td>
-            <td>Paid</td>
-            <td class="badge success">Fulfilled</td>
-            <td class="badge success">Details</td>
-          </tr>
-        </tbody>
-      </table>
-      <a href="#">Show All</a>
+      <canvas id="salesChart"></canvas>
+      <canvas id="accountsChart"></canvas>
     </div>
   </main>
 
-  <!-- Right Panel -->
   <div class="right">
-    <div class="top">
-      <button id="menu-btn">Menu</button>
-      <div class="theme-toggler">
-        <span class="material-icons-sharp active">light_mode</span>
-        <span class="material-icons-sharp">dark_mode</span>
-      </div>
-      <div class="profile-container">
-        <div class="info"><p>Hey, <b>Lax</b></p><small class="text-muted">Admin</small></div>
-        <div class="profile-photo"><img src="/static/img/dashboard/logo1.svg"></div>
-      </div>
-    </div>
-
-    <!-- Collapsible Right Panel Sections -->
     {{ range $section, $items := .RightPanelSections }}
-      <div class="collapsible">{{ $section }} <span class="material-icons-sharp">expand_more</span></div>
+      <div class="collapsible">{{ $section }}</div>
       <div class="content">
         {{ range $items }}
           <div class="func-btn">
-            <span class="icon material-icons-sharp">{{ .Icon }}</span>{{ .Label }}
-            {{ if .Alert }}<span class="alert {{ .Alert }}">{{ .Value }}</span>{{ end }}
+            <span class="material-icons-sharp">{{ .Icon }}</span>
+            {{ .Label }}
+            {{ if .Alert }}
+              <span class="alert {{ .Alert }}">{{ .Value }}</span>
+            {{ end }}
           </div>
         {{ end }}
       </div>
     {{ end }}
-
   </div>
 </div>
-
-<script src="/static/js/dashboard.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const toggler = document.querySelector(".theme-toggler");
-  toggler.addEventListener("click", () => document.body.classList.toggle("glow-theme"));
-
-  const collapsibles = document.querySelectorAll(".collapsible");
-  collapsibles.forEach(item => {
-    item.addEventListener("click", () => {
-      const content = item.nextElementSibling;
-      content.style.display = content.style.display === "flex" ? "none" : "flex";
-    });
-  });
-});
-</script>
 
 {{ end }}

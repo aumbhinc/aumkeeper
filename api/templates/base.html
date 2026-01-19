@@ -2,72 +2,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Core Meta -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}AumKeeper is a modern all-in-one SaaS ERP platform.{{ end }}" />
   <meta name="author" content="AumKeeper, Inc." />
   <meta name="robots" content="index, follow" />
 
-  <!-- Title -->
   <title>
-    {{ if .Title }}
-      {{ .Title }} | AumKeeper
-    {{ else }}
-      AumKeeper | ERP Dashboard
-    {{ end }}
+    {{ if .Title }}{{ .Title }} | AumKeeper{{ else }}AumKeeper | ERP Dashboard{{ end }}
   </title>
 
-  <!-- Icons -->
   <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
 
-  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
-
-  <!-- Base Styles -->
   <link rel="stylesheet" href="/static/css/base.css" />
 
-  <!-- Home Styles -->
-  {{ if and (not .IncludeDashboardJS) (not .IncludeStaffJS) }}
+  {{ if .IncludeDashboardJS }}
+    <link rel="stylesheet" href="/static/css/dashboard.css" />
+  {{ else if .IncludeStaffJS }}
+    <link rel="stylesheet" href="/static/css/staffs/styles.css" />
+  {{ else }}
     <link rel="stylesheet" href="/static/css/home.css" />
   {{ end }}
 
-  <!-- Dashboard Styles -->
-  {{ if .IncludeDashboardJS }}
-    <link rel="stylesheet" href="/static/css/dashboard.css" />
-  {{ end }}
-
-  <!-- Staffs Styles -->
-  {{ if .IncludeStaffJS }}
-    <link rel="stylesheet" href="/static/css/staffs/styles.css" />
-  {{ end }}
-
-  <!-- Head Extension (page-specific) -->
-  {{ block "head" . }}{{ end }}
+  {{ template "head" . }}
 </head>
 
 <body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else if .IncludeStaffJS }}staffs-page{{ else }}site-page{{ end }}">
 
-  <!-- Header -->
-  {{ block "header" . }}{{ end }}
+  {{ template "header" . }}
+  {{ template "flash" . }}
 
-  <!-- Flash / Toast Messages -->
-  {{ block "flash" . }}{{ end }}
-
-  <!-- Main Content -->
   <main class="{{ if .IncludeDashboardJS }}dashboard-main{{ else if .IncludeStaffJS }}staffs-main container mx-auto px-4 py-6{{ else }}flex-grow container mx-auto px-4 py-8{{ end }}">
     {{ if .PageContent }}
       {{ .PageContent }}
     {{ else }}
-      <!-- HARD FAIL SAFE -->
       <section style="padding:2rem;color:#b91c1c;font-weight:600">
         Template error: PageContent not supplied by handler.
       </section>
     {{ end }}
   </main>
 
-  <!-- Footer -->
   <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
     <div class="container mx-auto px-4 text-center max-w-4xl">
       <nav class="mb-2 space-x-3">
@@ -83,19 +59,14 @@
     </div>
   </footer>
 
-  <!-- Base JS -->
   <script defer src="/static/js/main.js"></script>
+  {{ template "scripts" . }}
 
-  <!-- Page-specific scripts -->
-  {{ block "scripts" . }}{{ end }}
-
-  <!-- Dashboard JS -->
   {{ if .IncludeDashboardJS }}
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="/static/js/dashboard.js"></script>
   {{ end }}
 
-  <!-- Staffs JS -->
   {{ if .IncludeStaffJS }}
     <script defer src="/static/js/staffs/script.js"></script>
   {{ end }}
