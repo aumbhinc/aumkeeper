@@ -33,11 +33,15 @@
   {{ block "flash" . }}{{ end }}
 
   <main>
-    {{ block "content" . }}
+
+    {{ if .Page }}
+      {{ template .Page . }}
+    {{ else }}
       <section style="padding:2rem;color:#b91c1c;font-weight:600">
-        Template error: content block not defined.
+        Template error: missing .Page (no page template specified)
       </section>
     {{ end }}
+
   </main>
 
   <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
