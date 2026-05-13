@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}AumKeeper is a modern all-in-one SaaS ERP platform.{{ end }}" />
   <meta name="author" content="AumKeeper, Inc." />
   <meta name="robots" content="index, follow" />
@@ -27,15 +28,14 @@
 </head>
 
 <body class="{{ if .IncludeDashboardJS }}dashboard-page{{ else if .IncludeStaffJS }}staffs-page{{ else }}site-page{{ end }}">
+
   {{ block "header" . }}{{ end }}
   {{ block "flash" . }}{{ end }}
 
   <main>
-    {{ if .PageContent }}
-      {{ .PageContent }}
-    {{ else }}
+    {{ block "content" . }}
       <section style="padding:2rem;color:#b91c1c;font-weight:600">
-        Template error: PageContent not supplied by handler.
+        Template error: content block not defined.
       </section>
     {{ end }}
   </main>
@@ -53,13 +53,16 @@
   </footer>
 
   <script defer src="/static/js/main.js"></script>
+
   {{ if .IncludeDashboardJS }}
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="/static/js/dashboard.js"></script>
   {{ end }}
+
   {{ if .IncludeStaffJS }}
     <script defer src="/static/js/staffs/script.js"></script>
   {{ end }}
+
 </body>
 </html>
 {{ end }}
