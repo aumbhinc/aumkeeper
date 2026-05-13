@@ -1,32 +1,32 @@
 package handlers
 
 import (
-	"bytes"
 	"html/template"
 	"net/http"
 	"time"
 
+	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
 )
 
 func StaffsHandler(t *template.Template) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// Render staffs_content into buffer
-		var buf bytes.Buffer
-		if err := t.ExecuteTemplate(&buf, "staffs_content", nil); err != nil {
-			http.Error(w, "Error rendering staffs content: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		data := viewdata.Layout{
-			Title:          "Staff Manager",
-			Description:    "Manage staff, roles, and payroll",
+			Title:       "Staff Manager",
+			Description: "Manage staff, roles, and payroll",
+			Year:        time.Now().Year(),
+
+			// 🔥 CORE ENGINE KEY
+			Page: "staffs",
+
 			IncludeStaffJS: true,
-			Year:           time.Now().Year(),
-			PageContent:    template.HTML(buf.String()),
 		}
 
+		// 🔥 RESOLVE TEMPLATE VIA REGISTRY
+		templates.ResolvePage(&data)
+
+		// 🔥 SINGLE PASS RENDER
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := t.ExecuteTemplate(w, "base", data); err != nil {
 			http.Error(w, "Error rendering staff page: "+err.Error(), http.StatusInternalServerError)

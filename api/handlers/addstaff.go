@@ -4,11 +4,12 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 
-	apitemplates "aumkeeper/api/templates"
+	"aumkeeper/api/templates"
+	"aumkeeper/api/viewdata"
 	"aumkeeper/internal/domain"
 	"aumkeeper/internal/services"
-	"aumkeeper/api/viewdata"
 )
 
 type AddStaffHandler struct {
@@ -26,10 +27,7 @@ func NewAddStaffHandler(
 	}
 }
 
-func (h *AddStaffHandler) ServeHTTP(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
+func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 
@@ -39,25 +37,22 @@ func (h *AddStaffHandler) ServeHTTP(
 	case http.MethodGet:
 
 		data := viewdata.Layout{
-			Title:              "Add Staff",
-			Description:        "Create employee onboarding record for AumKeeper ERP",
-			PageContent:        "addstaff_content",
-			IncludeStaffJS:     true,
-			IncludeDashboardJS: false,
+			Title:       "Add Staff",
+			Description: "Create employee onboarding record for AumKeeper ERP",
+			Year:        time.Now().Year(),
+
+			// 🔥 CORE ENGINE KEY
+			Page: "addstaff",
+
+			IncludeStaffJS: true,
 		}
 
-		err := apitemplates.RenderTemplate(
-			h.Templates,
-			w,
-			"base",
-			data,
-		)
-		if err != nil {
-			http.Error(
-				w,
-				err.Error(),
-				http.StatusInternalServerError,
-			)
+		// 🔥 RESOLVE TEMPLATE
+		templates.ResolvePage(&data)
+
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := h.Templates.ExecuteTemplate(w, "base", data); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -67,28 +62,12 @@ func (h *AddStaffHandler) ServeHTTP(
 	case http.MethodPost:
 
 		if err := r.ParseForm(); err != nil {
-			http.Error(
-				w,
-				err.Error(),
-				http.StatusBadRequest,
-			)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		dependentClaims, err := strconv.Atoi(
-			r.FormValue("dependentClaims"),
-		)
-		if err != nil {
-			dependentClaims = 0
-		}
-
-		wage, err := strconv.ParseFloat(
-			r.FormValue("wage"),
-			64,
-		)
-		if err != nil {
-			wage = 0
-		}
+		dependentClaims, _ := strconv.Atoi(r.FormValue("dependentClaims"))
+		wage, _ := strconv.ParseFloat(r.FormValue("wage"), 64)
 
 		staff := domain.Staff{
 			FirstName:        r.FormValue("firstName"),
@@ -108,35 +87,18 @@ func (h *AddStaffHandler) ServeHTTP(
 			Comments:         r.FormValue("comments"),
 		}
 
-		_, err = h.StaffService.CreateStaff(
-			r.Context(),
-			staff,
-		)
+		_, err := h.StaffService.CreateStaff(r.Context(), staff)
 		if err != nil {
-			http.Error(
-				w,
-				err.Error(),
-				http.StatusBadRequest,
-			)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		http.Redirect(
-			w,
-			r,
-			"/staffs",
-			http.StatusSeeOther,
-		)
+		http.Redirect(w, r, "/staffs", http.StatusSeeOther)
 
 	// =========================================================
 	// METHOD NOT ALLOWED
 	// =========================================================
 	default:
-
-		http.Error(
-			w,
-			"Method not allowed",
-			http.StatusMethodNotAllowed,
-		)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }

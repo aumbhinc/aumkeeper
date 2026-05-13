@@ -1,10 +1,11 @@
 package templates
 
-import (
-	"html/template"
-	"net/http"
-)
+import "aumkeeper/api/viewdata"
 
-func RenderTemplate(t *template.Template, w http.ResponseWriter, name string, data any) error {
-	return t.ExecuteTemplate(w, name, data)
+func ResolvePage(l *viewdata.Layout) {
+	if tpl, ok := PageRegistry[l.Page]; ok {
+		l.ResolvedTemplate = tpl
+		return
+	}
+	l.ResolvedTemplate = "home_content" // fallback
 }

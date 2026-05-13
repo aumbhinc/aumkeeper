@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"bytes"
 	"html/template"
 	"net/http"
 	"time"
 
+	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
 )
 
@@ -13,9 +13,12 @@ func DashboardHandler(t *template.Template) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		layout := viewdata.Layout{
-			Title:              "Dashboard",
-			Description:        "AumKeeper Executive Control Panel",
-			Year:               time.Now().Year(),
+			Title:       "Dashboard",
+			Description: "AumKeeper Executive Control Panel",
+			Year:        time.Now().Year(),
+
+			Page: "dashboard", // 🔥 CORE ROUTING KEY
+
 			IncludeDashboardJS: true,
 
 			Stats: []viewdata.DashboardStat{
@@ -50,15 +53,10 @@ func DashboardHandler(t *template.Template) http.Handler {
 			},
 		}
 
-		// Render dashboard_content into buffer
-		var buf bytes.Buffer
-		if err := t.ExecuteTemplate(&buf, "dashboard_content", layout); err != nil {
-			http.Error(w, "Error rendering dashboard content: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
+		// 🔥 NEW ENGINE STEP: resolve template
+		templates.ResolvePage(&layout)
 
-		layout.PageContent = template.HTML(buf.String())
-
+		// 🔥 SINGLE RENDER PASS (NO BUFFER)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := t.ExecuteTemplate(w, "base", layout); err != nil {
 			http.Error(w, "Error rendering base template: "+err.Error(), http.StatusInternalServerError)
