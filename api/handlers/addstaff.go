@@ -8,7 +8,7 @@ import (
 	apitemplates "aumkeeper/api/templates"
 	"aumkeeper/internal/domain"
 	"aumkeeper/internal/services"
-	"aumkeeper/internal/viewdata"
+	"aumkeeper/api/viewdata"
 )
 
 type AddStaffHandler struct {
