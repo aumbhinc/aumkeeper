@@ -1,62 +1,474 @@
 {{ define "dashboard_content" }}
 
-<div class="container">
-  <aside>
-    <div class="logo">
-      <img src="/static/img/dashboard/logo1.svg">
-      <h2>AUMBH</h2>
-    </div>
-    <div class="sidebar">
-      <a class="active"><span class="material-icons-sharp">grid_view</span>Dashboard</a>
-      <a><span class="material-icons-sharp">leaderboard</span>Executive</a>
-      <a><span class="material-icons-sharp">group_add</span>Customers</a>
-      <a><span class="material-icons-sharp">inventory_2</span>Products</a>
-      <a><span class="material-icons-sharp">shopping_cart</span>Orders</a>
-      <a><span class="material-icons-sharp">add_business</span>Markets</a>
-      <a><span class="material-icons-sharp">logout</span>Vendors</a>
-      <a><span class="material-icons-sharp">warehouse</span>Purchase Orders</a>
-      <a><span class="material-icons-sharp">badge</span>Staffs</a>
-      <a><span class="material-icons-sharp">add_task</span>Tasks</a>
-      <a><span class="material-icons-sharp">settings</span>Settings</a>
-    </div>
-  </aside>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <main>
-    <h1>Dashboard</h1>
+<title>AumKeeper • Business Operating System</title>
 
-    <div class="stats-wrapper">
-      {{ range .Stats }}
-      <div class="stat-card">
-        <span class="material-icons-sharp">{{ .Icon }}</span>
-        <h3>{{ .Name }}</h3>
-        <div>{{ .Value }}</div>
-        <small>{{ .Change }}</small>
-      </div>
-      {{ end }}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+/* =========================
+   DESIGN SYSTEM (UNIFIED)
+========================= */
+
+:root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --panel:#ffffff;
+
+    --text:#0f172a;
+    --muted:#64748b;
+
+    --primary:#0ea5e9;
+    --primary-dark:#0284c7;
+
+    --border:#e6ebf2;
+
+    --shadow:
+        0 2px 8px rgba(0,0,0,0.04),
+        0 12px 30px rgba(15,23,42,0.06);
+
+    --radius:18px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    height:100vh;
+    overflow:hidden;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.layout{
+    display:grid;
+    grid-template-columns:260px 1fr 340px;
+    height:100vh;
+}
+
+/* =========================
+   LEFT NAV
+========================= */
+
+.sidebar{
+    background:#fff;
+    border-right:1px solid var(--border);
+    padding:18px;
+    overflow-y:auto;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.logo{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+}
+
+.nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    color:var(--text);
+    text-decoration:none;
+    font-size:14px;
+    margin-bottom:6px;
+    transition:.2s ease;
+}
+
+.nav-item:hover{
+    background:#eef7ff;
+}
+
+.nav-item.active{
+    background:#e6f4ff;
+    color:var(--primary-dark);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    padding:22px;
+    overflow-y:auto;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.header h1{
+    font-size:20px;
+    font-weight:700;
+}
+
+.sub{
+    font-size:13px;
+    color:var(--muted);
+}
+
+/* =========================
+   KPI CARDS
+========================= */
+
+.kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:18px;
+}
+
+.kpi{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px;
+    box-shadow:var(--shadow);
+}
+
+.kpi h3{
+    font-size:12px;
+    color:var(--muted);
+}
+
+.kpi p{
+    font-size:18px;
+    font-weight:700;
+    margin-top:4px;
+}
+
+/* =========================
+   CHARTS
+========================= */
+
+.grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:14px;
+    margin-bottom:18px;
+}
+
+.card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px;
+    box-shadow:var(--shadow);
+}
+
+/* =========================
+   TABLE
+========================= */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+}
+
+/* =========================
+   RIGHT PANEL
+========================= */
+
+.right{
+    background:#fff;
+    border-left:1px solid var(--border);
+    padding:14px;
+    overflow-y:auto;
+}
+
+.section{
+    margin-bottom:14px;
+}
+
+.section h4{
+    font-size:13px;
+    margin-bottom:8px;
+    color:var(--muted);
+}
+
+.item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+    border-radius:12px;
+    background:#f8fafc;
+    margin-bottom:8px;
+    font-size:13px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.quick-actions{
+    display:flex;
+    gap:10px;
+    margin-bottom:14px;
+}
+
+.btn{
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#fff;
+    font-size:13px;
+    cursor:pointer;
+}
+
+.btn.primary{
+    background:var(--primary);
+    color:#fff;
+    border:none;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+    .layout{
+        grid-template-columns:220px 1fr;
+    }
+    .right{
+        display:none;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+<aside class="sidebar">
+
+    <div class="brand">
+        <div class="logo">A</div>
+        AumKeeper
     </div>
 
-    <div class="charts-wrapper">
-      <canvas id="salesChart"></canvas>
-      <canvas id="accountsChart"></canvas>
-    </div>
-  </main>
+    <a class="nav-item active" href="#"><span class="material-icons">dashboard</span>Dashboard</a>
+    <a class="nav-item" href="#"><span class="material-icons">leaderboard</span>Executive</a>
+    <a class="nav-item" href="#"><span class="material-icons">account_balance</span>Ledger</a>
+    <a class="nav-item" href="#"><span class="material-icons">receipt_long</span>Invoices</a>
+    <a class="nav-item" href="#"><span class="material-icons">payments</span>Payroll</a>
+    <a class="nav-item" href="#"><span class="material-icons">inventory_2</span>Products</a>
+    <a class="nav-item" href="#"><span class="material-icons">shopping_cart</span>Orders</a>
+    <a class="nav-item" href="#"><span class="material-icons">group</span>Customers</a>
+    <a class="nav-item" href="/staffs"><span class="material-icons">badge</span>Staff</a>
+    <a class="nav-item" href="#"><span class="material-icons">rule</span>Compliance</a>
+    <a class="nav-item" href="#"><span class="material-icons">settings</span>Settings</a>
 
-  <div class="right">
-    {{ range $section, $items := .RightPanelSections }}
-      <div class="collapsible">{{ $section }}</div>
-      <div class="content">
-        {{ range $items }}
-          <div class="func-btn">
-            <span class="material-icons-sharp">{{ .Icon }}</span>
-            {{ .Label }}
-            {{ if .Alert }}
-              <span class="alert {{ .Alert }}">{{ .Value }}</span>
-            {{ end }}
-          </div>
-        {{ end }}
-      </div>
-    {{ end }}
-  </div>
+</aside>
+
+<!-- =========================
+     MAIN
+========================= -->
+<main class="main">
+
+    <div class="header">
+        <div>
+            <h1>Good afternoon</h1>
+            <div class="sub">Here’s your business overview</div>
+        </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+        <button class="btn primary">+ Add Staff</button>
+        <button class="btn">+ Invoice</button>
+        <button class="btn">+ Product</button>
+        <button class="btn">+ Order</button>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpis">
+
+        <div class="kpi">
+            <h3>Net Worth</h3>
+            <p>$2.1M</p>
+        </div>
+
+        <div class="kpi">
+            <h3>Assets</h3>
+            <p>$3.4M</p>
+        </div>
+
+        <div class="kpi">
+            <h3>Liabilities</h3>
+            <p>$1.3M</p>
+        </div>
+
+        <div class="kpi">
+            <h3>Profit</h3>
+            <p>$420K</p>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="grid">
+
+        <div class="card">
+            <canvas id="chart1"></canvas>
+        </div>
+
+        <div class="card">
+            <canvas id="chart2"></canvas>
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+
+        <h3 style="margin-bottom:10px;">Recent Transactions</h3>
+
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Account</th>
+                <th>Debit</th>
+                <th>Credit</th>
+            </tr>
+
+            <tr>
+                <td>2026-02-12</td>
+                <td>Cash</td>
+                <td>500</td>
+                <td>-</td>
+            </tr>
+
+            <tr>
+                <td>2026-02-12</td>
+                <td>Revenue</td>
+                <td>-</td>
+                <td>500</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</main>
+
+<!-- =========================
+     RIGHT PANEL
+========================= -->
+<aside class="right">
+
+    <div class="section">
+        <h4>Accounting</h4>
+
+        <div class="item">Assets <span>+39%</span></div>
+        <div class="item">Liabilities <span>-9%</span></div>
+        <div class="item">Revenue <span>+21%</span></div>
+        <div class="item">Expenses <span>+7%</span></div>
+
+    </div>
+
+    <div class="section">
+        <h4>Operations</h4>
+
+        <div class="item">Sales</div>
+        <div class="item">Purchases</div>
+        <div class="item">Inventory</div>
+
+    </div>
+
+    <div class="section">
+        <h4>HR</h4>
+
+        <div class="item">Employees</div>
+        <div class="item">Payroll</div>
+
+    </div>
+
+    <div class="section">
+        <h4>System</h4>
+
+        <div class="item">API</div>
+        <div class="item">Logs</div>
+
+    </div>
+
+</aside>
+
 </div>
+
+<script>
+
+new Chart(document.getElementById('chart1'),{
+    type:'line',
+    data:{
+        labels:['Mon','Tue','Wed','Thu','Fri'],
+        datasets:[{
+            data:[12,19,14,22,30],
+            borderColor:'#0ea5e9',
+            fill:true
+        }]
+    }
+});
+
+new Chart(document.getElementById('chart2'),{
+    type:'doughnut',
+    data:{
+        labels:['Assets','Liabilities','Equity'],
+        datasets:[{
+            data:[45,25,30],
+            backgroundColor:['#0ea5e9','#ff9f0a','#34c759']
+        }]
+    }
+});
+
+</script>
+
+</body>
+</html>
 
 {{ end }}

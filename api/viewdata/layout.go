@@ -1,29 +1,33 @@
-// file: viewdata/viewdata.go
 package viewdata
 
 import "html/template"
 
 // Layout is the main page layout struct passed to base.html
+// This is the ONLY struct base.html should ever know about.
 type Layout struct {
 	Title              string
 	Description        string
 	Year               int
 	PageContent        template.HTML
-	Stats              []Stat
+
+	// Dashboard-specific data (optional, only set on dashboard)
+	Stats              []DashboardStat
 	RightPanelSections map[string][]RightPanelItem
+
+	// Conditional asset flags
 	IncludeDashboardJS bool
 	IncludeStaffJS     bool
 }
 
-// Stat represents each stat card in dashboard
-type Stat struct {
+// DashboardStat represents a top stat card in the dashboard
+type DashboardStat struct {
 	Name   string
 	Icon   string
 	Value  string
 	Change string
 }
 
-// RightPanelItem represents a button in right panel
+// RightPanelItem represents a button/action in the right panel
 type RightPanelItem struct {
 	Icon  string
 	Label string

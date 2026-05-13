@@ -1,45 +1,35 @@
 package handlers
 
 import (
+	"bytes"
 	"html/template"
 	"net/http"
 	"time"
+
+	"aumkeeper/api/viewdata"
 )
 
-// Staff represents one staff member
-type Staff struct {
-	Name       string
-	Access     string
-	TaskScore  string
-	Pay        string
-	Task       string
-}
+func StaffsHandler(t *template.Template) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-// StaffsPageData is passed to template
-type StaffsPageData struct {
-	Title string
-	Year  int
-	Staff []Staff
-}
-
-// StaffsHandler renders staff page
-func StaffsHandler(templates *template.Template) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		staffs := []Staff{
-			{Name: "John Doe", Access: "General Manager", TaskScore: "90/91", Pay: "$9000/month", Task: "Design the UI for new project"},
-			{Name: "Jane Smith", Access: "Staff", TaskScore: "90/91", Pay: "$17/hour", Task: "Design the UI for new project"},
-			{Name: "Rachel Ying", Access: "Manager", TaskScore: "100/91", Pay: "$5000/month", Task: "Design the UI for new project"},
+		// Render staffs_content into buffer
+		var buf bytes.Buffer
+		if err := t.ExecuteTemplate(&buf, "staffs_content", nil); err != nil {
+			http.Error(w, "Error rendering staffs content: "+err.Error(), http.StatusInternalServerError)
+			return
 		}
 
-		data := StaffsPageData{
-			Title: "Staff Manager",
-			Year:  time.Now().Year(),
-			Staff: staffs,
+		data := viewdata.Layout{
+			Title:          "Staff Manager",
+			Description:    "Manage staff, roles, and payroll",
+			IncludeStaffJS: true,
+			Year:           time.Now().Year(),
+			PageContent:    template.HTML(buf.String()),
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := templates.ExecuteTemplate(w, "staffs", data); err != nil {
-			http.Error(w, "Internal Server Error", 500)
+		if err := t.ExecuteTemplate(w, "base", data); err != nil {
+			http.Error(w, "Error rendering staff page: "+err.Error(), http.StatusInternalServerError)
 		}
-	}
+	})
 }

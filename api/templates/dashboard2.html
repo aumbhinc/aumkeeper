@@ -1,0 +1,252 @@
+{{ define "dashboard_content" }}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AumKeeper • Apple-Material Dashboard</title>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+  --bg:#0c0c0f;
+  --panel:rgba(28,30,34,0.95);
+  --panel-2:rgba(36,38,44,0.95);
+  --text:#f0f0f5;
+  --muted:#a1a4aa;
+  --accent:#5ac8fa; /* Apple cyan-blue */
+  --success:#34c759;
+  --warn:#ff9f0a;
+  --danger:#ff453a;
+  --radius:1rem;
+  --transition:.35s ease;
+  --shadow:0 8px 20px rgba(0,0,0,0.45);
+  --card-bg:rgba(30,32,38,0.85);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',sans-serif;}
+body{background:linear-gradient(160deg,#0c0c0f,#14151a);color:var(--text);overflow:hidden;height:100vh;}
+.container{display:grid;grid-template-columns:240px 1fr 320px;height:100vh;min-height:0;}
+
+/* Sidebar */
+aside{
+  background:var(--panel);
+  padding:1.5rem 1rem;
+  border-right:1px solid rgba(255,255,255,0.05);
+  overflow-y:auto;
+  backdrop-filter:blur(10px);
+}
+.logo{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;}
+.logo img{width:36px;}
+.logo h2{color:var(--accent);font-weight:700;font-size:1.1rem;}
+.sidebar a{
+  display:flex;align-items:center;gap:.6rem;padding:.65rem .9rem;
+  border-radius:.6rem;font-size:.85rem;color:var(--text);opacity:.85;
+  transition:var(--transition);cursor:pointer;text-decoration:none;
+}
+.sidebar a:hover,.sidebar a.active{
+  background:var(--accent);
+  color:#0c0c0f;opacity:1;
+  box-shadow:0 6px 16px rgba(90,200,250,.25);
+}
+
+/* Main */
+main{
+  padding:1.5rem;
+  overflow-y:auto;
+  display:flex;flex-direction:column;gap:1.5rem;
+  min-height:0;
+}
+h1{font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:1rem;letter-spacing:.3px;}
+.stats-wrapper{display:flex;gap:1rem;overflow-x:auto;padding-bottom:.5rem;}
+.stat-card{
+  min-width:200px;background:var(--card-bg);
+  border-radius:var(--radius);
+  padding:1rem;display:flex;gap:.8rem;align-items:center;
+  cursor:pointer;transition:transform var(--transition),box-shadow var(--transition);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(4px);
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.55);}
+.stat-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1.3rem;background:rgba(90,200,250,.15);}
+.stat-info h3{font-size:.8rem;color:var(--muted);}
+.stat-info p{font-size:1.1rem;font-weight:700;}
+.chart-row{display:flex;gap:1rem;flex-wrap:wrap;}
+.chart-container{
+  flex:1;min-width:320px;
+  background:var(--card-bg);padding:1rem;border-radius:var(--radius);
+  box-shadow:var(--shadow);backdrop-filter:blur(4px);
+}
+
+/* Table */
+.recent-order{
+  background:var(--card-bg);border-radius:var(--radius);
+  padding:1rem;box-shadow:var(--shadow);backdrop-filter:blur(4px);
+}
+.recent-order h2{font-size:.95rem;margin-bottom:.5rem;}
+.recent-order table{width:100%;border-collapse:collapse;font-size:.8rem;}
+.recent-order th,.recent-order td{padding:.55rem;border-bottom:1px solid rgba(255,255,255,.05);text-align:left;}
+.recent-order tr:hover{background:rgba(90,200,250,.08);transition:background .2s;}
+
+/* Right Panel */
+.right{
+  background:var(--panel);
+  border-left:1px solid rgba(255,255,255,.05);
+  padding:1rem .8rem;overflow-y:auto;height:100vh;display:flex;flex-direction:column;gap:.5rem;min-height:0;
+  backdrop-filter:blur(8px);
+}
+.collapsible{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.55rem .8rem;background:var(--panel-2);
+  border-radius:.6rem;font-size:.75rem;font-weight:600;
+  cursor:pointer;transition:background var(--transition),transform var(--transition);
+}
+.collapsible:hover{background:rgba(90,200,250,.12);transform:translateX(2px);}
+.content{
+  display:none;flex-direction:column;gap:.3rem;margin-bottom:.5rem;
+  max-height:calc(100vh - 50px);overflow-y:auto;
+}
+.content.show{
+  display:flex;
+  animation:slideDown .25s ease forwards;
+}
+@keyframes slideDown{
+  0%{opacity:0;transform:translateY(-5px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+.func-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.45rem .7rem;background:rgba(30,32,38,.7);
+  border-radius:.5rem;font-size:.7rem;transition:transform var(--transition),background var(--transition);
+  position:relative;
+  text-decoration:none;color:var(--text);
+}
+.func-btn:hover{transform:translateX(2px);background:rgba(90,200,250,.08);}
+.func-btn .icon{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--accent);
+  background:rgba(90,200,250,.15);
+}
+.alert{padding:.1rem .35rem;border-radius:.4rem;font-size:.65rem;color:#fff;min-width:32px;text-align:center;font-weight:600;}
+.alert.success{background:var(--success);}
+.alert.warn{background:var(--warn);}
+.alert.danger{background:var(--danger);}
+
+/* Responsive */
+@media(max-width:1200px){
+  .container{grid-template-columns:200px 1fr;}
+  .right{display:none;}
+}
+</style>
+
+<div class="container">
+<aside>
+  <div class="logo"><img src="/static/img/dashboard/logo1.svg"><h2>AUMBH</h2></div>
+  <div class="sidebar">
+    <a class="active" href="#"><span class="material-icons-sharp">grid_view</span>Dashboard</a>
+    <a href="#"><span class="material-icons-sharp">leaderboard</span>Executive</a>
+    <a href="#"><span class="material-icons-sharp">receipt_long</span>Ledger</a>
+    <a href="#"><span class="material-icons-sharp">description</span>Invoices</a>
+    <a href="#"><span class="material-icons-sharp">payments</span>Payroll</a>
+    <a href="#"><span class="material-icons-sharp">inventory_2</span>Products</a>
+    <a href="#"><span class="material-icons-sharp">shopping_cart</span>Orders</a>
+    <a href="#"><span class="material-icons-sharp">group</span>Customers</a>
+    <a href="#"><span class="material-icons-sharp">warehouse</span>Purchase Orders</a>
+    <a href="/staffs" class="active"><span class="material-icons-sharp">badge</span>Staff</a>
+    <a href="#"><span class="material-icons-sharp">rule</span>Compliance</a>
+    <a href="#"><span class="material-icons-sharp">analytics</span>Reports</a>
+    <a href="#"><span class="material-icons-sharp">api</span>API</a>
+    <a href="#"><span class="material-icons-sharp">settings</span>Settings</a>
+  </div>
+</aside>
+
+<main>
+  <h1>Comprehensive Dashboard</h1>
+  <div class="stats-wrapper">
+    <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">account_balance</span></div><div class="stat-info"><h3>Net Worth</h3><p>$2.1M</p></div></div>
+    <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">savings</span></div><div class="stat-info"><h3>Assets</h3><p>$3.4M</p></div></div>
+    <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">payments</span></div><div class="stat-info"><h3>Liabilities</h3><p>$1.3M</p></div></div>
+    <div class="stat-card"><div class="stat-icon"><span class="material-icons-sharp">insights</span></div><div class="stat-info"><h3>Profit</h3><p>$420K</p></div></div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-container"><canvas id="salesChart"></canvas></div>
+    <div class="chart-container"><canvas id="accountsChart"></canvas></div>
+  </div>
+
+  <div class="recent-order">
+    <h2>Recent Transactions</h2>
+    <table>
+      <tr><th>Date</th><th>Account</th><th>Debit</th><th>Credit</th></tr>
+      <tr><td>2026-02-12</td><td>Cash</td><td>500</td><td>-</td></tr>
+      <tr><td>2026-02-12</td><td>Revenue</td><td>-</td><td>500</td></tr>
+    </table>
+  </div>
+</main>
+
+<div class="right">
+<div class="collapsible">Accounting</div>
+<div class="content">
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">savings</span>Asset Accounts <span class="alert success">+39%</span></a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">payments</span>Liability Accounts <span class="alert warn">-9%</span></a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">monetization_on</span>Revenue Accounts <span class="alert success">+21%</span></a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">monetization_on</span>Equity Accounts <span class="alert success">+12%</span></a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">monetization_on</span>Expense Accounts <span class="alert success">+7%</span></a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">monetization_on</span>Contra Accounts <span class="alert success">+3%</span></a>
+</div>
+
+<div class="collapsible">Operations</div>
+<div class="content">
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">shopping_cart</span>Sales</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">local_shipping</span>Purchases</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">inventory</span>Inventory</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">payments</span>Bank</a>
+</div>
+
+<div class="collapsible">HR & Payroll</div>
+<div class="content">
+  <a class="func-btn" href="/staff"><span class="icon material-icons-sharp">badge</span>Employees</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">request_quote</span>Run Payroll</a>
+</div>
+
+<div class="collapsible">Assets</div>
+<div class="content">
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">apartment</span>Fixed Assets</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">trending_down</span>Depreciation</a>
+</div>
+
+<div class="collapsible">Compliance</div>
+<div class="content">
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">rule</span>Tax Filing</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">security</span>Audit Log</a>
+</div>
+
+<div class="collapsible">System</div>
+<div class="content">
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">import_export</span>Import</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">cloud_upload</span>Export</a>
+  <a class="func-btn" href="#"><span class="icon material-icons-sharp">api</span>API Keys</a>
+</div>
+</div>
+</div>
+
+<script>
+document.querySelectorAll('.collapsible').forEach(c=>{
+  c.addEventListener('click',()=>{
+    const content=c.nextElementSibling;
+    content.classList.toggle('show');
+  });
+});
+
+new Chart(document.getElementById('salesChart'),{
+  type:'line',
+  data:{labels:['Mon','Tue','Wed','Thu','Fri'],datasets:[{data:[12,19,14,22,30],borderColor:'#5ac8fa',tension:.4,fill:true,backgroundColor:'rgba(90,200,250,.15)'}]},
+  options:{plugins:{legend:{display:false}},responsive:true}
+});
+
+new Chart(document.getElementById('accountsChart'),{
+  type:'doughnut',
+  data:{labels:['Assets','Liabilities','Equity'],datasets:[{data:[45,25,30],backgroundColor:['#5ac8fa','#ff9f0a','#34c759']}]},
+  options:{plugins:{legend:{position:'bottom'}},responsive:true}
+});
+</script>
+{{ end }}

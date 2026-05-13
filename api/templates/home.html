@@ -1,78 +1,323 @@
 {{ define "home_content" }}
 
-<section class="hero container" role="main" aria-label="AumKeeper ERP overview">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Headline -->
-  <h1 class="headline">
-    🚀 Run Your Entire Business on tap.
-    <br />
-    <span class="highlight">
-      AumKeeper keeps assets under management on exa growth mode.
-    </span>
-  </h1>
+<title>AumKeeper • Business Operating System</title>
 
-  <!-- Subheadline -->
-  <p class="subtext">
-    AumKeeper is a modern, all-in-one SaaS ERP platform built for small and
-    medium-sized businesses to manage operations, inventory, finances, staff,
-    and customer relationships from one unified control center.
-    Gain microscopic control over daily execution and macroscopic insight into
-    business performance — anytime, anywhere.
-  </p>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Email Signup Form -->
-  <form
-    method="POST"
-    action="/signup"
-    class="signup-form"
-    aria-label="Early access signup"
-  >
-    <input
-      type="email"
-      id="email"
-      name="email"
-      placeholder="Enter your business email"
-      aria-label="Business email"
-      required
-    />
-    <button type="submit" class="button primary">
-      Get Early Access
-    </button>
-  </form>
+<style>
+:root{
+    --primary:#0ea5e9;
+    --primary-dark:#0284c7;
 
-  <!-- Trust Microcopy -->
-  <p class="microcopy">
-    🔐 Your information is secure. No spam. No obligation.
-  </p>
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --border:#e5eaf1;
 
-  <!-- Pricing -->
-  <section class="pricing-line" aria-label="Pricing overview">
-    Affordable, scalable pricing — designed for growing businesses
-  </section>
+    --text:#0f172a;
+    --muted:#64748b;
 
-  <!-- Benefits -->
-  <section class="pricing-benefits">
-    ✅ Unified Business Dashboard<br />
-    ✅ Staff & Role Management<br />
-    ✅ Inventory & Supply Tracking<br />
-    ✅ Financial Management & Reporting<br />
-    ✅ Customer Relationship Management (CRM)<br />
-    ✅ Real-Time Insights & Analytics<br />
-    ✅ Web & Mobile Access Anywhere
-  </section>
+    --shadow:
+        0 2px 6px rgba(0,0,0,0.04),
+        0 10px 30px rgba(15,23,42,0.06);
 
-  <!-- Assurance -->
-  <p class="assurance">
-    ⚙️ Built on secure, scalable modern infrastructure and engineered for U.S.
-    businesses with performance, compliance, and usability at its core.
-  </p>
+    --radius:18px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+}
+
+/* =========================
+   TOP NAV
+========================= */
+
+.nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:16px 24px;
+
+    background:rgba(255,255,255,0.7);
+    backdrop-filter:blur(14px);
+
+    border-bottom:1px solid var(--border);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:700;
+    font-size:18px;
+}
+
+.brand-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    max-width:1000px;
+    margin:0 auto;
+    padding:80px 20px 40px;
+    text-align:center;
+}
+
+.hero h1{
+    font-size:44px;
+    font-weight:800;
+    letter-spacing:-0.02em;
+    margin-bottom:14px;
+}
+
+.hero p{
+    font-size:18px;
+    color:var(--muted);
+    margin-bottom:30px;
+}
+
+/* =========================
+   AUTH CARD
+========================= */
+
+.auth-card{
+    max-width:520px;
+    margin:0 auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:24px;
+    box-shadow:var(--shadow);
+}
+
+.auth-title{
+    font-size:16px;
+    font-weight:600;
+    margin-bottom:12px;
+}
+
+.input-row{
+    display:flex;
+    gap:10px;
+}
+
+input[type="email"]{
+    flex:1;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    font-size:15px;
+    outline:none;
+}
+
+input[type="email"]:focus{
+    border-color:var(--primary);
+}
+
+button{
+    padding:14px 18px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.2s ease;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-primary:hover{
+    background:var(--primary-dark);
+}
+
+.micro{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--muted);
+}
+
+/* =========================
+   FEATURES GRID
+========================= */
+
+.features{
+    max-width:1100px;
+    margin:60px auto;
+    padding:0 20px;
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.card h3{
+    font-size:15px;
+    margin-bottom:6px;
+}
+
+.card p{
+    font-size:13px;
+    color:var(--muted);
+}
+
+/* =========================
+   TRUST BAR
+========================= */
+
+.trust{
+    text-align:center;
+    margin:40px auto 80px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+    .features{
+        grid-template-columns:1fr;
+    }
+
+    .hero h1{
+        font-size:32px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- NAV -->
+<div class="nav">
+    <div class="brand">
+        <div class="brand-icon">A</div>
+        AumKeeper
+    </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+
+    <h1>Run your business from one operating system</h1>
+
+    <p>
+        Accounting, staff, inventory, CRM, and operations—unified in AumKeeper ERP.
+    </p>
+
+    <!-- AUTH -->
+    <div class="auth-card">
+
+        <div class="auth-title">Start your workspace</div>
+
+        <form method="POST" action="/auth/start">
+
+            <div class="input-row">
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter business email"
+                    required
+                />
+
+                <button class="btn-primary" type="submit">
+                    Start Free →
+                </button>
+
+            </div>
+
+        </form>
+
+        <div class="micro">
+            Passwordless magic link. No password required.
+        </div>
+
+    </div>
 
 </section>
 
-<noscript>
-  <div class="noscript-warning">
-    JavaScript is required for full functionality.
-  </div>
-</noscript>
+<!-- FEATURES -->
+<section class="features">
+
+    <div class="card">
+        <h3>Staff Management</h3>
+        <p>Hire, onboard, and manage your workforce in one system.</p>
+    </div>
+
+    <div class="card">
+        <h3>Accounting Core</h3>
+        <p>Double-entry ledger, financial reporting, and compliance.</p>
+    </div>
+
+    <div class="card">
+        <h3>Inventory Control</h3>
+        <p>Track stock, suppliers, and purchase orders in real time.</p>
+    </div>
+
+    <div class="card">
+        <h3>CRM System</h3>
+        <p>Manage customers, leads, and business relationships.</p>
+    </div>
+
+    <div class="card">
+        <h3>Analytics</h3>
+        <p>Real-time dashboards for business intelligence.</p>
+    </div>
+
+    <div class="card">
+        <h3>Automation</h3>
+        <p>Workflows that reduce manual operations and errors.</p>
+    </div>
+
+</section>
+
+<div class="trust">
+    Built for U.S. businesses. Secure. Scalable. Production-grade ERP infrastructure.
+</div>
+
+</body>
+</html>
 
 {{ end }}

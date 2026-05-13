@@ -1,35 +1,34 @@
 package handlers
 
 import (
-	"aumkeeper/api/viewdata"
 	"bytes"
 	"html/template"
 	"net/http"
 	"time"
+
+	"aumkeeper/api/viewdata"
 )
 
 func HomeHandler(t *template.Template) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var buf bytes.Buffer
 
-		// Render the "home_content" template into a buffer
+		// Render home_content into buffer
+		var buf bytes.Buffer
 		if err := t.ExecuteTemplate(&buf, "home_content", nil); err != nil {
-			http.Error(w, "Error rendering page content: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Error rendering home content: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Prepare layout data
 		data := viewdata.Layout{
 			Title:       "Home",
 			Description: "AumKeeper ERP platform for SMBs",
 			Year:        time.Now().Year(),
-			PageContent: template.HTML(buf.String()), // Safe raw HTML injection
+			PageContent: template.HTML(buf.String()),
 		}
 
-		// Render the base template with the page content
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := t.ExecuteTemplate(w, "base", data); err != nil {
-			http.Error(w, "Error rendering base template: "+err.Error(), http.StatusInternalServerError)
-			return
+			http.Error(w, "Error rendering home page: "+err.Error(), http.StatusInternalServerError)
 		}
 	})
 }

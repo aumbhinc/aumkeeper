@@ -1,10 +1,5 @@
-# fly.toml app configuration file generated for aumkeeper-icy-smoke-5765 on 2026-01-01T17:58:46-08:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'aumkeeper-icy-smoke-5765'
-primary_region = 'dfw'
+app = "aumkeeper-icy-smoke-5765"
+primary_region = "dfw"
 
 [build]
 
@@ -13,10 +8,10 @@ primary_region = 'dfw'
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+  min_machines_running = 1   # 🔥 prevents dashboard cold start
+  processes = ["app"]
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
+  memory = "1gb"
+  cpu_kind = "shared"
   cpus = 1

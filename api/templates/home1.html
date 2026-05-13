@@ -1,0 +1,143 @@
+{{ define "home_content" }}
+<section class="hero container" role="main" aria-label="AumKeeper ERP overview">
+
+
+  <!-- Headline -->
+  <h1 class="headline">
+    Take Full Control of Your Business
+  </h1>
+
+  <!-- Subheadline -->
+  <p class="highlight">
+    AumKeeper puts your assets and operations in your hands—powered by AI.
+  </p>
+
+  <!-- Signup Form -->
+  <form method="POST" action="/signup" class="signup-form">
+    <input type="email" name="email" placeholder="Enter your business email" required>
+    <button type="submit" class="button primary">Free Signup</button>
+    <button type="submit" class="button primary">LogIn</button>
+
+  </form>
+
+  <!-- Microcopy -->
+  <p class="microcopy">🔐 Your information is secure. No spam. No obligation.</p>
+
+  <!-- Benefits Section -->
+  <section class="pricing-benefits">
+    ✅ Unified Dashboard<br>
+    ✅ Staff & Role Management<br>
+    ✅ Inventory & Supply Tracking<br>
+    ✅ Financial Management & Reporting<br>
+    ✅ CRM & Customer Insights<br>
+    ✅ Real-Time Analytics<br>
+    ✅ Web & Mobile Access
+  </section>
+
+  <!-- Assurance -->
+  <p class="assurance">⚙️ Built on secure, scalable infrastructure for U.S. businesses.</p>
+
+</section>
+
+<style>
+/* Container */
+.hero.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 6rem 1.5rem 4rem;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    color: #111;
+}
+
+/* Hero Icon (giant above headline) */
+.hero-icon {
+    font-size: 8rem;
+    margin-bottom: 2rem;
+    display: inline-block;
+    animation: float 2s ease-in-out infinite;
+}
+
+/* Floating animation for subtle motion */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* Headline */
+.headline {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+/* Subheadline / highlight */
+.highlight {
+    font-size: 1.4rem;
+    color: #1e90ff;
+    margin-bottom: 2rem;
+    display: block;
+}
+
+/* Signup Form */
+.signup-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.signup-form input[type="email"] {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    flex: 1 1 300px;
+}
+
+.signup-form button {
+    padding: 0.75rem 1.75rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #1e90ff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.signup-form button:hover {
+    background-color: #0f78d4;
+}
+
+/* Microcopy */
+.microcopy {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    color: #555;
+}
+
+/* Benefits Section */
+.pricing-benefits {
+    margin-top: 2rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+/* Assurance */
+.assurance {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .hero-icon { font-size: 6rem; }
+    .headline { font-size: 2.25rem; }
+    .highlight { font-size: 1.2rem; }
+}
+</style>
+{{ end }}
