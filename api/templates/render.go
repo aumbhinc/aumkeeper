@@ -7,5 +7,6 @@ func ResolvePage(l *viewdata.Layout) {
 		l.ResolvedTemplate = tpl
 		return
 	}
-	l.ResolvedTemplate = "home_content" // fallback
+
+	panic("Template Error: Unknown or missing page → " + l.Page)
 }
