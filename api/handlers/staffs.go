@@ -1,35 +1,60 @@
 package handlers
 
 import (
-	"html/template"
 	"net/http"
 	"time"
 
 	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
+	"aumkeeper/internal/render"
 )
 
-func StaffsHandler(t *template.Template) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+type StaffsHandler struct {
+	Renderer render.Renderer
+}
 
-		data := viewdata.Layout{
-			Title:       "Staff Manager",
-			Description: "Manage staff, roles, and payroll",
-			Year:        time.Now().Year(),
+func NewStaffsHandler(
+	r render.Renderer,
+) *StaffsHandler {
 
-			// 🔥 CORE ENGINE KEY
-			Page: "staffs",
+	return &StaffsHandler{
+		Renderer: r,
+	}
+}
 
-			IncludeStaffJS: true,
-		}
+func (h *StaffsHandler) ServeHTTP(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 
-		// 🔥 RESOLVE TEMPLATE VIA REGISTRY
-		templates.ResolvePage(&data)
+	if r.Method != http.MethodGet {
 
-		// 🔥 SINGLE PASS RENDER
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := t.ExecuteTemplate(w, "base", data); err != nil {
-			http.Error(w, "Error rendering staff page: "+err.Error(), http.StatusInternalServerError)
-		}
-	})
+		http.Error(
+			w,
+			http.StatusText(http.StatusMethodNotAllowed),
+			http.StatusMethodNotAllowed,
+		)
+
+		return
+	}
+
+	data := viewdata.Layout{
+		Title:       "Staff Manager",
+		Description: "Manage staff, roles, and payroll",
+		Year:        time.Now().Year(),
+
+		IncludeStaffJS: true,
+	}
+
+	templates.ResolvePage(&data)
+
+	h.Renderer.OK(
+		w,
+		"staffs",
+		&render.RenderData{
+			Title:       data.Title,
+			Description: data.Description,
+			Data:        &data,
+		},
+	)
 }

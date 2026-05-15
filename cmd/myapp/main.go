@@ -12,6 +12,7 @@ import (
 
 	"aumkeeper/api"
 	"aumkeeper/api/handlers"
+	"aumkeeper/internal/render"
 	"aumkeeper/internal/repository"
 	"aumkeeper/internal/services"
 
@@ -20,37 +21,52 @@ import (
 )
 
 func main() {
+
 	log.Println("🔄 Starting AumKeeper server...")
 
-	// Load environment
 	_ = godotenv.Load()
 
-	// Root context
+	// --------------------------------------------------
+	// Root context + graceful shutdown
+	// --------------------------------------------------
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
 	go handleSignals(cancel)
 
-	// -----------------------------
-	// Load templates
-	// -----------------------------
+	// --------------------------------------------------
+	// Templates
+	// --------------------------------------------------
+
 	templates := template.New("").Funcs(api.FuncMap())
 
+	// Root templates
 	if _, err := templates.ParseGlob("api/templates/*.html"); err != nil {
 		log.Fatalf("❌ template parse error: %v", err)
 	}
 
-	if _, err := templates.ParseGlob("api/templates/*/*.html"); err != nil {
-		log.Fatalf("❌ template parse error: %v", err)
+	// Partial templates
+	if _, err := templates.ParseGlob("api/templates/partials/*.html"); err != nil {
+		log.Fatalf("❌ partial template parse error: %v", err)
 	}
 
 	log.Println("✅ Templates loaded successfully")
 
-	// -----------------------------
+	// --------------------------------------------------
+	// Centralized renderer
+	// --------------------------------------------------
+
+	renderer := render.NewRenderer(templates)
+
+	// --------------------------------------------------
 	// Database
-	// -----------------------------
+	// --------------------------------------------------
+
 	var pool *pgxpool.Pool
 
 	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+
 		dbPool, err := pgxpool.New(ctx, dbURL)
 		if err != nil {
 			log.Fatalf("❌ database connection failed: %v", err)
@@ -61,33 +77,65 @@ func main() {
 		}
 
 		pool = dbPool
+
+		defer pool.Close()
+
 		log.Println("✅ Postgres connected")
+
 	} else {
-		log.Println("⚠️ DATABASE_URL missing (local mode)")
+
+		log.Println("⚠️ DATABASE_URL missing (running in local mode)")
 	}
 
-	// -----------------------------
-	// Dependency wiring
-	// -----------------------------
-	repos := repository.New(pool)
+	// --------------------------------------------------
+	// Repository layer
+	// --------------------------------------------------
 
-	staffRepo := repository.NewStaffRepository(repos)
+	var repos *repository.Repositories
+	var staffService *services.StaffService
 
-	staffService := services.NewStaffService(
-		staffRepo,
-	)
+	if pool != nil {
 
-	addStaffHandler := handlers.NewAddStaffHandler(
-		templates,
-		staffService,
-	)
+		repos = repository.New(pool)
 
-	// -----------------------------
+		staffRepo := repository.NewStaffRepository(repos)
+
+		staffService = services.NewStaffService(staffRepo)
+
+		log.Println("✅ Services initialized (DB mode)")
+
+	} else {
+
+		log.Println("⚠️ Services initialized in MOCK mode (no DB)")
+	}
+
+	// --------------------------------------------------
+	// Handler layer
+	// --------------------------------------------------
+
+	homeHandler := handlers.NewHomeHandler(renderer)
+
+	dashboardHandler := handlers.NewDashboardHandler(renderer)
+
+	staffsHandler := handlers.NewStaffsHandler(renderer)
+
+	var addStaffHandler *handlers.AddStaffHandler
+
+	if staffService != nil {
+
+		addStaffHandler = handlers.NewAddStaffHandler(
+			renderer,
+			staffService,
+		)
+	}
+
+	// --------------------------------------------------
 	// Router
-	// -----------------------------
+	// --------------------------------------------------
+
 	mux := http.NewServeMux()
 
-	// Static assets
+	// Static files
 	static := http.StripPrefix(
 		"/static/",
 		http.FileServer(http.Dir("api/static")),
@@ -98,20 +146,44 @@ func main() {
 		cacheControlMiddleware(static),
 	)
 
-	// Health endpoint
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+	// Health check
+	mux.HandleFunc("/healthz", func(
+		w http.ResponseWriter,
+		r *http.Request,
+	) {
 		w.Write([]byte("ok"))
 	})
 
 	// Routes
-	mux.Handle("/", handlers.HomeHandler(templates))
-	mux.Handle("/dashboard", handlers.DashboardHandler(templates))
-	mux.Handle("/staffs", handlers.StaffsHandler(templates))
-	mux.Handle("/addstaff", addStaffHandler)
+	mux.Handle("/", homeHandler)
 
-	// -----------------------------
-	// HTTP Server
-	// -----------------------------
+	mux.Handle("/dashboard", dashboardHandler)
+
+	mux.Handle("/staffs", staffsHandler)
+
+	if addStaffHandler != nil {
+
+		mux.Handle("/addstaff", addStaffHandler)
+
+	} else {
+
+		mux.HandleFunc("/addstaff", func(
+			w http.ResponseWriter,
+			r *http.Request,
+		) {
+
+			http.Error(
+				w,
+				"DB not configured",
+				http.StatusServiceUnavailable,
+			)
+		})
+	}
+
+	// --------------------------------------------------
+	// HTTP server
+	// --------------------------------------------------
+
 	port := getPort()
 
 	server := &http.Server{
@@ -123,30 +195,40 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("🌐 Server listening on :%s", port)
+
+		log.Printf("🌐 Server running on :%s", port)
 
 		if err := server.ListenAndServe(); err != nil &&
 			err != http.ErrServerClosed {
-			log.Fatal(err)
+
+			log.Printf("❌ server error: %v", err)
+
+			cancel()
 		}
 	}()
 
 	<-ctx.Done()
+
 	gracefulShutdown(server, 10*time.Second)
 }
 
-// ------------------------------------------------
+// --------------------------------------------------
 // Helpers
-// ------------------------------------------------
+// --------------------------------------------------
 
 func getPort() string {
+
 	if p := os.Getenv("PORT"); p != "" {
 		return p
 	}
+
 	return "8080"
 }
 
-func handleSignals(cancel context.CancelFunc) {
+func handleSignals(
+	cancel context.CancelFunc,
+) {
+
 	c := make(chan os.Signal, 1)
 
 	signal.Notify(
@@ -156,6 +238,7 @@ func handleSignals(cancel context.CancelFunc) {
 	)
 
 	<-c
+
 	cancel()
 }
 
@@ -163,14 +246,18 @@ func gracefulShutdown(
 	server *http.Server,
 	timeout time.Duration,
 ) {
+
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		timeout,
 	)
+
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
-		log.Printf("❌ graceful shutdown error: %v", err)
+
+		log.Printf("❌ shutdown error: %v", err)
+
 		return
 	}
 
@@ -180,10 +267,12 @@ func gracefulShutdown(
 func cacheControlMiddleware(
 	next http.Handler,
 ) http.Handler {
+
 	return http.HandlerFunc(func(
 		w http.ResponseWriter,
 		r *http.Request,
 	) {
+
 		w.Header().Set(
 			"Cache-Control",
 			"public, max-age=604800, immutable",

@@ -1,33 +1,36 @@
 package handlers
 
 import (
-	"html/template"
 	"net/http"
 	"strconv"
 	"time"
 
-	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
 	"aumkeeper/internal/domain"
+	"aumkeeper/internal/render"
 	"aumkeeper/internal/services"
 )
 
 type AddStaffHandler struct {
-	Templates    *template.Template
+	Renderer     render.Renderer
 	StaffService *services.StaffService
 }
 
 func NewAddStaffHandler(
-	templates *template.Template,
+	renderer render.Renderer,
 	staffService *services.StaffService,
 ) *AddStaffHandler {
+
 	return &AddStaffHandler{
-		Templates:    templates,
+		Renderer:     renderer,
 		StaffService: staffService,
 	}
 }
 
-func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *AddStaffHandler) ServeHTTP(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 
 	switch r.Method {
 
@@ -36,25 +39,24 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// =========================================================
 	case http.MethodGet:
 
-		data := viewdata.Layout{
+		layout := viewdata.Layout{
 			Title:       "Add Staff",
 			Description: "Create employee onboarding record for AumKeeper ERP",
 			Year:        time.Now().Year(),
-
-			// 🔥 CORE ENGINE KEY
-			Page: "addstaff",
-
+			Page:        "addstaff",
 			IncludeStaffJS: true,
 		}
 
-		// 🔥 RESOLVE TEMPLATE
-		templates.ResolvePage(&data)
-
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := h.Templates.ExecuteTemplate(w, "base", data); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		h.Renderer.OK(
+			w,
+			"addstaff",
+			&render.RenderData{
+				Title:       layout.Title,
+				Description: layout.Description,
+				Page:        layout.Page,
+				Data:        &layout,
+			},
+		)
 
 	// =========================================================
 	// POST -> Create Staff
@@ -73,18 +75,18 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			FirstName:        r.FormValue("firstName"),
 			MiddleName:       r.FormValue("middleName"),
 			LastName:         r.FormValue("lastName"),
-			Role:             r.FormValue("role"),
-			Email:            r.FormValue("email"),
-			PhoneNumber:      r.FormValue("phoneNumber"),
-			Street:           r.FormValue("street"),
-			City:             r.FormValue("city"),
-			ZipCode:          r.FormValue("zipCode"),
-			SSN:              r.FormValue("ssn"),
-			TaxFileStatus:    r.FormValue("taxFileStatus"),
-			DependentClaims:  dependentClaims,
-			Wage:             wage,
-			PaymentFrequency: r.FormValue("paymentFrequency"),
-			Comments:         r.FormValue("comments"),
+			Role:              r.FormValue("role"),
+			Email:             r.FormValue("email"),
+			PhoneNumber:       r.FormValue("phoneNumber"),
+			Street:            r.FormValue("street"),
+			City:              r.FormValue("city"),
+			ZipCode:           r.FormValue("zipCode"),
+			SSN:               r.FormValue("ssn"),
+			TaxFileStatus:     r.FormValue("taxFileStatus"),
+			DependentClaims:   dependentClaims,
+			Wage:              wage,
+			PaymentFrequency:  r.FormValue("paymentFrequency"),
+			Comments:          r.FormValue("comments"),
 		}
 
 		_, err := h.StaffService.CreateStaff(r.Context(), staff)
@@ -99,6 +101,10 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// METHOD NOT ALLOWED
 	// =========================================================
 	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(
+			w,
+			"Method not allowed",
+			http.StatusMethodNotAllowed,
+		)
 	}
 }

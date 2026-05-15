@@ -10,11 +10,11 @@ import (
 )
 
 type HomeHandler struct {
-	Renderer *render.Renderer
+	Renderer render.Renderer
 }
 
 func NewHomeHandler(
-	renderer *render.Renderer,
+	renderer render.Renderer,
 ) *HomeHandler {
 	return &HomeHandler{
 		Renderer: renderer,
@@ -39,15 +39,11 @@ func (h *HomeHandler) ServeHTTP(
 		Title:       "Home",
 		Description: "AumKeeper ERP platform for SMBs",
 		Year:        time.Now().Year(),
-
-		// CORE ROUTING KEY
-		Page: "home",
+		Page:        "home",
 	}
 
-	// Resolve page metadata/template registry
 	templates.ResolvePage(data)
 
-	// SINGLE CENTRALIZED RENDER PIPELINE
 	h.Renderer.OK(
 		w,
 		"home",

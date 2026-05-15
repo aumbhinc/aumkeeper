@@ -6,62 +6,94 @@ import (
 	"net/http"
 )
 
-type Renderer struct {
-	templates *template.Template
-}
-
-func NewRenderer(templates *template.Template) *Renderer {
-	return &Renderer{
-		templates: templates,
-	}
-}
-
-// RenderData is the universal render payload
-// that flows through the entire ERP UI system.
 type RenderData struct {
 	Title       string
 	Description string
+	Page        string
+	Data        any
 
-	// Page identifier from PageRegistry
-	Page string
-
-	// Actual page/module data
-	Data any
-
-	// Global UI flags
 	IncludeDashboardJS bool
 	IncludeStaffJS     bool
 
-	// Future-safe extension fields
 	Sidebar any
 	Topbar  any
 	User    any
 }
 
-// Render is the ONLY approved rendering entrypoint.
-//
-// ALL handlers MUST flow through this method.
-// NO handler should directly execute templates.
-func (r *Renderer) Render(
+// CONTRACT
+
+type Renderer interface {
+	Render(
+		w http.ResponseWriter,
+		status int,
+		page string,
+		data *RenderData,
+	)
+
+	OK(
+		w http.ResponseWriter,
+		page string,
+		data *RenderData,
+	)
+
+	Created(
+		w http.ResponseWriter,
+		page string,
+		data *RenderData,
+	)
+
+	NotFound(w http.ResponseWriter)
+
+	ServerError(w http.ResponseWriter)
+}
+
+// IMPLEMENTATION
+
+type HTMLRenderer struct {
+	templates *template.Template
+}
+
+func NewRenderer(
+	templates *template.Template,
+) Renderer {
+	return &HTMLRenderer{
+		templates: templates,
+	}
+}
+
+func (r *HTMLRenderer) Render(
 	w http.ResponseWriter,
 	status int,
 	page string,
 	data *RenderData,
 ) {
+
 	if data == nil {
 		data = &RenderData{}
 	}
 
-	// Inject page automatically
 	data.Page = page
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set(
+		"Content-Type",
+		"text/html; charset=utf-8",
+	)
+
 	w.WriteHeader(status)
 
-	err := r.templates.ExecuteTemplate(w, "base.html", data)
+	err := r.templates.ExecuteTemplate(
+		w,
+		"base.html",
+		data,
+	)
+
 	if err != nil {
 
-		log.Printf("render error [%s]: %v", page, err)
+		log.Printf(
+			"render error [%s]: %v",
+			page,
+			err,
+		)
 
 		http.Error(
 			w,
@@ -73,9 +105,7 @@ func (r *Renderer) Render(
 	}
 }
 
-// Convenience helpers
-
-func (r *Renderer) OK(
+func (r *HTMLRenderer) OK(
 	w http.ResponseWriter,
 	page string,
 	data *RenderData,
@@ -83,7 +113,7 @@ func (r *Renderer) OK(
 	r.Render(w, http.StatusOK, page, data)
 }
 
-func (r *Renderer) Created(
+func (r *HTMLRenderer) Created(
 	w http.ResponseWriter,
 	page string,
 	data *RenderData,
@@ -91,14 +121,28 @@ func (r *Renderer) Created(
 	r.Render(w, http.StatusCreated, page, data)
 }
 
-func (r *Renderer) NotFound(w http.ResponseWriter) {
-	r.Render(w, http.StatusNotFound, "404", &RenderData{
-		Title: "Page Not Found",
-	})
+func (r *HTMLRenderer) NotFound(
+	w http.ResponseWriter,
+) {
+	r.Render(
+		w,
+		http.StatusNotFound,
+		"404",
+		&RenderData{
+			Title: "Page Not Found",
+		},
+	)
 }
 
-func (r *Renderer) ServerError(w http.ResponseWriter) {
-	r.Render(w, http.StatusInternalServerError, "500", &RenderData{
-		Title: "Internal Server Error",
-	})
+func (r *HTMLRenderer) ServerError(
+	w http.ResponseWriter,
+) {
+	r.Render(
+		w,
+		http.StatusInternalServerError,
+		"500",
+		&RenderData{
+			Title: "Internal Server Error",
+		},
+	)
 }
