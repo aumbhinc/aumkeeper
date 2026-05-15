@@ -1,33 +1,61 @@
 package handlers
 
 import (
-	"html/template"
 	"net/http"
 	"time"
 
 	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
+	"aumkeeper/internal/render"
 )
 
-func HomeHandler(t *template.Template) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+type HomeHandler struct {
+	Renderer *render.Renderer
+}
 
-		data := viewdata.Layout{
-			Title:       "Home",
-			Description: "AumKeeper ERP platform for SMBs",
-			Year:        time.Now().Year(),
+func NewHomeHandler(
+	renderer *render.Renderer,
+) *HomeHandler {
+	return &HomeHandler{
+		Renderer: renderer,
+	}
+}
 
-			// 🔥 CORE ROUTING KEY
-			Page: "home",
-		}
+func (h *HomeHandler) ServeHTTP(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 
-		// 🔥 RESOLVE TEMPLATE VIA REGISTRY
-		templates.ResolvePage(&data)
+	if r.Method != http.MethodGet {
+		http.Error(
+			w,
+			http.StatusText(http.StatusMethodNotAllowed),
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
 
-		// 🔥 SINGLE PASS RENDER
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := t.ExecuteTemplate(w, "base", data); err != nil {
-			http.Error(w, "Error rendering home page: "+err.Error(), http.StatusInternalServerError)
-		}
-	})
+	data := &viewdata.Layout{
+		Title:       "Home",
+		Description: "AumKeeper ERP platform for SMBs",
+		Year:        time.Now().Year(),
+
+		// CORE ROUTING KEY
+		Page: "home",
+	}
+
+	// Resolve page metadata/template registry
+	templates.ResolvePage(data)
+
+	// SINGLE CENTRALIZED RENDER PIPELINE
+	h.Renderer.OK(
+		w,
+		"home",
+		&render.RenderData{
+			Title:       data.Title,
+			Description: data.Description,
+			Page:        data.Page,
+			Data:        data,
+		},
+	)
 }
