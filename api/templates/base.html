@@ -44,12 +44,28 @@
   {{ block "flash" . }}{{ end }}
 
   <!-- =========================
-       MAIN CONTENT ENGINE
+       MAIN CONTENT ENGINE (FIXED)
   ========================== -->
 
   <main>
 
-    {{ template (print .Page "_content") . }}
+    {{ if eq .Page "home" }}
+      {{ template "home_content" . }}
+
+    {{ else if eq .Page "dashboard" }}
+      {{ template "dashboard_content" . }}
+
+    {{ else if eq .Page "staffs" }}
+      {{ template "staffs_content" . }}
+
+    {{ else if eq .Page "addstaff_content" }}
+      {{ template "addstaff_content" . }}
+
+    {{ else }}
+      <div style="padding:20px;">
+        <h2>Page not found</h2>
+      </div>
+    {{ end }}
 
   </main>
 
