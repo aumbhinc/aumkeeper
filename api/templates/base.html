@@ -43,29 +43,20 @@
   <!-- FLASH SLOT -->
   {{ block "flash" . }}{{ end }}
 
-  <!-- MAIN CONTENT RENDERER -->
+  <!-- =========================
+       MAIN CONTENT ENGINE
+  ========================== -->
+
   <main>
 
-    {{ if eq .Page "dashboard_content" }}
-      {{ template "dashboard_content" . }}
-
-    {{ else if eq .Page "addstaff_content" }}
-      {{ template "addstaff_content" . }}
-
-    {{ else if eq .Page "timeclock_content" }}
-      {{ template "timeclock_content" . }}
-
-    {{ else }}
-      <section style="padding:2rem;color:#b91c1c;font-weight:600">
-        ❌ Template Error: Unknown or missing page → {{ .Page }}
-      </section>
-    {{ end }}
+    {{ template (print .Page "_content") . }}
 
   </main>
 
   <!-- FOOTER -->
   <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
     <div class="container mx-auto px-4 text-center max-w-4xl">
+
       <nav class="mb-2 space-x-3">
         <a href="/" class="hover:underline">Home</a> |
         <a href="/contact" class="hover:underline">Contact</a> |
@@ -77,6 +68,7 @@
         © {{ if .Year }}{{ .Year }}{{ else }}2026{{ end }}
         AumKeeper, Inc. — All rights reserved.
       </p>
+
     </div>
   </footer>
 

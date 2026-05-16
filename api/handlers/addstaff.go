@@ -19,17 +19,13 @@ func NewAddStaffHandler(
 	renderer render.Renderer,
 	staffService *services.StaffService,
 ) *AddStaffHandler {
-
 	return &AddStaffHandler{
 		Renderer:     renderer,
 		StaffService: staffService,
 	}
 }
 
-func (h *AddStaffHandler) ServeHTTP(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
+func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 
@@ -39,10 +35,10 @@ func (h *AddStaffHandler) ServeHTTP(
 	case http.MethodGet:
 
 		layout := viewdata.Layout{
-			Title:       "Add Staff",
-			Description: "Create employee onboarding record for AumKeeper ERP",
-			Page:        "addstaff",
-			IncludeStaffJS: true,
+			Title:           "Add Staff",
+			Description:     "Create employee onboarding record for AumKeeper ERP",
+			Page:            "addstaff_content",
+			IncludeStaffJS:  true,
 		}
 
 		h.Renderer.OK(
@@ -62,14 +58,10 @@ func (h *AddStaffHandler) ServeHTTP(
 	case http.MethodPost:
 
 		if err := r.ParseForm(); err != nil {
-			h.Renderer.Render(
+			h.renderAddStaffError(
 				w,
-				http.StatusBadRequest,
-				"addstaff",
-				&render.RenderData{
-					Title: "Add Staff",
-					Page:  "addstaff",
-				},
+				"Invalid form submission",
+				nil,
 			)
 			return
 		}
@@ -92,26 +84,26 @@ func (h *AddStaffHandler) ServeHTTP(
 			Comments:         r.FormValue("comments"),
 		}
 
-		// IMPORTANT: service returns 2 values → MUST capture both
+		// IMPORTANT: service returns (result, error)
 		_, err := h.StaffService.CreateStaff(r.Context(), staff)
 		if err != nil {
-			h.Renderer.Render(
+			h.renderAddStaffError(
 				w,
-				http.StatusBadRequest,
-				"addstaff",
-				&render.RenderData{
-					Title: "Add Staff",
-					Page:  "addstaff",
-					Data:  staff, // preserve form state
-				},
+				err.Error(),
+				&staff,
 			)
 			return
 		}
 
-		http.Redirect(w, r, "/staffs", http.StatusSeeOther)
+		http.Redirect(
+			w,
+			r,
+			"/staffs",
+			http.StatusSeeOther,
+		)
 
 	// =====================================================
-	// DEFAULT: METHOD NOT ALLOWED
+	// DEFAULT
 	// =====================================================
 	default:
 		h.Renderer.Render(
@@ -126,9 +118,34 @@ func (h *AddStaffHandler) ServeHTTP(
 	}
 }
 
-// =========================================================
+// =====================================================
+// ERROR RENDER HELPER
+// =====================================================
+
+func (h *AddStaffHandler) renderAddStaffError(
+	w http.ResponseWriter,
+	message string,
+	staff *domain.Staff,
+) {
+	h.Renderer.Render(
+		w,
+		http.StatusBadRequest,
+		"addstaff",
+		&render.RenderData{
+			Title:       "Add Staff",
+			Description: message,
+			Page:        "addstaff_content",
+			Data: map[string]any{
+				"Staff": staff,
+				"Error": message,
+			},
+		},
+	)
+}
+
+// =====================================================
 // SAFE PARSERS
-// =========================================================
+// =====================================================
 
 func parseInt(s string) int {
 	v, err := strconv.Atoi(s)
