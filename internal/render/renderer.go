@@ -6,21 +6,39 @@ import (
 	"net/http"
 )
 
+//
+// =========================
+// CORE DATA CONTRACT
+// =========================
+//
+
 type RenderData struct {
 	Title       string
 	Description string
 	Page        string
-	Data        any
 
+	// Primary payload (used by templates)
+	Data any
+
+	// 🔥 Strongly used by forms like AddStaff
+	FormData any
+	Errors   map[string]string
+
+	// Feature flags
 	IncludeDashboardJS bool
 	IncludeStaffJS     bool
 
+	// UI slots
 	Sidebar any
 	Topbar  any
 	User    any
 }
 
-// CONTRACT
+//
+// =========================
+// RENDER INTERFACE
+// =========================
+//
 
 type Renderer interface {
 	Render(w http.ResponseWriter, status int, page string, data *RenderData)
@@ -30,20 +48,28 @@ type Renderer interface {
 	ServerError(w http.ResponseWriter)
 }
 
+//
+// =========================
 // IMPLEMENTATION
+// =========================
+//
 
 type HTMLRenderer struct {
 	templates *template.Template
 }
 
-// constructor
 func NewRenderer(t *template.Template) Renderer {
 	return &HTMLRenderer{
 		templates: t,
 	}
 }
 
-// core render engine
+//
+// =========================
+// CORE SAFE RENDER ENGINE
+// =========================
+//
+
 func (r *HTMLRenderer) Render(
 	w http.ResponseWriter,
 	status int,
@@ -55,37 +81,41 @@ func (r *HTMLRenderer) Render(
 		data = &RenderData{}
 	}
 
-	// inject page for template system
 	data.Page = page
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)
 
-	// 🔥 CRITICAL FIX:
-	// try page-specific template first (dashboard_content, addstaff_content, etc.)
-	tmplName := page + "_content"
+	// 🔥 STRICT TEMPLATE NAMING RULE
+	// All pages must follow: page + "_content"
+	templateName := page + "_content"
 
-	// fallback safety
-	tmpl := r.templates.Lookup(tmplName)
+	tmpl := r.templates.Lookup(templateName)
 	if tmpl == nil {
-		log.Printf("WARN: template not found: %s, falling back to base.html", tmplName)
+		log.Printf("WARN: missing template: %s (fallback to base.html)", templateName)
 
 		err := r.templates.ExecuteTemplate(w, "base.html", data)
 		if err != nil {
-			log.Printf("RENDER ERROR (base fallback): %v", err)
+			log.Printf("FATAL TEMPLATE ERROR (base fallback): %v", err)
 			http.Error(w, "Template render failure", http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// execute page content template
-	err := tmpl.ExecuteTemplate(w, tmplName, data)
+	// EXECUTE PAGE TEMPLATE SAFELY
+	err := tmpl.ExecuteTemplate(w, templateName, data)
 	if err != nil {
-		log.Printf("RENDER ERROR [%s]: %v", tmplName, err)
+		log.Printf("TEMPLATE EXEC ERROR [%s]: %v", templateName, err)
 		http.Error(w, "Template render failure", http.StatusInternalServerError)
 		return
 	}
 }
+
+//
+// =========================
+// HELPERS
+// =========================
+//
 
 func (r *HTMLRenderer) OK(w http.ResponseWriter, page string, data *RenderData) {
 	r.Render(w, http.StatusOK, page, data)
@@ -96,23 +126,13 @@ func (r *HTMLRenderer) Created(w http.ResponseWriter, page string, data *RenderD
 }
 
 func (r *HTMLRenderer) NotFound(w http.ResponseWriter) {
-	r.Render(
-		w,
-		http.StatusNotFound,
-		"404",
-		&RenderData{
-			Title: "Page Not Found",
-		},
-	)
+	r.Render(w, http.StatusNotFound, "404", &RenderData{
+		Title: "Page Not Found",
+	})
 }
 
 func (r *HTMLRenderer) ServerError(w http.ResponseWriter) {
-	r.Render(
-		w,
-		http.StatusInternalServerError,
-		"500",
-		&RenderData{
-			Title: "Internal Server Error",
-		},
-	)
+	r.Render(w, http.StatusInternalServerError, "500", &RenderData{
+		Title: "Internal Server Error",
+	})
 }
