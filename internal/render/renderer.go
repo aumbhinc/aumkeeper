@@ -1,75 +1,82 @@
 package render
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-type Renderer struct {
-	tmpl *template.Template
-}
-
 type RenderData struct {
 	Title       string
 	Description string
 	Page        string
-	Data        any
+
+	Data  any
+	Debug bool
 }
 
-func NewRenderer(t *template.Template) *Renderer {
-	return &Renderer{tmpl: t}
+type Renderer struct {
+	Tmpl *template.Template
 }
 
-func (r *Renderer) OK(w http.ResponseWriter, page string, data *RenderData) {
-
-	// =========================================================
-	// 1. PAGE → TEMPLATE NAME MAPPING (CRITICAL LAYER)
-	// =========================================================
-	templateMap := map[string]string{
-		"home":      "home_content",
-		"dashboard": "dashboard_content",
-		"staffs":    "staffs_content",
-		"addstaff":  "addstaff_content",
+func NewRenderer(tmpl *template.Template) *Renderer {
+	return &Renderer{
+		Tmpl: tmpl,
 	}
+}
 
-	tmplName, ok := templateMap[page]
-	if !ok {
-		log.Printf("❌ RENDER ERROR: unknown page key: %s", page)
-		http.Error(w, "template mapping not found", http.StatusInternalServerError)
+// =========================================================
+// MAIN ENTRY
+// =========================================================
+func (r *Renderer) OK(w http.ResponseWriter, base string, data *RenderData) {
+
+	log.Println("🧠 [RENDER START]")
+	log.Println("➡️ Base template:", base)
+	log.Println("➡️ Page:", data.Page)
+	log.Println("➡️ Title:", data.Title)
+
+	if data == nil {
+		log.Println("❌ RenderData is NIL")
+		http.Error(w, "render data missing", http.StatusInternalServerError)
 		return
 	}
 
-	// =========================================================
-	// 2. DEBUG: PRINT REQUESTED PAGE + RESOLVED TEMPLATE
-	// =========================================================
-	log.Printf("📦 RENDER REQUEST: page=%s → template=%s", page, tmplName)
-
-	// =========================================================
-	// 3. DEBUG: DUMP ALL LOADED TEMPLATES (CRITICAL TRACE)
-	// =========================================================
-	log.Println("===== TEMPLATE REGISTRY DUMP START =====")
-	for _, t := range r.tmpl.Templates() {
-		log.Printf("🧩 TEMPLATE LOADED: %q", t.Name())
+	if data.Page == "" {
+		log.Println("❌ PAGE IS EMPTY → template will fail")
+		http.Error(w, "page not defined", http.StatusInternalServerError)
+		return
 	}
-	log.Println("===== TEMPLATE REGISTRY DUMP END =====")
 
-	// =========================================================
-	// 4. EXECUTE TEMPLATE WITH FULL ERROR TRACE
-	// =========================================================
-	err := r.tmpl.ExecuteTemplate(w, tmplName, data)
+	// DEBUG: template existence check
+	t := r.Tmpl.Lookup(base)
+	if t == nil {
+		log.Println("❌ BASE TEMPLATE NOT FOUND:", base)
+		http.Error(w, "base template missing", http.StatusInternalServerError)
+		return
+	}
+
+	log.Println("✅ Base template found")
+
+	// Execute
+	err := t.Execute(w, data)
 	if err != nil {
-		log.Printf("❌ TEMPLATE EXECUTION ERROR:")
-		log.Printf("   page      : %s", page)
-		log.Printf("   template  : %s", tmplName)
-		log.Printf("   error     : %v", err)
-
-		http.Error(w, "template render failed", http.StatusInternalServerError)
+		log.Println("❌ TEMPLATE EXEC ERROR:", err)
+		http.Error(w, fmt.Sprintf("template error: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// =========================================================
-	// 5. SUCCESS TRACE
-	// =========================================================
-	log.Printf("✅ TEMPLATE RENDER SUCCESS: %s", tmplName)
+	log.Println("✅ [RENDER SUCCESS]")
+}
+
+// =========================================================
+// HELPERS
+// =========================================================
+func (r *Renderer) NotFound(w http.ResponseWriter) {
+	http.Error(w, "404 not found", http.StatusNotFound)
+}
+
+func (r *Renderer) ServerError(w http.ResponseWriter, err error) {
+	log.Println("❌ SERVER ERROR:", err)
+	http.Error(w, "server error", http.StatusInternalServerError)
 }
