@@ -23,27 +23,10 @@ type RenderData struct {
 // CONTRACT
 
 type Renderer interface {
-	Render(
-		w http.ResponseWriter,
-		status int,
-		page string,
-		data *RenderData,
-	)
-
-	OK(
-		w http.ResponseWriter,
-		page string,
-		data *RenderData,
-	)
-
-	Created(
-		w http.ResponseWriter,
-		page string,
-		data *RenderData,
-	)
-
+	Render(w http.ResponseWriter, status int, page string, data *RenderData)
+	OK(w http.ResponseWriter, page string, data *RenderData)
+	Created(w http.ResponseWriter, page string, data *RenderData)
 	NotFound(w http.ResponseWriter)
-
 	ServerError(w http.ResponseWriter)
 }
 
@@ -53,14 +36,14 @@ type HTMLRenderer struct {
 	templates *template.Template
 }
 
-func NewRenderer(
-	templates *template.Template,
-) Renderer {
+// constructor
+func NewRenderer(t *template.Template) Renderer {
 	return &HTMLRenderer{
-		templates: templates,
+		templates: t,
 	}
 }
 
+// core render engine
 func (r *HTMLRenderer) Render(
 	w http.ResponseWriter,
 	status int,
@@ -72,58 +55,47 @@ func (r *HTMLRenderer) Render(
 		data = &RenderData{}
 	}
 
+	// inject page for template system
 	data.Page = page
 
-	w.Header().Set(
-		"Content-Type",
-		"text/html; charset=utf-8",
-	)
-
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)
 
-	err := r.templates.ExecuteTemplate(
-		w,
-		"base.html",
-		data,
-	)
+	// 🔥 CRITICAL FIX:
+	// try page-specific template first (dashboard_content, addstaff_content, etc.)
+	tmplName := page + "_content"
 
+	// fallback safety
+	tmpl := r.templates.Lookup(tmplName)
+	if tmpl == nil {
+		log.Printf("WARN: template not found: %s, falling back to base.html", tmplName)
+
+		err := r.templates.ExecuteTemplate(w, "base.html", data)
+		if err != nil {
+			log.Printf("RENDER ERROR (base fallback): %v", err)
+			http.Error(w, "Template render failure", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// execute page content template
+	err := tmpl.ExecuteTemplate(w, tmplName, data)
 	if err != nil {
-
-		log.Printf(
-			"render error [%s]: %v",
-			page,
-			err,
-		)
-
-		http.Error(
-			w,
-			http.StatusText(http.StatusInternalServerError),
-			http.StatusInternalServerError,
-		)
-
+		log.Printf("RENDER ERROR [%s]: %v", tmplName, err)
+		http.Error(w, "Template render failure", http.StatusInternalServerError)
 		return
 	}
 }
 
-func (r *HTMLRenderer) OK(
-	w http.ResponseWriter,
-	page string,
-	data *RenderData,
-) {
+func (r *HTMLRenderer) OK(w http.ResponseWriter, page string, data *RenderData) {
 	r.Render(w, http.StatusOK, page, data)
 }
 
-func (r *HTMLRenderer) Created(
-	w http.ResponseWriter,
-	page string,
-	data *RenderData,
-) {
+func (r *HTMLRenderer) Created(w http.ResponseWriter, page string, data *RenderData) {
 	r.Render(w, http.StatusCreated, page, data)
 }
 
-func (r *HTMLRenderer) NotFound(
-	w http.ResponseWriter,
-) {
+func (r *HTMLRenderer) NotFound(w http.ResponseWriter) {
 	r.Render(
 		w,
 		http.StatusNotFound,
@@ -134,9 +106,7 @@ func (r *HTMLRenderer) NotFound(
 	)
 }
 
-func (r *HTMLRenderer) ServerError(
-	w http.ResponseWriter,
-) {
+func (r *HTMLRenderer) ServerError(w http.ResponseWriter) {
 	r.Render(
 		w,
 		http.StatusInternalServerError,
