@@ -41,12 +41,10 @@ func main() {
 
 	templates := template.New("").Funcs(api.FuncMap())
 
-	// Root templates
 	if _, err := templates.ParseGlob("api/templates/*.html"); err != nil {
 		log.Fatalf("❌ template parse error: %v", err)
 	}
 
-	// Partial templates
 	if _, err := templates.ParseGlob("api/templates/partials/*.html"); err != nil {
 		log.Fatalf("❌ partial template parse error: %v", err)
 	}
@@ -54,7 +52,7 @@ func main() {
 	log.Println("✅ Templates loaded successfully")
 
 	// --------------------------------------------------
-	// Centralized renderer
+	// Renderer
 	// --------------------------------------------------
 
 	renderer := render.NewRenderer(templates)
@@ -77,56 +75,41 @@ func main() {
 		}
 
 		pool = dbPool
-
 		defer pool.Close()
 
 		log.Println("✅ Postgres connected")
 
 	} else {
-
 		log.Println("⚠️ DATABASE_URL missing (running in local mode)")
 	}
 
 	// --------------------------------------------------
-	// Repository layer
+	// Repository + Service layer
 	// --------------------------------------------------
 
-	var repos *repository.Repositories
 	var staffService *services.StaffService
 
 	if pool != nil {
-
-		repos = repository.New(pool)
-
+		repos := repository.New(pool)
 		staffRepo := repository.NewStaffRepository(repos)
-
 		staffService = services.NewStaffService(staffRepo)
 
 		log.Println("✅ Services initialized (DB mode)")
-
 	} else {
-
 		log.Println("⚠️ Services initialized in MOCK mode (no DB)")
 	}
 
 	// --------------------------------------------------
-	// Handler layer
+	// Handler layer (FIXED: ALL USE *render.Renderer)
 	// --------------------------------------------------
 
 	homeHandler := handlers.NewHomeHandler(renderer)
-
 	dashboardHandler := handlers.NewDashboardHandler(renderer)
-
 	staffsHandler := handlers.NewStaffsHandler(renderer)
 
 	var addStaffHandler *handlers.AddStaffHandler
-
 	if staffService != nil {
-
-		addStaffHandler = handlers.NewAddStaffHandler(
-			renderer,
-			staffService,
-		)
+		addStaffHandler = handlers.NewAddStaffHandler(renderer, staffService)
 	}
 
 	// --------------------------------------------------
@@ -141,47 +124,28 @@ func main() {
 		http.FileServer(http.Dir("api/static")),
 	)
 
-	mux.Handle(
-		"/static/",
-		cacheControlMiddleware(static),
-	)
+	mux.Handle("/static/", cacheControlMiddleware(static))
 
 	// Health check
-	mux.HandleFunc("/healthz", func(
-		w http.ResponseWriter,
-		r *http.Request,
-	) {
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
 	})
 
 	// Routes
 	mux.Handle("/", homeHandler)
-
 	mux.Handle("/dashboard", dashboardHandler)
-
 	mux.Handle("/staffs", staffsHandler)
 
 	if addStaffHandler != nil {
-
 		mux.Handle("/addstaff", addStaffHandler)
-
 	} else {
-
-		mux.HandleFunc("/addstaff", func(
-			w http.ResponseWriter,
-			r *http.Request,
-		) {
-
-			http.Error(
-				w,
-				"DB not configured",
-				http.StatusServiceUnavailable,
-			)
+		mux.HandleFunc("/addstaff", func(w http.ResponseWriter, r *http.Request) {
+			http.Error(w, "DB not configured", http.StatusServiceUnavailable)
 		})
 	}
 
 	// --------------------------------------------------
-	// HTTP server
+	// Server
 	// --------------------------------------------------
 
 	port := getPort()
@@ -195,14 +159,12 @@ func main() {
 	}
 
 	go func() {
-
 		log.Printf("🌐 Server running on :%s", port)
 
 		if err := server.ListenAndServe(); err != nil &&
 			err != http.ErrServerClosed {
 
 			log.Printf("❌ server error: %v", err)
-
 			cancel()
 		}
 	}()
@@ -217,67 +179,34 @@ func main() {
 // --------------------------------------------------
 
 func getPort() string {
-
 	if p := os.Getenv("PORT"); p != "" {
 		return p
 	}
-
 	return "8080"
 }
 
-func handleSignals(
-	cancel context.CancelFunc,
-) {
-
+func handleSignals(cancel context.CancelFunc) {
 	c := make(chan os.Signal, 1)
-
-	signal.Notify(
-		c,
-		syscall.SIGINT,
-		syscall.SIGTERM,
-	)
-
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 	<-c
-
 	cancel()
 }
 
-func gracefulShutdown(
-	server *http.Server,
-	timeout time.Duration,
-) {
-
-	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		timeout,
-	)
-
+func gracefulShutdown(server *http.Server, timeout time.Duration) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
-
 		log.Printf("❌ shutdown error: %v", err)
-
 		return
 	}
 
 	log.Println("✅ Server gracefully stopped")
 }
 
-func cacheControlMiddleware(
-	next http.Handler,
-) http.Handler {
-
-	return http.HandlerFunc(func(
-		w http.ResponseWriter,
-		r *http.Request,
-	) {
-
-		w.Header().Set(
-			"Cache-Control",
-			"public, max-age=604800, immutable",
-		)
-
+func cacheControlMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=604800, immutable")
 		next.ServeHTTP(w, r)
 	})
 }

@@ -9,11 +9,11 @@ import (
 )
 
 type DashboardHandler struct {
-	Renderer render.Renderer
+	Renderer *render.Renderer
 }
 
 func NewDashboardHandler(
-	r render.Renderer,
+	r *render.Renderer,
 ) *DashboardHandler {
 
 	return &DashboardHandler{
@@ -30,13 +30,11 @@ func (h *DashboardHandler) ServeHTTP(
 	// STRICT METHOD CHECK
 	// =========================================================
 	if r.Method != http.MethodGet {
-
 		http.Error(
 			w,
 			http.StatusText(http.StatusMethodNotAllowed),
 			http.StatusMethodNotAllowed,
 		)
-
 		return
 	}
 
@@ -80,41 +78,21 @@ func (h *DashboardHandler) ServeHTTP(
 		},
 
 		RightPanelSections: map[string][]viewdata.RightPanelItem{
-
 			"Accounts": {
-				{
-					Label: "Cash",
-					Value: "$48,200",
-				},
-				{
-					Label: "Accounts Receivable",
-					Value: "$16,440",
-				},
-				{
-					Label: "Inventory",
-					Value: "$87,300",
-				},
+				{Label: "Cash", Value: "$48,200"},
+				{Label: "Accounts Receivable", Value: "$16,440"},
+				{Label: "Inventory", Value: "$87,300"},
 			},
-
 			"Operations": {
-				{
-					Label: "Add Staff",
-					Value: "/addstaff",
-				},
-				{
-					Label: "Timeclock",
-					Value: "/timeclock",
-				},
-				{
-					Label: "Staff Manager",
-					Value: "/staffs",
-				},
+				{Label: "Add Staff", Value: "/addstaff"},
+				{Label: "Timeclock", Value: "/timeclock"},
+				{Label: "Staff Manager", Value: "/staffs"},
 			},
 		},
 	}
 
 	// =========================================================
-	// RENDER PAGE
+	// RENDER PAGE (FIXED CONTRACT)
 	// =========================================================
 	h.Renderer.OK(
 		w,
@@ -122,8 +100,11 @@ func (h *DashboardHandler) ServeHTTP(
 		&render.RenderData{
 			Title:       layout.Title,
 			Description: layout.Description,
-			Page:        layout.Page,
-			Data:        &layout,
+			Page:        "dashboard",
+
+			// IMPORTANT FIX:
+			// DO NOT use pointer to layout — pass value safely
+			Data: layout,
 		},
 	)
 }

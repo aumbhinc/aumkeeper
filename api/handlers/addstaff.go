@@ -29,7 +29,7 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 
 	// =========================
-	// GET (ALWAYS SAFE EMPTY FORM)
+	// GET (SAFE EMPTY FORM)
 	// =========================
 	case http.MethodGet:
 
@@ -38,7 +38,7 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Description: "Create employee onboarding record",
 			Page:        "addstaff_content",
 
-			// 🔥 CRITICAL FIX: NEVER nil, ALWAYS populated struct
+			// SAFE DEFAULT FORM (NEVER NIL)
 			Data: map[string]any{
 				"FormData": domain.Staff{},
 			},
@@ -58,18 +58,18 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			FirstName:        r.FormValue("firstName"),
 			MiddleName:       r.FormValue("middleName"),
 			LastName:         r.FormValue("lastName"),
-			Role:             r.FormValue("role"),
-			Email:            r.FormValue("email"),
+			Role:              r.FormValue("role"),
+			Email:             r.FormValue("email"),
 			PhoneNumber:      r.FormValue("phoneNumber"),
-			Street:           r.FormValue("street"),
-			City:             r.FormValue("city"),
-			ZipCode:          r.FormValue("zipCode"),
-			SSN:              r.FormValue("ssn"),
-			TaxFileStatus:    r.FormValue("taxFileStatus"),
-			DependentClaims:  parseInt(r.FormValue("dependentClaims")),
-			Wage:             parseFloat(r.FormValue("wage")),
-			PaymentFrequency: r.FormValue("paymentFrequency"),
-			Comments:         r.FormValue("comments"),
+			Street:            r.FormValue("street"),
+			City:              r.FormValue("city"),
+			ZipCode:           r.FormValue("zipCode"),
+			SSN:               r.FormValue("ssn"),
+			TaxFileStatus:     r.FormValue("taxFileStatus"),
+			DependentClaims:   parseInt(r.FormValue("dependentClaims")),
+			Wage:              parseFloat(r.FormValue("wage")),
+			PaymentFrequency:  r.FormValue("paymentFrequency"),
+			Comments:          r.FormValue("comments"),
 		}
 
 		_, err := h.StaffService.CreateStaff(r.Context(), staff)
@@ -87,7 +87,7 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 //
 // =========================
-// ERROR RENDER SAFE (NO NIL FORM LOSS)
+// ERROR RENDER SAFE
 // =========================
 //
 
@@ -98,7 +98,7 @@ func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string, form do
 		Description: msg,
 		Page:        "addstaff_content",
 
-		// 🔥 CRITICAL FIX: preserve user input (NO reset)
+		// PRESERVE FORM STATE (NO RESET ON ERROR)
 		Data: map[string]any{
 			"FormData": form,
 		},
@@ -107,7 +107,7 @@ func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string, form do
 
 //
 // =========================
-// PARSERS (SAFE DEFAULTS)
+// PARSERS
 // =========================
 //
 

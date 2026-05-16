@@ -9,11 +9,11 @@ import (
 )
 
 type HomeHandler struct {
-	Renderer render.Renderer
+	Renderer *render.Renderer
 }
 
 func NewHomeHandler(
-	renderer render.Renderer,
+	renderer *render.Renderer,
 ) *HomeHandler {
 
 	return &HomeHandler{
@@ -30,13 +30,11 @@ func (h *HomeHandler) ServeHTTP(
 	// STRICT GET ONLY
 	// =========================================================
 	if r.Method != http.MethodGet {
-
 		http.Error(
 			w,
 			http.StatusText(http.StatusMethodNotAllowed),
 			http.StatusMethodNotAllowed,
 		)
-
 		return
 	}
 
@@ -47,12 +45,10 @@ func (h *HomeHandler) ServeHTTP(
 		Title:       "Home",
 		Description: "AumKeeper ERP platform for SMBs",
 		Year:        time.Now().Year(),
-
-		Page: "home",
 	}
 
 	// =========================================================
-	// RENDER PAGE
+	// RENDER PAGE (FIXED CONTRACT)
 	// =========================================================
 	h.Renderer.OK(
 		w,
@@ -60,8 +56,8 @@ func (h *HomeHandler) ServeHTTP(
 		&render.RenderData{
 			Title:       layout.Title,
 			Description: layout.Description,
-			Page:        layout.Page,
-			Data:        &layout,
+			Page:        "home",
+			Data:        layout,
 		},
 	)
 }

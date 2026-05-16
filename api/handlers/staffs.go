@@ -9,11 +9,11 @@ import (
 )
 
 type StaffsHandler struct {
-	Renderer render.Renderer
+	Renderer *render.Renderer
 }
 
 func NewStaffsHandler(
-	r render.Renderer,
+	r *render.Renderer,
 ) *StaffsHandler {
 
 	return &StaffsHandler{
@@ -30,13 +30,11 @@ func (h *StaffsHandler) ServeHTTP(
 	// STRICT GET ONLY
 	// =========================================================
 	if r.Method != http.MethodGet {
-
 		http.Error(
 			w,
 			http.StatusText(http.StatusMethodNotAllowed),
 			http.StatusMethodNotAllowed,
 		)
-
 		return
 	}
 
@@ -54,7 +52,7 @@ func (h *StaffsHandler) ServeHTTP(
 	}
 
 	// =========================================================
-	// RENDER PAGE
+	// RENDER PAGE (FIXED CONTRACT)
 	// =========================================================
 	h.Renderer.OK(
 		w,
@@ -63,7 +61,10 @@ func (h *StaffsHandler) ServeHTTP(
 			Title:       layout.Title,
 			Description: layout.Description,
 			Page:        layout.Page,
-			Data:        &layout,
+
+			// IMPORTANT FIX:
+			// pass VALUE, not pointer (prevents structural drift)
+			Data: layout,
 		},
 	)
 }
