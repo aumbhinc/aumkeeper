@@ -19,7 +19,7 @@
   <!-- Core Styles -->
   <link rel="stylesheet" href="/static/css/base.css" />
 
-  <!-- Page-specific styles -->
+  <!-- Page-specific styles (controlled by renderer flags) -->
   {{ if .IncludeDashboardJS }}
     <link rel="stylesheet" href="/static/css/dashboard.css" />
   {{ end }}
@@ -36,16 +36,9 @@
   {{ block "header" . }}{{ end }}
   {{ block "flash" . }}{{ end }}
 
+  <!-- ✅ PURE RENDERER CONTROLLED CONTENT AREA -->
   <main>
-    {{ if eq .Page "dashboard" }}
-      {{ template "dashboard_content" . }}
-    {{ else if eq .Page "staffs" }}
-      {{ template "staffs_content" . }}
-    {{ else if eq .Page "addstaff" }}
-      {{ template "addstaff_content" . }}
-    {{ else }}
-      <div class="error-page">Page not found</div>
-    {{ end }}
+    {{ block "content" . }}{{ end }}
   </main>
 
   <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
