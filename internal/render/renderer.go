@@ -7,76 +7,66 @@ import (
 	"net/http"
 )
 
+type Renderer struct {
+	Tmpl *template.Template
+	Debug bool
+}
+
+// RenderData = ONLY stable fields (NO Layout, NO FormData here)
 type RenderData struct {
 	Title       string
 	Description string
 	Page        string
 
-	Data  any
-	Debug bool
+	Data map[string]any // flexible payload bucket (IMPORTANT FIX)
 }
 
-type Renderer struct {
-	Tmpl *template.Template
-}
-
-func NewRenderer(tmpl *template.Template) *Renderer {
-	return &Renderer{
-		Tmpl: tmpl,
+// Render main entry
+func (r *Renderer) Render(w http.ResponseWriter, page string, data *RenderData) {
+	if r == nil || r.Tmpl == nil {
+		http.Error(w, "renderer not initialized", http.StatusInternalServerError)
+		return
 	}
-}
-
-// =========================================================
-// MAIN ENTRY
-// =========================================================
-func (r *Renderer) OK(w http.ResponseWriter, base string, data *RenderData) {
-
-	log.Println("🧠 [RENDER START]")
-	log.Println("➡️ Base template:", base)
-	log.Println("➡️ Page:", data.Page)
-	log.Println("➡️ Title:", data.Title)
 
 	if data == nil {
-		log.Println("❌ RenderData is NIL")
-		http.Error(w, "render data missing", http.StatusInternalServerError)
-		return
+		data = &RenderData{}
 	}
 
-	if data.Page == "" {
-		log.Println("❌ PAGE IS EMPTY → template will fail")
-		http.Error(w, "page not defined", http.StatusInternalServerError)
-		return
+	if data.Data == nil {
+		data.Data = map[string]any{}
 	}
 
-	// DEBUG: template existence check
-	t := r.Tmpl.Lookup(base)
+	// DEBUG LOGGING
+	if r.Debug {
+		log.Println("🧠 Render() called")
+		log.Println("➡ page:", page)
+		log.Println("➡ title:", data.Title)
+	}
+
+	tmplName := page
+
+	// Safety: prevent undefined template panic
+	t := r.Tmpl.Lookup(tmplName)
 	if t == nil {
-		log.Println("❌ BASE TEMPLATE NOT FOUND:", base)
-		http.Error(w, "base template missing", http.StatusInternalServerError)
+		errMsg := fmt.Sprintf("TEMPLATE NOT FOUND: %s", tmplName)
+		log.Println("❌", errMsg)
+		http.Error(w, errMsg, http.StatusInternalServerError)
 		return
 	}
 
-	log.Println("✅ Base template found")
-
-	// Execute
 	err := t.Execute(w, data)
 	if err != nil {
 		log.Println("❌ TEMPLATE EXEC ERROR:", err)
-		http.Error(w, fmt.Sprintf("template error: %v", err), http.StatusInternalServerError)
+		http.Error(w, "template execution error", http.StatusInternalServerError)
 		return
 	}
 
-	log.Println("✅ [RENDER SUCCESS]")
+	if r.Debug {
+		log.Println("✅ Render success:", page)
+	}
 }
 
-// =========================================================
-// HELPERS
-// =========================================================
-func (r *Renderer) NotFound(w http.ResponseWriter) {
-	http.Error(w, "404 not found", http.StatusNotFound)
-}
-
-func (r *Renderer) ServerError(w http.ResponseWriter, err error) {
-	log.Println("❌ SERVER ERROR:", err)
-	http.Error(w, "server error", http.StatusInternalServerError)
+// Shortcut
+func (r *Renderer) OK(w http.ResponseWriter, page string, data *RenderData) {
+	r.Render(w, page, data)
 }
