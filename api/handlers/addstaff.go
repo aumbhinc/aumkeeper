@@ -7,6 +7,7 @@ import (
 	"aumkeeper/internal/domain"
 	"aumkeeper/internal/render"
 	"aumkeeper/internal/services"
+	"aumkeeper/api/viewdata"
 )
 
 type AddStaffHandler struct {
@@ -29,16 +30,15 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 
 	// =========================
-	// GET (SAFE EMPTY FORM)
+	// GET
 	// =========================
 	case http.MethodGet:
 
 		h.Renderer.OK(w, "addstaff", &render.RenderData{
-			Title:       "Add Staff",
-			Description: "Create employee onboarding record",
-			Page:        "addstaff_content",
-
-			// SAFE DEFAULT FORM (NEVER NIL)
+			Layout: &viewdata.Layout{
+				Title:       "Add Staff",
+				Description: "Create employee onboarding record",
+			},
 			Data: map[string]any{
 				"FormData": domain.Staff{},
 			},
@@ -55,21 +55,21 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		staff := domain.Staff{
-			FirstName:        r.FormValue("firstName"),
-			MiddleName:       r.FormValue("middleName"),
-			LastName:         r.FormValue("lastName"),
-			Role:              r.FormValue("role"),
-			Email:             r.FormValue("email"),
-			PhoneNumber:      r.FormValue("phoneNumber"),
-			Street:            r.FormValue("street"),
-			City:              r.FormValue("city"),
-			ZipCode:           r.FormValue("zipCode"),
-			SSN:               r.FormValue("ssn"),
-			TaxFileStatus:     r.FormValue("taxFileStatus"),
-			DependentClaims:   parseInt(r.FormValue("dependentClaims")),
-			Wage:              parseFloat(r.FormValue("wage")),
-			PaymentFrequency:  r.FormValue("paymentFrequency"),
-			Comments:          r.FormValue("comments"),
+			FirstName:       r.FormValue("firstName"),
+			MiddleName:      r.FormValue("middleName"),
+			LastName:        r.FormValue("lastName"),
+			Role:            r.FormValue("role"),
+			Email:           r.FormValue("email"),
+			PhoneNumber:     r.FormValue("phoneNumber"),
+			Street:          r.FormValue("street"),
+			City:             r.FormValue("city"),
+			ZipCode:         r.FormValue("zipCode"),
+			SSN:             r.FormValue("ssn"),
+			TaxFileStatus:   r.FormValue("taxFileStatus"),
+			DependentClaims:  parseInt(r.FormValue("dependentClaims")),
+			Wage:            parseFloat(r.FormValue("wage")),
+			PaymentFrequency: r.FormValue("paymentFrequency"),
+			Comments:        r.FormValue("comments"),
 		}
 
 		_, err := h.StaffService.CreateStaff(r.Context(), staff)
@@ -87,18 +87,17 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 //
 // =========================
-// ERROR RENDER SAFE
+// ERROR RENDER
 // =========================
 //
 
 func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string, form domain.Staff) {
 
 	h.Renderer.OK(w, "addstaff", &render.RenderData{
-		Title:       "Add Staff",
-		Description: msg,
-		Page:        "addstaff_content",
-
-		// PRESERVE FORM STATE (NO RESET ON ERROR)
+		Layout: &viewdata.Layout{
+			Title:       "Add Staff",
+			Description: msg,
+		},
 		Data: map[string]any{
 			"FormData": form,
 		},
@@ -107,7 +106,7 @@ func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string, form do
 
 //
 // =========================
-// PARSERS
+// HELPERS
 // =========================
 //
 

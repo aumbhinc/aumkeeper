@@ -30,41 +30,30 @@ func (h *StaffsHandler) ServeHTTP(
 	// STRICT GET ONLY
 	// =========================================================
 	if r.Method != http.MethodGet {
-		http.Error(
-			w,
-			http.StatusText(http.StatusMethodNotAllowed),
-			http.StatusMethodNotAllowed,
-		)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
 	// =========================================================
 	// PAGE LAYOUT
 	// =========================================================
-	layout := viewdata.Layout{
-		Title:       "Staff Manager",
-		Description: "Manage staff, roles, and payroll",
-		Year:        time.Now().Year(),
-
-		Page: "staffs",
-
-		IncludeStaffJS: true,
+	layout := &viewdata.Layout{
+		Title:           "Staff Manager",
+		Description:     "Manage staff, roles, and payroll",
+		Year:            time.Now().Year(),
+		Page:            "staffs",
+		IncludeStaffJS:  true,
 	}
 
 	// =========================================================
-	// RENDER PAGE (FIXED CONTRACT)
+	// RENDER (CLEAN CONTRACT)
 	// =========================================================
 	h.Renderer.OK(
 		w,
 		"staffs",
 		&render.RenderData{
-			Title:       layout.Title,
-			Description: layout.Description,
-			Page:        layout.Page,
-
-			// IMPORTANT FIX:
-			// pass VALUE, not pointer (prevents structural drift)
-			Data: layout,
+			Layout: layout,
+			Data:   layout, // optional (safe for debugging)
 		},
 	)
 }

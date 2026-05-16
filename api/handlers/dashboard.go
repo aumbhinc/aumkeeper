@@ -30,18 +30,14 @@ func (h *DashboardHandler) ServeHTTP(
 	// STRICT METHOD CHECK
 	// =========================================================
 	if r.Method != http.MethodGet {
-		http.Error(
-			w,
-			http.StatusText(http.StatusMethodNotAllowed),
-			http.StatusMethodNotAllowed,
-		)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
 	// =========================================================
-	// DASHBOARD LAYOUT DATA
+	// BUILD LAYOUT
 	// =========================================================
-	layout := viewdata.Layout{
+	layout := &viewdata.Layout{
 		Title:       "Dashboard",
 		Description: "AumKeeper Executive Control Panel",
 		Year:        time.Now().Year(),
@@ -92,19 +88,14 @@ func (h *DashboardHandler) ServeHTTP(
 	}
 
 	// =========================================================
-	// RENDER PAGE (FIXED CONTRACT)
+	// RENDER (CORRECT CONTRACT)
 	// =========================================================
 	h.Renderer.OK(
 		w,
 		"dashboard",
 		&render.RenderData{
-			Title:       layout.Title,
-			Description: layout.Description,
-			Page:        "dashboard",
-
-			// IMPORTANT FIX:
-			// DO NOT use pointer to layout — pass value safely
-			Data: layout,
+			Layout: layout,
+			Data:   layout, // optional duplication-safe payload for templates
 		},
 	)
 }

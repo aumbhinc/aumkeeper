@@ -30,34 +30,28 @@ func (h *HomeHandler) ServeHTTP(
 	// STRICT GET ONLY
 	// =========================================================
 	if r.Method != http.MethodGet {
-		http.Error(
-			w,
-			http.StatusText(http.StatusMethodNotAllowed),
-			http.StatusMethodNotAllowed,
-		)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
 	// =========================================================
 	// PAGE LAYOUT
 	// =========================================================
-	layout := viewdata.Layout{
+	layout := &viewdata.Layout{
 		Title:       "Home",
 		Description: "AumKeeper ERP platform for SMBs",
 		Year:        time.Now().Year(),
 	}
 
 	// =========================================================
-	// RENDER PAGE (FIXED CONTRACT)
+	// RENDER (CLEAN CONTRACT)
 	// =========================================================
 	h.Renderer.OK(
 		w,
 		"home",
 		&render.RenderData{
-			Title:       layout.Title,
-			Description: layout.Description,
-			Page:        "home",
-			Data:        layout,
+			Layout: layout,
+			Data:   layout, // optional (safe for now, can remove later)
 		},
 	)
 }
