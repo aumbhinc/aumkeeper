@@ -13,13 +13,9 @@
     {{ if .Title }}{{ .Title }} | AumKeeper{{ else }}AumKeeper | ERP Dashboard{{ end }}
   </title>
 
-  <!-- Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
-
-  <!-- Core Styles -->
   <link rel="stylesheet" href="/static/css/base.css" />
 
-  <!-- Page-specific styles (controlled by renderer flags) -->
   {{ if .IncludeDashboardJS }}
     <link rel="stylesheet" href="/static/css/dashboard.css" />
   {{ end }}
@@ -36,9 +32,21 @@
   {{ block "header" . }}{{ end }}
   {{ block "flash" . }}{{ end }}
 
-  <!-- ✅ PURE RENDERER CONTROLLED CONTENT AREA -->
   <main>
-    {{ block "content" . }}{{ end }}
+
+    {{ if .dashboard_content }}
+      {{ .dashboard_content }}
+
+    {{ else if .staffs_content }}
+      {{ .staffs_content }}
+
+    {{ else if .addstaff_content }}
+      {{ .addstaff_content }}
+
+    {{ else }}
+      {{ block "content" . }}{{ end }}
+    {{ end }}
+
   </main>
 
   <footer class="bg-gray-100 text-sm text-gray-600 py-6 mt-8 border-t">
