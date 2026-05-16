@@ -1,112 +1,59 @@
 package render
 
 import (
-	"bytes"
 	"html/template"
 	"log"
 	"net/http"
+	 "strings"
 
-	"aumkeeper/api/viewdata"
 )
 
 type Renderer struct {
 	Templates *template.Template
 }
 
+// RenderData is your unified contract for all pages
 type RenderData struct {
-	Layout *viewdata.Layout
-	Page   string
-	Data   any
+	Layout interface{}
+	Data   interface{}
 }
 
-func NewRenderer(t *template.Template) *Renderer {
-	return &Renderer{
-		Templates: t,
-	}
-}
-
+// OK renders a page using centralized template resolution
 func (r *Renderer) OK(
 	w http.ResponseWriter,
 	page string,
 	data *RenderData,
 ) {
-	r.Render(w, page, data)
-}
 
-func (r *Renderer) Render(
-	w http.ResponseWriter,
-	page string,
-	data *RenderData,
-) {
+	// =========================================================
+	// RESOLVE TEMPLATE NAME
+	// Convention: page -> page_content
+	// =========================================================
+	resolvedPage := page + "_content"
 
-	/*
-		STAGE 1:
-		Render page template into buffer
-	*/
+	log.Println("=================================================")
+	log.Println("🧭 RENDER START")
+	log.Println("➡️ PAGE INPUT:", page)
+	log.Println("➡️ TEMPLATE TARGET:", resolvedPage)
+	log.Println("=================================================")
 
-	var pageBuffer bytes.Buffer
+	// =========================================================
+	// EXECUTE TEMPLATE INTO BUFFER
+	// =========================================================
+	var pageBuffer strings.Builder
 
-	err := r.Templates.ExecuteTemplate(
-		&pageBuffer,
-		page,
-		data,
-	)
-
+	err := r.Templates.ExecuteTemplate(&pageBuffer, resolvedPage, data)
 	if err != nil {
-		log.Println("PAGE TEMPLATE ERROR:", err)
-
-		http.Error(
-			w,
-			"Page render error",
-			http.StatusInternalServerError,
-		)
-
+		log.Println("❌ TEMPLATE EXECUTION ERROR:", err)
+		http.Error(w, "Page render error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	/*
-		STAGE 2:
-		Inject into layout
-	*/
+	log.Println("📦 PAGE BUFFER SIZE:", len(pageBuffer.String()))
 
-	pageHTML := template.HTML(pageBuffer.String())
-
-	switch page {
-
-	case "dashboard":
-		data.Layout.DashboardContent = pageHTML
-
-	case "staffs":
-		data.Layout.StaffsContent = pageHTML
-
-	case "addstaff":
-		data.Layout.AddStaffContent = pageHTML
-
-	default:
-		log.Println("UNKNOWN PAGE:", page)
-	}
-
-	/*
-		STAGE 3:
-		Render base layout
-	*/
-
-	err = r.Templates.ExecuteTemplate(
-		w,
-		"base",
-		data,
-	)
-
-	if err != nil {
-
-		log.Println("BASE TEMPLATE ERROR:", err)
-
-		http.Error(
-			w,
-			"Layout render error",
-			http.StatusInternalServerError,
-		)
-
-		return
-	}
+	// =========================================================
+	// FINAL OUTPUT TO RESPONSE
+	// =========================================================
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, _ = w.Write([]byte(pageBuffer.String()))
 }
