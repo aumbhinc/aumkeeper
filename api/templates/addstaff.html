@@ -436,10 +436,10 @@ textarea{
                             type="text"
                             id="firstName"
                             name="firstName"
-                            value="{{.Data.FormData.FirstName}}"
+                            value="{{.FormData.FirstName}}"
                             required>
 
-                        {{with index .Data.Errors "firstName"}}
+                        {{with index .Errors "firstName"}}
                         <div class="error-msg">{{.}}</div>
                         {{end}}
                     </div>
@@ -451,7 +451,7 @@ textarea{
                             type="text"
                             id="middleName"
                             name="middleName"
-                            value="{{.Data.FormData.MiddleName}}">
+                            value="{{.FormData.MiddleName}}">
                     </div>
 
                     <div class="form-group">
@@ -461,7 +461,7 @@ textarea{
                             type="text"
                             id="lastName"
                             name="lastName"
-                            value="{{.Data.FormData.LastName}}"
+                            value="{{.FormData.LastName}}"
                             required>
                     </div>
 
@@ -472,7 +472,7 @@ textarea{
                             type="text"
                             id="role"
                             name="role"
-                            value="{{.Data.FormData.Role}}"
+                            value="{{.FormData.Role}}"
                             placeholder="Store Manager"
                             required>
                     </div>
@@ -484,7 +484,7 @@ textarea{
                             type="email"
                             id="email"
                             name="email"
-                            value="{{.Data.FormData.Email}}"
+                            value="{{.FormData.Email}}"
                             required>
                     </div>
 
@@ -495,7 +495,7 @@ textarea{
                             type="text"
                             id="phoneNumber"
                             name="phoneNumber"
-                            value="{{.Data.FormData.PhoneNumber}}"
+                            value="{{.FormData.PhoneNumber}}"
                             required>
                     </div>
 
@@ -525,7 +525,7 @@ textarea{
                             type="text"
                             id="street"
                             name="street"
-                            value="{{.Data.FormData.Street}}"
+                            value="{{.FormData.Street}}"
                             required>
                     </div>
 
@@ -536,7 +536,7 @@ textarea{
                             type="text"
                             id="city"
                             name="city"
-                            value="{{.Data.FormData.City}}"
+                            value="{{.FormData.City}}"
                             required>
                     </div>
 
@@ -547,7 +547,7 @@ textarea{
                             type="text"
                             id="zipCode"
                             name="zipCode"
-                            value="{{.Data.FormData.ZipCode}}"
+                            value="{{.FormData.ZipCode}}"
                             required>
                     </div>
 
@@ -577,7 +577,7 @@ textarea{
                             type="text"
                             id="ssn"
                             name="ssn"
-                            value="{{.Data.FormData.SSN}}"
+                            value="{{.FormData.SSN}}"
                             placeholder="XXX-XX-XXXX"
                             required>
                     </div>
@@ -591,7 +591,7 @@ textarea{
                             type="number"
                             id="dependentClaims"
                             name="dependentClaims"
-                            value="{{.Data.FormData.DependentClaims}}">
+                            value="{{.FormData.DependentClaims}}">
                     </div>
 
                     <div class="form-group">
@@ -602,7 +602,7 @@ textarea{
                             step="0.01"
                             id="wage"
                             name="wage"
-                            value="{{.Data.FormData.Wage}}"
+                            value="{{.FormData.Wage}}"
                             required>
                     </div>
 
@@ -612,7 +612,7 @@ textarea{
                         <textarea
                             id="comments"
                             name="comments"
-                            placeholder="Employee notes, onboarding remarks, restrictions, or HR comments...">{{.Data.FormData.Comments}}</textarea>
+                            placeholder="Employee notes, onboarding remarks, restrictions, or HR comments...">{{.FormData.Comments}}</textarea>
                     </div>
 
                 </div>

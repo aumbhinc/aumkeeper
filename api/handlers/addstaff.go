@@ -29,16 +29,18 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 
 	case http.MethodGet:
+
 		h.Renderer.OK(w, "addstaff", &render.RenderData{
 			Title:       "Add Staff",
 			Description: "Create employee onboarding record",
 			Page:        "addstaff",
-			Data: map[string]any{
-				"FormData": domain.Staff{},
-			},
+
+			FormData: render.FormData{},
+			Errors:   map[string]string{},
 		})
 
 	case http.MethodPost:
+
 		if err := r.ParseForm(); err != nil {
 			h.renderError(w, "Invalid form data", domain.Staff{})
 			return
@@ -57,7 +59,7 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			SSN:             r.FormValue("ssn"),
 			TaxFileStatus:   r.FormValue("taxFileStatus"),
 			DependentClaims: parseInt(r.FormValue("dependentClaims")),
-			Wage:           parseFloat(r.FormValue("wage")),
+			Wage:            parseFloat(r.FormValue("wage")),
 			PaymentFrequency: r.FormValue("paymentFrequency"),
 			Comments:        r.FormValue("comments"),
 		}
@@ -75,13 +77,35 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string, form domain.Staff) {
+func (h *AddStaffHandler) renderError(
+	w http.ResponseWriter,
+	msg string,
+	form domain.Staff,
+) {
+
 	h.Renderer.OK(w, "addstaff", &render.RenderData{
 		Title:       "Add Staff",
 		Description: msg,
 		Page:        "addstaff",
-		Data: map[string]any{
-			"FormData": form,
+
+		FormData: render.FormData{
+			FirstName:       form.FirstName,
+			MiddleName:      form.MiddleName,
+			LastName:        form.LastName,
+			Role:            form.Role,
+			Email:           form.Email,
+			PhoneNumber:     form.PhoneNumber,
+			Street:          form.Street,
+			City:            form.City,
+			ZipCode:         form.ZipCode,
+			SSN:             form.SSN,
+			DependentClaims: strconv.Itoa(form.DependentClaims),
+			Wage:            strconv.FormatFloat(form.Wage, 'f', 2, 64),
+			Comments:        form.Comments,
+		},
+
+		Errors: map[string]string{
+			"form": msg,
 		},
 	})
 }

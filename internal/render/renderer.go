@@ -8,17 +8,52 @@ import (
 	"net/http"
 )
 
-type Renderer struct {
-	Tmpl  *template.Template
-	Debug bool
+/*
+===========================
+TYPE-SAFE VIEW MODELS
+===========================
+*/
+
+type FormData struct {
+	FirstName       string
+	MiddleName      string
+	LastName        string
+	Role            string
+	Email           string
+	PhoneNumber     string
+	Street          string
+	City            string
+	ZipCode         string
+	SSN             string
+	DependentClaims string
+	Wage            string
+	Comments        string
 }
+
+/*
+===========================
+RENDER DATA (CLEAN)
+===========================
+*/
 
 type RenderData struct {
 	Title       string
 	Description string
 	Page        string
 
-	Data map[string]any
+	FormData FormData
+	Errors   map[string]string
+}
+
+/*
+===========================
+RENDERER
+===========================
+*/
+
+type Renderer struct {
+	Tmpl  *template.Template
+	Debug bool
 }
 
 func (r *Renderer) Render(
@@ -32,30 +67,26 @@ func (r *Renderer) Render(
 	}
 
 	if data == nil {
-		data = &RenderData{}
+		data = &RenderData{
+			Errors: map[string]string{},
+		}
 	}
 
-	if data.Data == nil {
-		data.Data = map[string]any{}
+	if data.Errors == nil {
+		data.Errors = map[string]string{}
 	}
 
 	if r.Debug {
 		log.Println("🧠 [RENDER START]")
-		log.Println("➡️ Base template:", page)
-		log.Println("➡️ Page:", data.Page)
+		log.Println("➡️ Page:", page)
 		log.Println("➡️ Title:", data.Title)
 	}
 
 	t := r.Tmpl.Lookup(page)
 	if t == nil {
-		errMsg := fmt.Sprintf("template not found: %s", page)
-		log.Println("❌", errMsg)
-
-		http.Error(
-			w,
-			errMsg,
-			http.StatusInternalServerError,
-		)
+		msg := fmt.Sprintf("template not found: %s", page)
+		log.Println("❌", msg)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
@@ -68,15 +99,11 @@ func (r *Renderer) Render(
 	err := t.Execute(&buf, data)
 	if err != nil {
 		log.Println("❌ TEMPLATE EXEC ERROR:", err)
-
-		http.Error(
-			w,
-			"template execution error",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "template execution error", http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
 	_, err = buf.WriteTo(w)
