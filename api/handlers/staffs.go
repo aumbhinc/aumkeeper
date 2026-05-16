@@ -12,48 +12,29 @@ type StaffsHandler struct {
 	Renderer *render.Renderer
 }
 
-func NewStaffsHandler(
-	r *render.Renderer,
-) *StaffsHandler {
-
-	return &StaffsHandler{
-		Renderer: r,
-	}
+func NewStaffsHandler(r *render.Renderer) *StaffsHandler {
+	return &StaffsHandler{Renderer: r}
 }
 
-func (h *StaffsHandler) ServeHTTP(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
+func (h *StaffsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	// =========================================================
-	// STRICT GET ONLY
-	// =========================================================
 	if r.Method != http.MethodGet {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
-	// =========================================================
-	// PAGE LAYOUT
-	// =========================================================
-	layout := &viewdata.Layout{
-		Title:           "Staff Manager",
-		Description:     "Manage staff, roles, and payroll",
-		Year:            time.Now().Year(),
-		Page:            "staffs",
-		IncludeStaffJS:  true,
+	layout := viewdata.Layout{
+		Title:       "Staff Manager",
+		Description: "Manage staff, roles, payroll",
+		Year:        time.Now().Year(),
+		Page:        "staffs",
+		IncludeStaffJS: true,
 	}
 
-	// =========================================================
-	// RENDER (CLEAN CONTRACT)
-	// =========================================================
-	h.Renderer.OK(
-		w,
-		"staffs",
-		&render.RenderData{
-			Layout: layout,
-			Data:   layout, // optional (safe for debugging)
-		},
-	)
+	h.Renderer.OK(w, "staffs", &render.RenderData{
+		Title:       layout.Title,
+		Description: layout.Description,
+		Page:        "staffs",
+		Data:        layout,
+	})
 }

@@ -7,7 +7,6 @@ import (
 	"aumkeeper/internal/domain"
 	"aumkeeper/internal/render"
 	"aumkeeper/internal/services"
-	"aumkeeper/api/viewdata"
 )
 
 type AddStaffHandler struct {
@@ -29,26 +28,17 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 
-	// =========================
-	// GET
-	// =========================
 	case http.MethodGet:
-
 		h.Renderer.OK(w, "addstaff", &render.RenderData{
-			Layout: &viewdata.Layout{
-				Title:       "Add Staff",
-				Description: "Create employee onboarding record",
-			},
+			Title:       "Add Staff",
+			Description: "Create employee onboarding record",
+			Page:        "addstaff",
 			Data: map[string]any{
 				"FormData": domain.Staff{},
 			},
 		})
 
-	// =========================
-	// POST
-	// =========================
 	case http.MethodPost:
-
 		if err := r.ParseForm(); err != nil {
 			h.renderError(w, "Invalid form data", domain.Staff{})
 			return
@@ -62,12 +52,12 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Email:           r.FormValue("email"),
 			PhoneNumber:     r.FormValue("phoneNumber"),
 			Street:          r.FormValue("street"),
-			City:             r.FormValue("city"),
+			City:            r.FormValue("city"),
 			ZipCode:         r.FormValue("zipCode"),
 			SSN:             r.FormValue("ssn"),
 			TaxFileStatus:   r.FormValue("taxFileStatus"),
-			DependentClaims:  parseInt(r.FormValue("dependentClaims")),
-			Wage:            parseFloat(r.FormValue("wage")),
+			DependentClaims: parseInt(r.FormValue("dependentClaims")),
+			Wage:           parseFloat(r.FormValue("wage")),
 			PaymentFrequency: r.FormValue("paymentFrequency"),
 			Comments:        r.FormValue("comments"),
 		}
@@ -85,43 +75,23 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//
-// =========================
-// ERROR RENDER
-// =========================
-//
-
 func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string, form domain.Staff) {
-
 	h.Renderer.OK(w, "addstaff", &render.RenderData{
-		Layout: &viewdata.Layout{
-			Title:       "Add Staff",
-			Description: msg,
-		},
+		Title:       "Add Staff",
+		Description: msg,
+		Page:        "addstaff",
 		Data: map[string]any{
 			"FormData": form,
 		},
 	})
 }
 
-//
-// =========================
-// HELPERS
-// =========================
-//
-
 func parseInt(s string) int {
-	v, err := strconv.Atoi(s)
-	if err != nil {
-		return 0
-	}
+	v, _ := strconv.Atoi(s)
 	return v
 }
 
 func parseFloat(s string) float64 {
-	v, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return 0
-	}
+	v, _ := strconv.ParseFloat(s, 64)
 	return v
 }
