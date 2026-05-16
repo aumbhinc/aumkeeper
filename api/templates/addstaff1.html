@@ -55,6 +55,10 @@ body{
     margin:auto;
 }
 
+/* =========================
+   STICKY TOP BAR
+========================= */
+
 .sticky-banner{
     position:sticky;
     top:14px;
@@ -161,6 +165,10 @@ body{
     border:1px solid #fecaca;
 }
 
+/* =========================
+   MAIN CONTENT
+========================= */
+
 .content{
     display:grid;
     grid-template-columns:1fr 320px;
@@ -198,6 +206,10 @@ body{
     color:var(--muted);
     font-size:14px;
 }
+
+/* =========================
+   FORM GRID
+========================= */
 
 .form-grid{
     display:grid;
@@ -261,6 +273,10 @@ textarea{
     color:var(--danger);
 }
 
+/* =========================
+   SIDEBAR
+========================= */
+
 .sidebar{
     display:flex;
     flex-direction:column;
@@ -304,6 +320,20 @@ textarea{
     color:var(--muted);
     font-size:14px;
 }
+
+/* =========================
+   SECTION SPACING
+========================= */
+
+.section-divider{
+    height:1px;
+    background:var(--border);
+    margin:10px 0 24px;
+}
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:960px){
 
@@ -354,6 +384,10 @@ textarea{
 <body>
 
 <div class="staff-editor">
+
+    <!-- =========================
+         TOP BANNER
+    ========================== -->
 
     <div class="sticky-banner">
 
@@ -406,13 +440,23 @@ textarea{
 
     </div>
 
+    <!-- =========================
+         CONTENT
+    ========================== -->
+
     <div class="content">
+
+        <!-- =========================
+             MAIN FORM
+        ========================== -->
 
         <form
             id="newStaffForm"
             class="main-form"
             action="/addstaff"
             method="POST">
+
+            <!-- PERSONAL -->
 
             <div class="card">
 
@@ -436,10 +480,10 @@ textarea{
                             type="text"
                             id="firstName"
                             name="firstName"
-                            value="{{.Data.FormData.FirstName}}"
+                            value="{{.FormData.FirstName}}"
                             required>
 
-                        {{with index .Data.Errors "firstName"}}
+                        {{with index .Errors "firstName"}}
                         <div class="error-msg">{{.}}</div>
                         {{end}}
                     </div>
@@ -451,7 +495,7 @@ textarea{
                             type="text"
                             id="middleName"
                             name="middleName"
-                            value="{{.Data.FormData.MiddleName}}">
+                            value="{{.FormData.MiddleName}}">
                     </div>
 
                     <div class="form-group">
@@ -461,7 +505,7 @@ textarea{
                             type="text"
                             id="lastName"
                             name="lastName"
-                            value="{{.Data.FormData.LastName}}"
+                            value="{{.FormData.LastName}}"
                             required>
                     </div>
 
@@ -472,7 +516,7 @@ textarea{
                             type="text"
                             id="role"
                             name="role"
-                            value="{{.Data.FormData.Role}}"
+                            value="{{.FormData.Role}}"
                             placeholder="Store Manager"
                             required>
                     </div>
@@ -484,7 +528,7 @@ textarea{
                             type="email"
                             id="email"
                             name="email"
-                            value="{{.Data.FormData.Email}}"
+                            value="{{.FormData.Email}}"
                             required>
                     </div>
 
@@ -495,13 +539,15 @@ textarea{
                             type="text"
                             id="phoneNumber"
                             name="phoneNumber"
-                            value="{{.Data.FormData.PhoneNumber}}"
+                            value="{{.FormData.PhoneNumber}}"
                             required>
                     </div>
 
                 </div>
 
             </div>
+
+            <!-- ADDRESS -->
 
             <div class="card">
 
@@ -525,7 +571,7 @@ textarea{
                             type="text"
                             id="street"
                             name="street"
-                            value="{{.Data.FormData.Street}}"
+                            value="{{.FormData.Street}}"
                             required>
                     </div>
 
@@ -536,7 +582,7 @@ textarea{
                             type="text"
                             id="city"
                             name="city"
-                            value="{{.Data.FormData.City}}"
+                            value="{{.FormData.City}}"
                             required>
                     </div>
 
@@ -547,13 +593,15 @@ textarea{
                             type="text"
                             id="zipCode"
                             name="zipCode"
-                            value="{{.Data.FormData.ZipCode}}"
+                            value="{{.FormData.ZipCode}}"
                             required>
                     </div>
 
                 </div>
 
             </div>
+
+            <!-- TAX -->
 
             <div class="card">
 
@@ -577,9 +625,41 @@ textarea{
                             type="text"
                             id="ssn"
                             name="ssn"
-                            value="{{.Data.FormData.SSN}}"
+                            value="{{.FormData.SSN}}"
                             placeholder="XXX-XX-XXXX"
                             required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taxFileStatus">Tax Filing Status</label>
+
+                        <select
+                            id="taxFileStatus"
+                            name="taxFileStatus"
+                            required>
+
+                            <option value="">Select Status</option>
+
+                            <option value="single">Single</option>
+
+                            <option value="marriedSeparately">
+                                Married Filing Separately
+                            </option>
+
+                            <option value="marriedJointly">
+                                Married Filing Jointly
+                            </option>
+
+                            <option value="qualifyingSurvivingSpouse">
+                                Qualifying Surviving Spouse
+                            </option>
+
+                            <option value="headOfHousehold">
+                                Head of Household
+                            </option>
+
+                        </select>
+
                     </div>
 
                     <div class="form-group">
@@ -591,8 +671,29 @@ textarea{
                             type="number"
                             id="dependentClaims"
                             name="dependentClaims"
-                            value="{{.Data.FormData.DependentClaims}}">
+                            value="{{.FormData.DependentClaims}}">
                     </div>
+
+                </div>
+
+            </div>
+
+            <!-- COMPENSATION -->
+
+            <div class="card">
+
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="material-icons">payments</span>
+                        Compensation
+                    </div>
+
+                    <div class="card-subtitle">
+                        Salary, payroll, and compensation configuration
+                    </div>
+                </div>
+
+                <div class="form-grid">
 
                     <div class="form-group">
                         <label for="wage">Wage / Salary</label>
@@ -602,8 +703,28 @@ textarea{
                             step="0.01"
                             id="wage"
                             name="wage"
-                            value="{{.Data.FormData.Wage}}"
+                            value="{{.FormData.Wage}}"
                             required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentFrequency">
+                            Payment Frequency
+                        </label>
+
+                        <select
+                            id="paymentFrequency"
+                            name="paymentFrequency"
+                            required>
+
+                            <option value="hourly">Hourly</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="salary">Salary</option>
+
+                        </select>
+
                     </div>
 
                     <div class="form-group form-row-full">
@@ -612,7 +733,7 @@ textarea{
                         <textarea
                             id="comments"
                             name="comments"
-                            placeholder="Employee notes, onboarding remarks, restrictions, or HR comments...">{{.Data.FormData.Comments}}</textarea>
+                            placeholder="Employee notes, onboarding remarks, restrictions, or HR comments...">{{.FormData.Comments}}</textarea>
                     </div>
 
                 </div>
@@ -620,6 +741,10 @@ textarea{
             </div>
 
         </form>
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
 
         <aside class="sidebar">
 
@@ -652,6 +777,24 @@ textarea{
                     <div class="info-item">
                         <span class="material-icons">check_circle</span>
                         <p>Configure timeclock access</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="info-box">
+
+                <h3>AumKeeper ERP</h3>
+
+                <div class="info-list">
+
+                    <div class="info-item">
+                        <span class="material-icons">security</span>
+                        <p>
+                            Staff records are securely managed and ready
+                            for payroll, scheduling, and ERP integration.
+                        </p>
                     </div>
 
                 </div>
