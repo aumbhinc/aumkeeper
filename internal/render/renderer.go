@@ -3,65 +3,110 @@ package render
 import (
 	"bytes"
 	"html/template"
+	"log"
 	"net/http"
-	"sync"
+
+	"aumkeeper/api/viewdata"
 )
 
 type Renderer struct {
-	tmpl *template.Template
-	mu   sync.RWMutex
+	Templates *template.Template
+}
+
+type RenderData struct {
+	Layout *viewdata.Layout
+	Page   string
+	Data   any
 }
 
 func NewRenderer(t *template.Template) *Renderer {
-	return &Renderer{tmpl: t}
-}
-
-// =========================
-// SINGLE SOURCE OF TRUTH
-// =========================
-type RenderData struct {
-	// layout metadata (WAS MISSING → causing your error)
-	Title       string
-	Description string
-
-	// page routing key for base.html
-	Page string
-
-	// generic payload
-	Data any
-}
-
-func (r *Renderer) OK(w http.ResponseWriter, page string, data *RenderData) {
-	r.render(w, http.StatusOK, page, data)
-}
-
-func (r *Renderer) Render(w http.ResponseWriter, status int, page string, data *RenderData) {
-	r.render(w, status, page, data)
-}
-
-func (r *Renderer) ServerError(w http.ResponseWriter, page string, data *RenderData) {
-	r.render(w, http.StatusInternalServerError, page, data)
-}
-
-func (r *Renderer) render(w http.ResponseWriter, status int, page string, data *RenderData) {
-
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-
-	if data == nil {
-		data = &RenderData{}
+	return &Renderer{
+		Templates: t,
 	}
+}
 
-	data.Page = page
+func (r *Renderer) OK(
+	w http.ResponseWriter,
+	page string,
+	data *RenderData,
+) {
+	r.Render(w, page, data)
+}
 
-	var buf bytes.Buffer
+func (r *Renderer) Render(
+	w http.ResponseWriter,
+	page string,
+	data *RenderData,
+) {
 
-	err := r.tmpl.ExecuteTemplate(&buf, "base.html", data)
+	/*
+		STAGE 1:
+		Render page template into buffer
+	*/
+
+	var pageBuffer bytes.Buffer
+
+	err := r.Templates.ExecuteTemplate(
+		&pageBuffer,
+		page,
+		data,
+	)
+
 	if err != nil {
-		http.Error(w, "Template Error: "+err.Error(), http.StatusInternalServerError)
+		log.Println("PAGE TEMPLATE ERROR:", err)
+
+		http.Error(
+			w,
+			"Page render error",
+			http.StatusInternalServerError,
+		)
+
 		return
 	}
 
-	w.WriteHeader(status)
-	_, _ = buf.WriteTo(w)
+	/*
+		STAGE 2:
+		Inject into layout
+	*/
+
+	pageHTML := template.HTML(pageBuffer.String())
+
+	switch page {
+
+	case "dashboard":
+		data.Layout.DashboardContent = pageHTML
+
+	case "staffs":
+		data.Layout.StaffsContent = pageHTML
+
+	case "addstaff":
+		data.Layout.AddStaffContent = pageHTML
+
+	default:
+		log.Println("UNKNOWN PAGE:", page)
+	}
+
+	/*
+		STAGE 3:
+		Render base layout
+	*/
+
+	err = r.Templates.ExecuteTemplate(
+		w,
+		"base",
+		data,
+	)
+
+	if err != nil {
+
+		log.Println("BASE TEMPLATE ERROR:", err)
+
+		http.Error(
+			w,
+			"Layout render error",
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
 }
