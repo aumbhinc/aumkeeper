@@ -1,81 +1,52 @@
 package render
 
 import (
+	"bytes"
 	"html/template"
-	"log"
 	"net/http"
+	"sync"
 )
 
-//
-// =========================
-// CORE DATA CONTRACT
-// =========================
-//
+type Renderer struct {
+	tmpl *template.Template
+	mu   sync.RWMutex
+}
 
+func NewRenderer(t *template.Template) *Renderer {
+	return &Renderer{tmpl: t}
+}
+
+// =========================
+// SINGLE SOURCE OF TRUTH
+// =========================
 type RenderData struct {
+	// layout metadata (WAS MISSING → causing your error)
 	Title       string
 	Description string
-	Page        string
 
-	// Primary payload (used by templates)
+	// page routing key for base.html
+	Page string
+
+	// generic payload
 	Data any
-
-	// 🔥 Strongly used by forms like AddStaff
-	FormData any
-	Errors   map[string]string
-
-	// Feature flags
-	IncludeDashboardJS bool
-	IncludeStaffJS     bool
-
-	// UI slots
-	Sidebar any
-	Topbar  any
-	User    any
 }
 
-//
-// =========================
-// RENDER INTERFACE
-// =========================
-//
-
-type Renderer interface {
-	Render(w http.ResponseWriter, status int, page string, data *RenderData)
-	OK(w http.ResponseWriter, page string, data *RenderData)
-	Created(w http.ResponseWriter, page string, data *RenderData)
-	NotFound(w http.ResponseWriter)
-	ServerError(w http.ResponseWriter)
+func (r *Renderer) OK(w http.ResponseWriter, page string, data *RenderData) {
+	r.render(w, http.StatusOK, page, data)
 }
 
-//
-// =========================
-// IMPLEMENTATION
-// =========================
-//
-
-type HTMLRenderer struct {
-	templates *template.Template
+func (r *Renderer) Render(w http.ResponseWriter, status int, page string, data *RenderData) {
+	r.render(w, status, page, data)
 }
 
-func NewRenderer(t *template.Template) Renderer {
-	return &HTMLRenderer{
-		templates: t,
-	}
+func (r *Renderer) ServerError(w http.ResponseWriter, page string, data *RenderData) {
+	r.render(w, http.StatusInternalServerError, page, data)
 }
 
-//
-// =========================
-// CORE SAFE RENDER ENGINE
-// =========================
-//
+func (r *Renderer) render(w http.ResponseWriter, status int, page string, data *RenderData) {
 
-func (r *HTMLRenderer) Render(
-	w http.ResponseWriter,
-	status int,
-	page string,
-	data *RenderData,
-) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 
 	if data == nil {
 		data = &RenderData{}
@@ -83,56 +54,14 @@ func (r *HTMLRenderer) Render(
 
 	data.Page = page
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(status)
+	var buf bytes.Buffer
 
-	// 🔥 STRICT TEMPLATE NAMING RULE
-	// All pages must follow: page + "_content"
-	templateName := page + "_content"
-
-	tmpl := r.templates.Lookup(templateName)
-	if tmpl == nil {
-		log.Printf("WARN: missing template: %s (fallback to base.html)", templateName)
-
-		err := r.templates.ExecuteTemplate(w, "base.html", data)
-		if err != nil {
-			log.Printf("FATAL TEMPLATE ERROR (base fallback): %v", err)
-			http.Error(w, "Template render failure", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	// EXECUTE PAGE TEMPLATE SAFELY
-	err := tmpl.ExecuteTemplate(w, templateName, data)
+	err := r.tmpl.ExecuteTemplate(&buf, "base.html", data)
 	if err != nil {
-		log.Printf("TEMPLATE EXEC ERROR [%s]: %v", templateName, err)
-		http.Error(w, "Template render failure", http.StatusInternalServerError)
+		http.Error(w, "Template Error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
 
-//
-// =========================
-// HELPERS
-// =========================
-//
-
-func (r *HTMLRenderer) OK(w http.ResponseWriter, page string, data *RenderData) {
-	r.Render(w, http.StatusOK, page, data)
-}
-
-func (r *HTMLRenderer) Created(w http.ResponseWriter, page string, data *RenderData) {
-	r.Render(w, http.StatusCreated, page, data)
-}
-
-func (r *HTMLRenderer) NotFound(w http.ResponseWriter) {
-	r.Render(w, http.StatusNotFound, "404", &RenderData{
-		Title: "Page Not Found",
-	})
-}
-
-func (r *HTMLRenderer) ServerError(w http.ResponseWriter) {
-	r.Render(w, http.StatusInternalServerError, "500", &RenderData{
-		Title: "Internal Server Error",
-	})
+	w.WriteHeader(status)
+	_, _ = buf.WriteTo(w)
 }

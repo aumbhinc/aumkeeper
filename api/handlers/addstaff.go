@@ -10,12 +10,12 @@ import (
 )
 
 type AddStaffHandler struct {
-	Renderer     render.Renderer
+	Renderer     *render.Renderer
 	StaffService *services.StaffService
 }
 
 func NewAddStaffHandler(
-	renderer render.Renderer,
+	renderer *render.Renderer,
 	staffService *services.StaffService,
 ) *AddStaffHandler {
 	return &AddStaffHandler{
@@ -29,14 +29,16 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 
 	// =========================
-	// GET
+	// GET (ALWAYS SAFE EMPTY FORM)
 	// =========================
 	case http.MethodGet:
 
 		h.Renderer.OK(w, "addstaff", &render.RenderData{
 			Title:       "Add Staff",
 			Description: "Create employee onboarding record",
-			Page:        "addstaff_content", // ✅ THIS IS REQUIRED FOR YOUR base.html
+			Page:        "addstaff_content",
+
+			// 🔥 CRITICAL FIX: NEVER nil, ALWAYS populated struct
 			Data: map[string]any{
 				"FormData": domain.Staff{},
 			},
@@ -48,31 +50,31 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 
 		if err := r.ParseForm(); err != nil {
-			h.renderError(w, "Invalid form data")
+			h.renderError(w, "Invalid form data", domain.Staff{})
 			return
 		}
 
 		staff := domain.Staff{
-			FirstName:   r.FormValue("firstName"),
-			MiddleName:  r.FormValue("middleName"),
-			LastName:    r.FormValue("lastName"),
-			Role:        r.FormValue("role"),
-			Email:       r.FormValue("email"),
-			PhoneNumber: r.FormValue("phoneNumber"),
-			Street:      r.FormValue("street"),
-			City:        r.FormValue("city"),
-			ZipCode:     r.FormValue("zipCode"),
-			SSN:         r.FormValue("ssn"),
-			TaxFileStatus: r.FormValue("taxFileStatus"),
-			DependentClaims: parseInt(r.FormValue("dependentClaims")),
-			Wage:        parseFloat(r.FormValue("wage")),
+			FirstName:        r.FormValue("firstName"),
+			MiddleName:       r.FormValue("middleName"),
+			LastName:         r.FormValue("lastName"),
+			Role:             r.FormValue("role"),
+			Email:            r.FormValue("email"),
+			PhoneNumber:      r.FormValue("phoneNumber"),
+			Street:           r.FormValue("street"),
+			City:             r.FormValue("city"),
+			ZipCode:          r.FormValue("zipCode"),
+			SSN:              r.FormValue("ssn"),
+			TaxFileStatus:    r.FormValue("taxFileStatus"),
+			DependentClaims:  parseInt(r.FormValue("dependentClaims")),
+			Wage:             parseFloat(r.FormValue("wage")),
 			PaymentFrequency: r.FormValue("paymentFrequency"),
-			Comments:    r.FormValue("comments"),
+			Comments:         r.FormValue("comments"),
 		}
 
 		_, err := h.StaffService.CreateStaff(r.Context(), staff)
 		if err != nil {
-			h.renderError(w, "Failed to create staff")
+			h.renderError(w, "Failed to create staff", staff)
 			return
 		}
 
@@ -83,24 +85,31 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//
 // =========================
-// ERROR RENDER SAFE
+// ERROR RENDER SAFE (NO NIL FORM LOSS)
 // =========================
+//
 
-func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string) {
-	h.Renderer.Render(w, http.StatusBadRequest, "addstaff", &render.RenderData{
+func (h *AddStaffHandler) renderError(w http.ResponseWriter, msg string, form domain.Staff) {
+
+	h.Renderer.OK(w, "addstaff", &render.RenderData{
 		Title:       "Add Staff",
 		Description: msg,
-		Page:        "addstaff_content", // ✅ IMPORTANT
+		Page:        "addstaff_content",
+
+		// 🔥 CRITICAL FIX: preserve user input (NO reset)
 		Data: map[string]any{
-			"FormData": domain.Staff{},
+			"FormData": form,
 		},
 	})
 }
 
+//
 // =========================
-// PARSERS
+// PARSERS (SAFE DEFAULTS)
 // =========================
+//
 
 func parseInt(s string) int {
 	v, err := strconv.Atoi(s)
