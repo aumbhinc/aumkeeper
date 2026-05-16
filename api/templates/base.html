@@ -43,10 +43,6 @@
   <!-- FLASH SLOT -->
   {{ block "flash" . }}{{ end }}
 
-  <!-- =========================
-       MAIN CONTENT ENGINE (FIXED)
-  ========================== -->
-
   <main>
 
     {{ if eq .Page "home" }}
@@ -63,7 +59,7 @@
 
     {{ else }}
       <div style="padding:20px;">
-        <h2>Page not found</h2>
+        Unknown page: {{ .Page }}
       </div>
     {{ end }}
 
