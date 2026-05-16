@@ -5,11 +5,28 @@ import (
 	"strconv"
 	"time"
 
-	"aumkeeper/api/viewdata"
 	"aumkeeper/internal/domain"
 	"aumkeeper/internal/render"
 	"aumkeeper/internal/services"
 )
+
+type AddStaffForm struct {
+	FirstName        string
+	MiddleName       string
+	LastName         string
+	Role             string
+	Email            string
+	PhoneNumber      string
+	Street           string
+	City             string
+	ZipCode          string
+	SSN              string
+	TaxFileStatus    string
+	DependentClaims  int
+	Wage             float64
+	PaymentFrequency string
+	Comments         string
+}
 
 type AddStaffHandler struct {
 	Renderer     render.Renderer
@@ -20,45 +37,30 @@ func NewAddStaffHandler(
 	renderer render.Renderer,
 	staffService *services.StaffService,
 ) *AddStaffHandler {
-
 	return &AddStaffHandler{
 		Renderer:     renderer,
 		StaffService: staffService,
 	}
 }
 
-func (h *AddStaffHandler) ServeHTTP(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
+func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 
 	// =========================================================
-	// GET -> RENDER ADD STAFF PAGE
+	// GET -> RENDER PAGE (IMPORTANT FIX HERE)
 	// =========================================================
 	case http.MethodGet:
 
-		layout := viewdata.Layout{
+		form := AddStaffForm{}
+
+		h.Renderer.OK(w, "addstaff", &render.RenderData{
 			Title:       "Add Staff",
 			Description: "Create employee onboarding record for AumKeeper ERP",
-			Year:        time.Now().Year(),
-
-			Page: "addstaff",
-
-			IncludeStaffJS: true,
-		}
-
-		h.Renderer.OK(
-			w,
-			"addstaff",
-			&render.RenderData{
-				Title:       layout.Title,
-				Description: layout.Description,
-				Page:        layout.Page,
-				Data:        &layout,
-			},
-		)
+			Page:        "addstaff",
+			FormData:    form, // 🔥 CRITICAL FIX
+			Errors:      map[string]string{},
+		})
 
 	// =========================================================
 	// POST -> CREATE STAFF
@@ -66,34 +68,14 @@ func (h *AddStaffHandler) ServeHTTP(
 	case http.MethodPost:
 
 		if err := r.ParseForm(); err != nil {
-
-			http.Error(
-				w,
-				err.Error(),
-				http.StatusBadRequest,
-			)
-
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		dependentClaims, err := strconv.Atoi(
-			r.FormValue("dependentClaims"),
-		)
+		dependentClaims, _ := strconv.Atoi(r.FormValue("dependentClaims"))
+		wage, _ := strconv.ParseFloat(r.FormValue("wage"), 64)
 
-		if err != nil {
-			dependentClaims = 0
-		}
-
-		wage, err := strconv.ParseFloat(
-			r.FormValue("wage"),
-			64,
-		)
-
-		if err != nil {
-			wage = 0
-		}
-
-		staff := domain.Staff{
+		form := AddStaffForm{
 			FirstName:        r.FormValue("firstName"),
 			MiddleName:       r.FormValue("middleName"),
 			LastName:         r.FormValue("lastName"),
@@ -111,38 +93,65 @@ func (h *AddStaffHandler) ServeHTTP(
 			Comments:         r.FormValue("comments"),
 		}
 
-		_, err = h.StaffService.CreateStaff(
-			r.Context(),
-			staff,
-		)
+		// =====================================================
+		// SIMPLE VALIDATION (CAN EXPAND LATER)
+		// =====================================================
+		errors := map[string]string{}
 
-		if err != nil {
+		if form.FirstName == "" {
+			errors["firstName"] = "First name required"
+		}
+		if form.Email == "" {
+			errors["email"] = "Email required"
+		}
 
-			http.Error(
-				w,
-				err.Error(),
-				http.StatusBadRequest,
-			)
-
+		// =====================================================
+		// IF ERRORS -> RE-RENDER FORM (CRITICAL FIX)
+		// =====================================================
+		if len(errors) > 0 {
+			h.Renderer.OK(w, "addstaff", &render.RenderData{
+				Title:       "Add Staff",
+				Description: "Fix validation errors",
+				Page:        "addstaff",
+				FormData:    form,   // 🔥 KEEP USER INPUT
+				Errors:      errors, // 🔥 SHOW ERRORS
+			})
 			return
 		}
 
-		http.Redirect(
-			w,
-			r,
-			"/staffs",
-			http.StatusSeeOther,
-		)
+		// =====================================================
+		// DOMAIN OBJECT (DB LAYER)
+		// =====================================================
+		staff := domain.Staff{
+			FirstName:        form.FirstName,
+			MiddleName:       form.MiddleName,
+			LastName:         form.LastName,
+			Role:             form.Role,
+			Email:            form.Email,
+			PhoneNumber:      form.PhoneNumber,
+			Street:           form.Street,
+			City:             form.City,
+			ZipCode:          form.ZipCode,
+			SSN:              form.SSN,
+			TaxFileStatus:    form.TaxFileStatus,
+			DependentClaims:  form.DependentClaims,
+			Wage:             form.Wage,
+			PaymentFrequency: form.PaymentFrequency,
+			Comments:         form.Comments,
+		}
+
+		_, err := h.StaffService.CreateStaff(r.Context(), staff)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		http.Redirect(w, r, "/staffs", http.StatusSeeOther)
 
 	// =========================================================
 	// METHOD NOT ALLOWED
 	// =========================================================
 	default:
-
-		http.Error(
-			w,
-			http.StatusText(http.StatusMethodNotAllowed),
-			http.StatusMethodNotAllowed,
-		)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
 }
