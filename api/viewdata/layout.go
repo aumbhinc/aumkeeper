@@ -1,15 +1,22 @@
 package viewdata
 
+import "html/template"
+
 // Layout is the main page container
 type Layout struct {
 	Title       string
 	Description string
 	Year        int
 
-	Page            string
+	Page             string
 	ResolvedTemplate string
 
 	PageData any
+
+	// ✅ Renderer injected content
+	DashboardContent template.HTML
+	StaffsContent    template.HTML
+	AddStaffContent  template.HTML
 
 	Stats              []DashboardStat
 	RightPanelSections map[string][]RightPanelItem

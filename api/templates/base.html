@@ -34,14 +34,14 @@
 
   <main>
 
-    {{ if .dashboard_content }}
-      {{ .dashboard_content }}
+    {{ if .DashboardContent }}
+      {{ .DashboardContent }}
 
-    {{ else if .staffs_content }}
-      {{ .staffs_content }}
+    {{ else if .StaffsContent }}
+      {{ .StaffsContent }}
 
-    {{ else if .addstaff_content }}
-      {{ .addstaff_content }}
+    {{ else if .AddStaffContent }}
+      {{ .AddStaffContent }}
 
     {{ else }}
       {{ block "content" . }}{{ end }}
