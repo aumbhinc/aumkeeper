@@ -1,6 +1,7 @@
 package render
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"log"
@@ -8,65 +9,153 @@ import (
 )
 
 type Renderer struct {
-	Tmpl *template.Template
+	Tmpl  *template.Template
 	Debug bool
 }
 
-// RenderData = ONLY stable fields (NO Layout, NO FormData here)
+// Stable renderer contract
 type RenderData struct {
 	Title       string
 	Description string
 	Page        string
 
-	Data map[string]any // flexible payload bucket (IMPORTANT FIX)
+	// Flexible page-specific payload
+	Data map[string]any
 }
 
-// Render main entry
-func (r *Renderer) Render(w http.ResponseWriter, page string, data *RenderData) {
+func (r *Renderer) Render(
+	w http.ResponseWriter,
+	page string,
+	data *RenderData,
+) {
+	// Renderer safety
 	if r == nil || r.Tmpl == nil {
-		http.Error(w, "renderer not initialized", http.StatusInternalServerError)
+		http.Error(
+			w,
+			"renderer not initialized",
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
+	// Nil safety
 	if data == nil {
 		data = &RenderData{}
 	}
 
+	// Data bucket safety
 	if data.Data == nil {
 		data.Data = map[string]any{}
 	}
 
-	// DEBUG LOGGING
+	// Debug logs
 	if r.Debug {
-		log.Println("🧠 Render() called")
-		log.Println("➡ page:", page)
-		log.Println("➡ title:", data.Title)
+		log.Println("🧠 [RENDER START]")
+		log.Println("➡️ Base template:", page)
+		log.Println("➡️ Page:", data.Page)
+		log.Println("➡️ Title:", data.Title)
 	}
 
-	tmplName := page
-
-	// Safety: prevent undefined template panic
-	t := r.Tmpl.Lookup(tmplName)
+	// Ensure template exists
+	t := r.Tmpl.Lookup(page)
 	if t == nil {
-		errMsg := fmt.Sprintf("TEMPLATE NOT FOUND: %s", tmplName)
+		errMsg := fmt.Sprintf(
+			"TEMPLATE NOT FOUND: %s",
+			page,
+		)
+
 		log.Println("❌", errMsg)
-		http.Error(w, errMsg, http.StatusInternalServerError)
+
+		http.Error(
+			w,
+			errMsg,
+			http.StatusInternalServerError,
+		)
+
 		return
 	}
 
-	err := t.Execute(w, data)
+	if r.Debug {
+		log.Println("✅ Base template found")
+	}
+
+	// Final payload sent to template
+	payload := map[string]any{
+		"Title":       data.Title,
+		"Description": data.Description,
+		"Page":        data.Page,
+		"Data":        data.Data,
+	}
+
+	// BUFFERED RENDERING
+	// prevents partial writes + double WriteHeader panic
+	var buf bytes.Buffer
+
+	err := t.Execute(&buf, payload)
 	if err != nil {
 		log.Println("❌ TEMPLATE EXEC ERROR:", err)
-		http.Error(w, "template execution error", http.StatusInternalServerError)
+
+		http.Error(
+			w,
+			"template execution error",
+			http.StatusInternalServerError,
+		)
+
+		return
+	}
+
+	// Success
+	w.WriteHeader(http.StatusOK)
+
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		log.Println("❌ RESPONSE WRITE ERROR:", err)
 		return
 	}
 
 	if r.Debug {
-		log.Println("✅ Render success:", page)
+		log.Println("✅ [RENDER SUCCESS]")
 	}
 }
 
-// Shortcut
-func (r *Renderer) OK(w http.ResponseWriter, page string, data *RenderData) {
+// OK shortcut
+func (r *Renderer) OK(
+	w http.ResponseWriter,
+	page string,
+	data *RenderData,
+) {
 	r.Render(w, page, data)
+}
+
+// Created shortcut
+func (r *Renderer) Created(
+	w http.ResponseWriter,
+	page string,
+	data *RenderData,
+) {
+	w.WriteHeader(http.StatusCreated)
+	r.Render(w, page, data)
+}
+
+// NotFound shortcut
+func (r *Renderer) NotFound(w http.ResponseWriter) {
+	http.Error(
+		w,
+		"page not found",
+		http.StatusNotFound,
+	)
+}
+
+// ServerError shortcut
+func (r *Renderer) ServerError(
+	w http.ResponseWriter,
+	err error,
+) {
+	log.Println("❌ SERVER ERROR:", err)
+
+	http.Error(
+		w,
+		"internal server error",
+		http.StatusInternalServerError,
+	)
 }
