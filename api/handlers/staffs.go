@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
 	"aumkeeper/internal/render"
 )
@@ -27,6 +26,9 @@ func (h *StaffsHandler) ServeHTTP(
 	r *http.Request,
 ) {
 
+	// =========================================================
+	// STRICT GET ONLY
+	// =========================================================
 	if r.Method != http.MethodGet {
 
 		http.Error(
@@ -38,23 +40,30 @@ func (h *StaffsHandler) ServeHTTP(
 		return
 	}
 
-	data := viewdata.Layout{
+	// =========================================================
+	// PAGE LAYOUT
+	// =========================================================
+	layout := viewdata.Layout{
 		Title:       "Staff Manager",
 		Description: "Manage staff, roles, and payroll",
 		Year:        time.Now().Year(),
 
+		Page: "staffs",
+
 		IncludeStaffJS: true,
 	}
 
-	templates.ResolvePage(&data)
-
+	// =========================================================
+	// RENDER PAGE
+	// =========================================================
 	h.Renderer.OK(
 		w,
 		"staffs",
 		&render.RenderData{
-			Title:       data.Title,
-			Description: data.Description,
-			Data:        &data,
+			Title:       layout.Title,
+			Description: layout.Description,
+			Page:        layout.Page,
+			Data:        &layout,
 		},
 	)
 }

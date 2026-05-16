@@ -35,7 +35,7 @@ func (h *AddStaffHandler) ServeHTTP(
 	switch r.Method {
 
 	// =========================================================
-	// GET -> Render Add Staff Page
+	// GET -> RENDER ADD STAFF PAGE
 	// =========================================================
 	case http.MethodGet:
 
@@ -43,7 +43,9 @@ func (h *AddStaffHandler) ServeHTTP(
 			Title:       "Add Staff",
 			Description: "Create employee onboarding record for AumKeeper ERP",
 			Year:        time.Now().Year(),
-			Page:        "addstaff",
+
+			Page: "addstaff",
+
 			IncludeStaffJS: true,
 		}
 
@@ -59,51 +61,87 @@ func (h *AddStaffHandler) ServeHTTP(
 		)
 
 	// =========================================================
-	// POST -> Create Staff
+	// POST -> CREATE STAFF
 	// =========================================================
 	case http.MethodPost:
 
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+
+			http.Error(
+				w,
+				err.Error(),
+				http.StatusBadRequest,
+			)
+
 			return
 		}
 
-		dependentClaims, _ := strconv.Atoi(r.FormValue("dependentClaims"))
-		wage, _ := strconv.ParseFloat(r.FormValue("wage"), 64)
+		dependentClaims, err := strconv.Atoi(
+			r.FormValue("dependentClaims"),
+		)
+
+		if err != nil {
+			dependentClaims = 0
+		}
+
+		wage, err := strconv.ParseFloat(
+			r.FormValue("wage"),
+			64,
+		)
+
+		if err != nil {
+			wage = 0
+		}
 
 		staff := domain.Staff{
 			FirstName:        r.FormValue("firstName"),
 			MiddleName:       r.FormValue("middleName"),
 			LastName:         r.FormValue("lastName"),
-			Role:              r.FormValue("role"),
-			Email:             r.FormValue("email"),
-			PhoneNumber:       r.FormValue("phoneNumber"),
-			Street:            r.FormValue("street"),
-			City:              r.FormValue("city"),
-			ZipCode:           r.FormValue("zipCode"),
-			SSN:               r.FormValue("ssn"),
-			TaxFileStatus:     r.FormValue("taxFileStatus"),
-			DependentClaims:   dependentClaims,
-			Wage:              wage,
-			PaymentFrequency:  r.FormValue("paymentFrequency"),
-			Comments:          r.FormValue("comments"),
+			Role:             r.FormValue("role"),
+			Email:            r.FormValue("email"),
+			PhoneNumber:      r.FormValue("phoneNumber"),
+			Street:           r.FormValue("street"),
+			City:             r.FormValue("city"),
+			ZipCode:          r.FormValue("zipCode"),
+			SSN:              r.FormValue("ssn"),
+			TaxFileStatus:    r.FormValue("taxFileStatus"),
+			DependentClaims:  dependentClaims,
+			Wage:             wage,
+			PaymentFrequency: r.FormValue("paymentFrequency"),
+			Comments:         r.FormValue("comments"),
 		}
 
-		_, err := h.StaffService.CreateStaff(r.Context(), staff)
+		_, err = h.StaffService.CreateStaff(
+			r.Context(),
+			staff,
+		)
+
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+
+			http.Error(
+				w,
+				err.Error(),
+				http.StatusBadRequest,
+			)
+
 			return
 		}
 
-		http.Redirect(w, r, "/staffs", http.StatusSeeOther)
+		http.Redirect(
+			w,
+			r,
+			"/staffs",
+			http.StatusSeeOther,
+		)
 
 	// =========================================================
 	// METHOD NOT ALLOWED
 	// =========================================================
 	default:
+
 		http.Error(
 			w,
-			"Method not allowed",
+			http.StatusText(http.StatusMethodNotAllowed),
 			http.StatusMethodNotAllowed,
 		)
 	}

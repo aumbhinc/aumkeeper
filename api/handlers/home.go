@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
 	"aumkeeper/internal/render"
 )
@@ -16,6 +15,7 @@ type HomeHandler struct {
 func NewHomeHandler(
 	renderer render.Renderer,
 ) *HomeHandler {
+
 	return &HomeHandler{
 		Renderer: renderer,
 	}
@@ -26,32 +26,42 @@ func (h *HomeHandler) ServeHTTP(
 	r *http.Request,
 ) {
 
+	// =========================================================
+	// STRICT GET ONLY
+	// =========================================================
 	if r.Method != http.MethodGet {
+
 		http.Error(
 			w,
 			http.StatusText(http.StatusMethodNotAllowed),
 			http.StatusMethodNotAllowed,
 		)
+
 		return
 	}
 
-	data := &viewdata.Layout{
+	// =========================================================
+	// PAGE LAYOUT
+	// =========================================================
+	layout := viewdata.Layout{
 		Title:       "Home",
 		Description: "AumKeeper ERP platform for SMBs",
 		Year:        time.Now().Year(),
-		Page:        "home",
+
+		Page: "home",
 	}
 
-	templates.ResolvePage(data)
-
+	// =========================================================
+	// RENDER PAGE
+	// =========================================================
 	h.Renderer.OK(
 		w,
 		"home",
 		&render.RenderData{
-			Title:       data.Title,
-			Description: data.Description,
-			Page:        data.Page,
-			Data:        data,
+			Title:       layout.Title,
+			Description: layout.Description,
+			Page:        layout.Page,
+			Data:        &layout,
 		},
 	)
 }

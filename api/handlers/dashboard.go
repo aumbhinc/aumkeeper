@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"aumkeeper/api/templates"
 	"aumkeeper/api/viewdata"
 	"aumkeeper/internal/render"
 )
@@ -27,6 +26,9 @@ func (h *DashboardHandler) ServeHTTP(
 	r *http.Request,
 ) {
 
+	// =========================================================
+	// STRICT METHOD CHECK
+	// =========================================================
 	if r.Method != http.MethodGet {
 
 		http.Error(
@@ -38,10 +40,15 @@ func (h *DashboardHandler) ServeHTTP(
 		return
 	}
 
+	// =========================================================
+	// DASHBOARD LAYOUT DATA
+	// =========================================================
 	layout := viewdata.Layout{
 		Title:       "Dashboard",
 		Description: "AumKeeper Executive Control Panel",
 		Year:        time.Now().Year(),
+
+		Page: "dashboard",
 
 		IncludeDashboardJS: true,
 
@@ -71,16 +78,51 @@ func (h *DashboardHandler) ServeHTTP(
 				Icon:   "warning",
 			},
 		},
+
+		RightPanelSections: map[string][]viewdata.RightPanelItem{
+
+			"Accounts": {
+				{
+					Label: "Cash",
+					Value: "$48,200",
+				},
+				{
+					Label: "Accounts Receivable",
+					Value: "$16,440",
+				},
+				{
+					Label: "Inventory",
+					Value: "$87,300",
+				},
+			},
+
+			"Operations": {
+				{
+					Label: "Add Staff",
+					Value: "/addstaff",
+				},
+				{
+					Label: "Timeclock",
+					Value: "/timeclock",
+				},
+				{
+					Label: "Staff Manager",
+					Value: "/staffs",
+				},
+			},
+		},
 	}
 
-	templates.ResolvePage(&layout)
-
+	// =========================================================
+	// RENDER PAGE
+	// =========================================================
 	h.Renderer.OK(
 		w,
 		"dashboard",
 		&render.RenderData{
 			Title:       layout.Title,
 			Description: layout.Description,
+			Page:        layout.Page,
 			Data:        &layout,
 		},
 	)
