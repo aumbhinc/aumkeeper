@@ -27,9 +27,15 @@ type FormData struct {
 	ZipCode         string
 	SSN             string
 	DependentClaims string
-	Wage             string
+	Wage            string
 	Comments        string
 }
+
+/*
+===========================
+RENDER DATA
+===========================
+*/
 
 type RenderData struct {
 	Title       string
@@ -51,17 +57,31 @@ type Renderer struct {
 	Debug bool
 }
 
+/*
+===========================
+CONSTRUCTOR (IMPORTANT)
+===========================
+*/
+func NewRenderer(tmpl *template.Template, debug bool) *Renderer {
+	return &Renderer{
+		Tmpl:  tmpl,
+		Debug: debug,
+	}
+}
+
+/*
+===========================
+RENDER CORE
+===========================
+*/
+
 func (r *Renderer) Render(
 	w http.ResponseWriter,
 	page string,
 	data *RenderData,
 ) {
 	if r == nil || r.Tmpl == nil {
-		http.Error(
-			w,
-			"renderer not initialized",
-			http.StatusInternalServerError,
-		)
+		http.Error(w, "renderer not initialized", http.StatusInternalServerError)
 		return
 	}
 
@@ -82,14 +102,8 @@ func (r *Renderer) Render(
 	t := r.Tmpl.Lookup(page)
 	if t == nil {
 		msg := fmt.Sprintf("template not found: %s", page)
-
 		log.Println("❌", msg)
-
-		http.Error(
-			w,
-			msg,
-			http.StatusInternalServerError,
-		)
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
@@ -102,20 +116,11 @@ func (r *Renderer) Render(
 	err := t.Execute(&buf, data)
 	if err != nil {
 		log.Println("❌ TEMPLATE EXEC ERROR:", err)
-
-		http.Error(
-			w,
-			err.Error(),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set(
-		"Content-Type",
-		"text/html; charset=utf-8",
-	)
-
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
 	_, err = buf.WriteTo(w)
