@@ -52,10 +52,10 @@ func main() {
 	log.Println("✅ Templates loaded successfully")
 
 	// --------------------------------------------------
-	// Renderer
+	// Renderer (FIXED)
 	// --------------------------------------------------
 
-	renderer := render.NewRenderer(templates)
+	renderer := render.NewRenderer(templates, false)
 
 	// --------------------------------------------------
 	// Database
@@ -100,7 +100,7 @@ func main() {
 	}
 
 	// --------------------------------------------------
-	// Handler layer (FIXED: ALL USE *render.Renderer)
+	// Handler layer
 	// --------------------------------------------------
 
 	homeHandler := handlers.NewHomeHandler(renderer)

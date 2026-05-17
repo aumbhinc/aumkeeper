@@ -59,19 +59,20 @@ type Renderer struct {
 
 /*
 ===========================
-CONSTRUCTOR (IMPORTANT)
+CONSTRUCTOR (FIX)
 ===========================
 */
-func NewRenderer(tmpl *template.Template, debug bool) *Renderer {
+
+func NewRenderer(t *template.Template, debug bool) *Renderer {
 	return &Renderer{
-		Tmpl:  tmpl,
+		Tmpl:  t,
 		Debug: debug,
 	}
 }
 
 /*
 ===========================
-RENDER CORE
+CORE RENDER
 ===========================
 */
 
@@ -107,16 +108,12 @@ func (r *Renderer) Render(
 		return
 	}
 
-	if r.Debug {
-		log.Println("✅ Base template found")
-	}
-
 	var buf bytes.Buffer
 
 	err := t.Execute(&buf, data)
 	if err != nil {
 		log.Println("❌ TEMPLATE EXEC ERROR:", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "template execution error", http.StatusInternalServerError)
 		return
 	}
 
@@ -133,6 +130,12 @@ func (r *Renderer) Render(
 		log.Println("✅ [RENDER SUCCESS]")
 	}
 }
+
+/*
+===========================
+HELPER
+===========================
+*/
 
 func (r *Renderer) OK(
 	w http.ResponseWriter,
