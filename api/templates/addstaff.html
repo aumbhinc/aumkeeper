@@ -14,14 +14,14 @@
     --primary:#0ea5e9;
     --primary-dark:#0284c7;
 
-    --bg:#f3f7fb;
+    --bg:#f6f8fc;
     --card:#ffffff;
-    --border:#dbe4ee;
+    --border:#e3e8f0;
 
     --text:#0f172a;
     --muted:#64748b;
 
-    --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(15,23,42,.06);
+    --shadow:0 1px 2px rgba(0,0,0,.03),0 10px 30px rgba(15,23,42,.06);
     --radius:18px;
 }
 
@@ -35,20 +35,20 @@ body{
     font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     background:var(--bg);
     color:var(--text);
-    line-height:1.5;
-    padding:32px 18px 80px;
+    line-height:1.55;
+    padding:34px 18px 90px;
 }
 
-/* FIX: prevents overlap due to sticky stacking */
+/* APP WRAPPER */
 .staff-editor{
-    max-width:1200px;
+    max-width:1180px;
     margin:auto;
     display:flex;
     flex-direction:column;
-    gap:24px;
+    gap:26px;
 }
 
-/* HEADER */
+/* TOP BAR (STEVE CLEAN HEADER) */
 .sticky-banner{
     position:sticky;
     top:14px;
@@ -59,12 +59,14 @@ body{
     justify-content:space-between;
     gap:16px;
 
-    padding:14px 18px;
+    padding:16px 18px;
 
-    background:rgba(255,255,255,.85);
-    backdrop-filter:blur(16px);
+    background:rgba(255,255,255,.8);
+    backdrop-filter:blur(18px);
 
-    border-radius:20px;
+    border:1px solid var(--border);
+    border-radius:22px;
+
     box-shadow:var(--shadow);
 }
 
@@ -78,7 +80,9 @@ body{
     width:48px;
     height:48px;
     border-radius:16px;
+
     background:linear-gradient(135deg,#0ea5e9,#2563eb);
+
     display:flex;
     align-items:center;
     justify-content:center;
@@ -88,11 +92,13 @@ body{
 .banner-title h1{
     font-size:20px;
     font-weight:700;
+    letter-spacing:-0.2px;
 }
 
 .banner-title p{
     font-size:13px;
     color:var(--muted);
+    margin-top:2px;
 }
 
 .banner-actions{
@@ -104,35 +110,54 @@ body{
 .btn{
     border:none;
     border-radius:14px;
-    padding:12px 16px;
-    cursor:pointer;
+    padding:12px 14px;
     font-weight:600;
+    cursor:pointer;
     display:flex;
     align-items:center;
     gap:8px;
+    transition:.15s ease;
     white-space:nowrap;
 }
 
-.btn-primary{background:var(--primary);color:white;}
-.btn-primary:hover{background:var(--primary-dark);}
-.btn-secondary{background:white;border:1px solid var(--border);}
-.btn-danger{background:#fff5f5;color:#ef4444;border:1px solid #fecaca;}
+.btn:hover{
+    transform:translateY(-1px);
+}
 
-/* FIX: prevents card collision */
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+.btn-primary:hover{background:var(--primary-dark);}
+
+.btn-secondary{
+    background:white;
+    border:1px solid var(--border);
+    color:var(--text);
+}
+
+.btn-danger{
+    background:#fff5f5;
+    color:#ef4444;
+    border:1px solid #fecaca;
+}
+
+/* MAIN LAYOUT */
 .content{
     display:grid;
-    grid-template-columns:1fr 320px;
-    gap:24px;
+    grid-template-columns:1fr 340px;
+    gap:26px;
     align-items:start;
 }
 
+/* FORM STACK */
 .main-form{
     display:flex;
     flex-direction:column;
-    gap:24px;
+    gap:22px;
 }
 
-/* FIX: ensures cards never overlap visually */
+/* CARD (CLEAN APP STYLE) */
 .card{
     background:var(--card);
     border-radius:var(--radius);
@@ -142,48 +167,53 @@ body{
     display:flex;
     flex-direction:column;
     gap:18px;
+
+    border:1px solid rgba(227,232,240,.7);
 }
 
 .card-title{
     display:flex;
     align-items:center;
     gap:10px;
+
     font-size:18px;
     font-weight:700;
+    letter-spacing:-0.2px;
 }
 
 .card-subtitle{
+    font-size:13px;
     color:var(--muted);
-    font-size:14px;
+    margin-top:-10px;
 }
 
-/* FIX: grid overflow stability */
+/* FORM GRID (FIXED STABILITY) */
 .form-grid{
     display:grid;
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    gap:18px;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:16px 18px;
 }
 
 .form-row-full{
-    grid-column:1 / -1;
+    grid-column:1/-1;
 }
 
 label{
-    font-size:14px;
-    font-weight:600;
-    margin-bottom:6px;
     display:block;
+    font-size:13px;
+    font-weight:600;
     color:#334155;
+    margin-bottom:6px;
 }
 
 input,select,textarea{
     width:100%;
-    padding:14px 16px;
+    padding:13px 14px;
     border-radius:14px;
     border:1px solid var(--border);
+    font-size:14px;
     background:white;
-    font-size:15px;
-    transition:.2s ease;
+    transition:.15s ease;
 }
 
 input:focus,select:focus,textarea:focus{
@@ -193,37 +223,45 @@ input:focus,select:focus,textarea:focus{
 }
 
 textarea{
-    min-height:130px;
+    min-height:120px;
     resize:vertical;
 }
 
-/* SIDEBAR FIX */
+/* SIDEBAR */
 .sidebar{
     display:flex;
     flex-direction:column;
-    gap:20px;
+    gap:18px;
     position:sticky;
     top:120px;
 }
 
 .info-box{
     background:white;
-    padding:22px;
     border-radius:var(--radius);
+    padding:20px;
+    border:1px solid var(--border);
     box-shadow:var(--shadow);
+
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap:10px;
+}
+
+.info-box strong{
+    font-size:14px;
+    margin-bottom:6px;
 }
 
 .info-item{
-    display:flex;
-    gap:10px;
+    font-size:13px;
     color:var(--muted);
-    font-size:14px;
+    display:flex;
+    gap:8px;
+    line-height:1.4;
 }
 
-/* RESPONSIVE FIX */
+/* RESPONSIVE */
 @media(max-width:960px){
     .content{
         grid-template-columns:1fr;
@@ -236,7 +274,9 @@ textarea{
 }
 
 @media(max-width:700px){
-    body{padding:14px 10px 80px;}
+    body{
+        padding:14px 10px 80px;
+    }
 
     .sticky-banner{
         flex-direction:column;
@@ -277,23 +317,28 @@ textarea{
     </div>
 
     <div class="banner-actions">
+
         <button type="button" class="btn btn-secondary" onclick="history.back()">
-            <span class="material-icons">arrow_back</span>Back
+            <span class="material-icons">arrow_back</span>
+            Back
         </button>
 
         <button type="button" class="btn btn-danger"
             onclick="document.getElementById('newStaffForm').reset()">
-            <span class="material-icons">delete</span>Discard
+            <span class="material-icons">delete</span>
+            Discard
         </button>
 
         <button type="submit" form="newStaffForm" class="btn btn-primary">
-            <span class="material-icons">save</span>Save
+            <span class="material-icons">save</span>
+            Save Staff
         </button>
+
     </div>
 
 </div>
 
-<!-- BODY -->
+<!-- CONTENT -->
 <div class="content">
 
 <form id="newStaffForm" class="main-form" method="POST" action="/addstaff">
@@ -345,7 +390,7 @@ textarea{
 <div class="card">
     <div class="card-title">
         <span class="material-icons">location_on</span>
-        Address
+        Address Information
     </div>
 
     <div class="form-grid">
@@ -361,7 +406,7 @@ textarea{
         </div>
 
         <div>
-            <label>Zip</label>
+            <label>Zip Code</label>
             <input name="zipCode" value="{{.FormData.ZipCode}}" required>
         </div>
 
@@ -372,7 +417,7 @@ textarea{
 <div class="card">
     <div class="card-title">
         <span class="material-icons">payments</span>
-        Payroll
+        Payroll & Compensation
     </div>
 
     <div class="form-grid">
@@ -388,7 +433,7 @@ textarea{
         </div>
 
         <div class="form-row-full">
-            <label>Notes</label>
+            <label>Internal Notes</label>
             <textarea name="comments">{{.FormData.Comments}}</textarea>
         </div>
 
@@ -401,21 +446,24 @@ textarea{
 <aside class="sidebar">
 
 <div class="info-box">
-    <strong>Checklist</strong>
-    <div class="info-item">✔ Verify ID</div>
-    <div class="info-item">✔ W-4 Form</div>
-    <div class="info-item">✔ I-9</div>
-    <div class="info-item">✔ Timeclock Setup</div>
+    <strong>Onboarding Checklist</strong>
+    <div class="info-item">✔ Verify government ID</div>
+    <div class="info-item">✔ W-4 tax form</div>
+    <div class="info-item">✔ I-9 verification</div>
+    <div class="info-item">✔ Timeclock setup</div>
 </div>
 
 <div class="info-box">
     <strong>AumKeeper ERP</strong>
-    <div class="info-item">Secure staff + payroll system</div>
+    <div class="info-item">
+        Secure staff records for payroll, HR, and compliance.
+    </div>
 </div>
 
 </aside>
 
 </div>
+
 </div>
 
 </body>
