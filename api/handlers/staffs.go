@@ -35,6 +35,5 @@ func (h *StaffsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Title:       layout.Title,
 		Description: layout.Description,
 		Page:        "staffs",
-		Data:        layout,
 	})
 }

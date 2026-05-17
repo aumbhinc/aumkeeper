@@ -35,6 +35,5 @@ func (h *DashboardHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Title:       layout.Title,
 		Description: layout.Description,
 		Page:        "dashboard",
-		Data:        layout,
 	})
 }

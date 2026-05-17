@@ -34,6 +34,5 @@ func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Title:       layout.Title,
 		Description: layout.Description,
 		Page:        "home",
-		Data:        layout,
 	})
 }

@@ -1,3 +1,4 @@
+
 package render
 
 import (
@@ -26,15 +27,9 @@ type FormData struct {
 	ZipCode         string
 	SSN             string
 	DependentClaims string
-	Wage            string
+	Wage             string
 	Comments        string
 }
-
-/*
-===========================
-RENDER DATA (CLEAN)
-===========================
-*/
 
 type RenderData struct {
 	Title       string
@@ -62,14 +57,16 @@ func (r *Renderer) Render(
 	data *RenderData,
 ) {
 	if r == nil || r.Tmpl == nil {
-		http.Error(w, "renderer not initialized", http.StatusInternalServerError)
+		http.Error(
+			w,
+			"renderer not initialized",
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
 	if data == nil {
-		data = &RenderData{
-			Errors: map[string]string{},
-		}
+		data = &RenderData{}
 	}
 
 	if data.Errors == nil {
@@ -85,8 +82,14 @@ func (r *Renderer) Render(
 	t := r.Tmpl.Lookup(page)
 	if t == nil {
 		msg := fmt.Sprintf("template not found: %s", page)
+
 		log.Println("❌", msg)
-		http.Error(w, msg, http.StatusInternalServerError)
+
+		http.Error(
+			w,
+			msg,
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
@@ -99,11 +102,20 @@ func (r *Renderer) Render(
 	err := t.Execute(&buf, data)
 	if err != nil {
 		log.Println("❌ TEMPLATE EXEC ERROR:", err)
-		http.Error(w, "template execution error", http.StatusInternalServerError)
+
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set(
+		"Content-Type",
+		"text/html; charset=utf-8",
+	)
+
 	w.WriteHeader(http.StatusOK)
 
 	_, err = buf.WriteTo(w)
