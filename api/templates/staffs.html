@@ -2,13 +2,25 @@
 
 <style>
 :root{
-  --bg:#f6f8fc;
-  --card:#ffffff;
+  --bg:#f5f7fb;
+  --surface:#ffffff;
+  --surface-2:#f8fafc;
   --text:#0f172a;
-  --muted:#6b7280;
+  --muted:#64748b;
   --line:#e5e7eb;
+
   --blue:#2563eb;
-  --soft:#eef5ff;
+  --blue-soft:#eef4ff;
+
+  --green:#16a34a;
+  --orange:#ea580c;
+  --red:#dc2626;
+
+  --radius:18px;
+}
+
+*{
+  box-sizing:border-box;
 }
 
 body{
@@ -18,306 +30,635 @@ body{
   color:var(--text);
 }
 
-/* =======================
-   TOP = ACTION LAYER (DO)
-======================= */
-.topbar{
+/* =========================================
+   TOP ACTION LAYER
+========================================= */
+.staffs-topbar{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:14px 18px;
-  background:transparent;
+  gap:1rem;
+  padding:18px 20px 14px;
 }
 
-.title{
+.topbar-left{
+  display:flex;
+  flex-direction:column;
+}
+
+.eyebrow{
   font-size:11px;
   letter-spacing:.16em;
   text-transform:uppercase;
   color:var(--muted);
 }
 
-.actions{
+.page-title{
+  font-size:1.4rem;
+  font-weight:650;
+  margin-top:2px;
+}
+
+.topbar-actions{
   display:flex;
-  gap:8px;
   flex-wrap:wrap;
+  gap:8px;
 }
 
-.btn{
-  font-size:12px;
-  padding:6px 12px;
+.action-btn{
+  border:none;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:8px 14px;
   border-radius:999px;
-  border:1px solid var(--line);
-  background:white;
+  font-size:12px;
+  font-weight:500;
   cursor:pointer;
-  transition:.15s;
+  transition:.18s ease;
 }
 
-.btn:hover{
+.action-btn:hover{
+  transform:translateY(-1px);
+  border-color:#cbd5e1;
+  box-shadow:0 6px 16px rgba(15,23,42,.06);
+}
+
+.action-btn.primary{
+  background:var(--blue);
+  color:white;
   border-color:var(--blue);
-  color:var(--blue);
 }
 
-/* =======================
-   MAIN JTBD GRID
-======================= */
-.grid{
+/* =========================================
+   MAIN GRID
+========================================= */
+.staffs-grid{
   display:grid;
-  grid-template-columns:1.9fr 1fr; /* LEFT DOMINATES (WHO + CONTROL) */
-  gap:14px;
-  padding:0 14px 14px;
-  height:calc(100vh - 70px);
+  grid-template-columns:1.9fr 1fr;
+  gap:16px;
+  padding:0 20px 20px;
+  min-height:calc(100vh - 90px);
 }
 
-/* =======================
-   LEFT = WHO (CAPACITY)
-======================= */
-.left{
-  background:white;
+/* =========================================
+   LEFT SIDE = STAFF CAPACITY
+========================================= */
+.staffs-left{
+  background:var(--surface);
+  border-radius:var(--radius);
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
-  overflow:auto;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
 }
 
-/* search */
-.search{
+.left-header{
+  padding:18px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(
+    to bottom,
+    #ffffff,
+    #fbfcfe
+  );
+}
+
+.left-title{
+  font-size:1rem;
+  font-weight:600;
+}
+
+.left-sub{
+  margin-top:4px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.staff-search{
+  margin-top:14px;
+}
+
+.staff-search input{
   width:100%;
-  padding:10px;
-  border-radius:10px;
   border:1px solid var(--line);
+  background:var(--surface-2);
+  border-radius:12px;
+  padding:11px 12px;
   font-size:13px;
-  margin-bottom:12px;
   outline:none;
 }
 
-/* staff rows */
-.person{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:.15s;
-  margin-bottom:6px;
-}
-
-.person:hover{
-  background:#f8fafc;
-}
-
-.person.active{
-  background:var(--soft);
-  border:1px solid #bfdbfe;
-}
-
-.name{
-  font-size:13px;
-  font-weight:600;
-}
-
-.role{
-  font-size:11px;
-  color:var(--muted);
-}
-
-/* =======================
-   RIGHT = WHAT (EXECUTION)
-======================= */
-.right{
+.staff-search input:focus{
+  border-color:#bfdbfe;
   background:white;
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
+}
+
+/* STAFF LIST */
+.staff-list{
+  padding:12px;
   overflow:auto;
 }
 
-/* EXECUTION HEADER */
-.header{
-  margin-bottom:12px;
+.staff-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  border-radius:14px;
+  cursor:pointer;
+  transition:.18s ease;
+  margin-bottom:8px;
 }
 
-.header h2{
-  margin:0;
-  font-size:15px;
+.staff-row:hover{
+  background:#f8fafc;
+}
+
+.staff-row.active{
+  background:var(--blue-soft);
+}
+
+.staff-main{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.staff-name{
+  font-size:14px;
   font-weight:600;
 }
 
-.sub{
+.staff-role{
   font-size:12px;
   color:var(--muted);
-  margin-top:4px;
 }
 
-/* TASK FLOW (clean stream) */
-.task{
-  padding:12px 0;
+.staff-load{
+  text-align:right;
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.staff-load strong{
+  display:block;
+  color:var(--text);
+  font-size:12px;
+}
+
+/* =========================================
+   RIGHT SIDE = ASSIGNMENT STREAM
+========================================= */
+.staffs-right{
+  background:var(--surface);
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.right-header{
+  padding:18px;
   border-bottom:1px solid var(--line);
 }
 
-.task-title{
-  font-size:13px;
-  font-weight:500;
+.assignment-title{
+  font-size:1rem;
+  font-weight:600;
 }
 
-.task-meta{
+.assignment-sub{
+  margin-top:4px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* ASSIGNMENT FEED */
+.assignment-feed{
+  padding:10px 16px 16px;
+  overflow:auto;
+}
+
+.assignment{
+  padding:16px 4px;
+  border-bottom:1px solid var(--line);
+}
+
+.assignment:last-child{
+  border-bottom:none;
+}
+
+.assignment-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.assignment-name{
+  font-size:14px;
+  font-weight:600;
+  line-height:1.4;
+}
+
+.assignment-meta{
+  margin-top:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
   font-size:11px;
   color:var(--muted);
-  margin-top:3px;
 }
 
-/* status indicator */
-.dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--blue);
-  display:inline-block;
-  margin-right:6px;
-  vertical-align:middle;
+/* STATUS BADGES */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.04em;
 }
 
-/* =======================
-   MOBILE
-======================= */
-@media(max-width:900px){
-  .grid{
+.badge.todo{
+  background:#eff6ff;
+  color:#2563eb;
+}
+
+.badge.progress{
+  background:#fff7ed;
+  color:#ea580c;
+}
+
+.badge.done{
+  background:#ecfdf5;
+  color:#16a34a;
+}
+
+.priority{
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* MOBILE */
+@media(max-width:980px){
+
+  .staffs-grid{
     grid-template-columns:1fr;
-    height:auto;
   }
+
+}
+
+@media(max-width:640px){
+
+  .staffs-topbar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .topbar-actions{
+    width:100%;
+  }
+
+  .action-btn{
+    flex:1;
+  }
+
 }
 </style>
 
-<!-- =======================
-     TOP: JTBD ACTION LAYER
-======================= -->
-<div class="topbar">
+<!-- =========================================
+     TOPBAR
+========================================= -->
+<section class="staffs-topbar">
 
-  <div class="title">
-    WORK EXECUTION SYSTEM
+  <div class="topbar-left">
+    <div class="eyebrow">
+      Workforce Execution System
+    </div>
+
+    <div class="page-title">
+      Staffs
+    </div>
   </div>
 
-  <div class="actions">
+  <div class="topbar-actions">
+
     <!-- CAPACITY -->
-    <button class="btn" id="addstaff">Add Staff</button>
+    <button class="action-btn" id="addstaff">
+      Add Staff
+    </button>
 
     <!-- EXECUTION -->
-    <button class="btn" id="addtask">Add Task</button>
-    <button class="btn" id="assign">Assign Task</button>
+    <button class="action-btn primary" id="addtask">
+      Add Task
+    </button>
+
+    <button class="action-btn" id="assign-task">
+      Assign Task
+    </button>
 
     <!-- CONTROL -->
-    <button class="btn" id="timeclock-btn">Timeclock</button>
-    <button class="btn" id="reports-btn">Reports</button>
+    <button class="action-btn" id="timeclock-btn">
+      Timeclock
+    </button>
+
+    <button class="action-btn" id="reports-btn">
+      Reports
+    </button>
+
   </div>
 
-</div>
+</section>
 
-<!-- =======================
-     JTBD GRID
-======================= -->
-<div class="grid">
+<!-- =========================================
+     MAIN GRID
+========================================= -->
+<section class="staffs-grid">
 
-  <!-- LEFT: WHO (CAPACITY) -->
-  <aside class="left">
+  <!-- =====================================
+       LEFT = STAFF CAPACITY
+  ====================================== -->
+  <aside class="staffs-left">
 
-    <input class="search" placeholder="Search staff...">
+    <div class="left-header">
 
-    <div class="person active" data-name="John Doe">
-      <div>
-        <div class="name">John Doe</div>
-        <div class="role">General Manager</div>
+      <div class="left-title">
+        Workforce Capacity
       </div>
-      <div class="role">Active</div>
+
+      <div class="left-sub">
+        Select staff to inspect active assignments
+      </div>
+
+      <div class="staff-search">
+        <input
+          type="search"
+          id="staff-search-input"
+          placeholder="Search staff..."
+        >
+      </div>
+
     </div>
 
-    <div class="person" data-name="Jane Smith">
-      <div>
-        <div class="name">Jane Smith</div>
-        <div class="role">Staff</div>
-      </div>
-      <div class="role">Active</div>
-    </div>
+    <div class="staff-list" id="staff-list">
 
-    <div class="person" data-name="Rachel Ying">
-      <div>
-        <div class="name">Rachel Ying</div>
-        <div class="role">Manager</div>
+      <div
+        class="staff-row active"
+        data-id="1"
+        data-name="John Doe"
+      >
+        <div class="staff-main">
+          <div class="staff-name">John Doe</div>
+          <div class="staff-role">
+            General Manager
+          </div>
+        </div>
+
+        <div class="staff-load">
+          <strong>4 Active</strong>
+          1 overdue
+        </div>
       </div>
-      <div class="role">Active</div>
+
+      <div
+        class="staff-row"
+        data-id="2"
+        data-name="Jane Smith"
+      >
+        <div class="staff-main">
+          <div class="staff-name">Jane Smith</div>
+          <div class="staff-role">
+            Staff
+          </div>
+        </div>
+
+        <div class="staff-load">
+          <strong>2 Active</strong>
+          0 overdue
+        </div>
+      </div>
+
+      <div
+        class="staff-row"
+        data-id="3"
+        data-name="Rachel Ying"
+      >
+        <div class="staff-main">
+          <div class="staff-name">Rachel Ying</div>
+          <div class="staff-role">
+            Operations Manager
+          </div>
+        </div>
+
+        <div class="staff-load">
+          <strong>6 Active</strong>
+          2 overdue
+        </div>
+      </div>
+
     </div>
 
   </aside>
 
-  <!-- RIGHT: WHAT (EXECUTION ONLY) -->
-  <main class="right">
+  <!-- =====================================
+       RIGHT = ASSIGNMENT EXECUTION FEED
+  ====================================== -->
+  <main class="staffs-right">
 
-    <div class="header">
-      <h2>Task Execution Stream</h2>
-      <div class="sub">Work assigned to selected staff</div>
+    <div class="right-header">
+
+      <div class="assignment-title" id="assignment-title">
+        Assignment Stream
+      </div>
+
+      <div class="assignment-sub" id="assignment-sub">
+        Active work assigned to John Doe
+      </div>
+
     </div>
 
-    <div class="task">
-      <div class="task-title">
-        <span class="dot"></span>
-        Design UI system
-      </div>
-      <div class="task-meta">High priority • Due tomorrow</div>
-    </div>
+    <div class="assignment-feed" id="assignment-feed">
 
-    <div class="task">
-      <div class="task-title">
-        <span class="dot"></span>
-        Review onboarding flow
-      </div>
-      <div class="task-meta">Medium priority • Due in 3 days</div>
-    </div>
+      <!-- ASSIGNMENT -->
+      <div class="assignment">
 
-    <div class="task">
-      <div class="task-title">
-        <span class="dot"></span>
-        Fix dashboard renderer bug
+        <div class="assignment-top">
+
+          <div>
+            <div class="assignment-name">
+              Design AumKeeper inventory workflow
+            </div>
+
+            <div class="assignment-meta">
+              <span>Due tomorrow</span>
+              <span>High priority</span>
+            </div>
+          </div>
+
+          <div class="badge progress">
+            In Progress
+          </div>
+
+        </div>
+
       </div>
-      <div class="task-meta">Critical • Due today</div>
+
+      <!-- ASSIGNMENT -->
+      <div class="assignment">
+
+        <div class="assignment-top">
+
+          <div>
+            <div class="assignment-name">
+              Review onboarding sequence
+            </div>
+
+            <div class="assignment-meta">
+              <span>Due in 3 days</span>
+              <span>Medium priority</span>
+            </div>
+          </div>
+
+          <div class="badge todo">
+            Assigned
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ASSIGNMENT -->
+      <div class="assignment">
+
+        <div class="assignment-top">
+
+          <div>
+            <div class="assignment-name">
+              Fix renderer deployment issue
+            </div>
+
+            <div class="assignment-meta">
+              <span>Due today</span>
+              <span>Critical</span>
+            </div>
+          </div>
+
+          <div class="badge done">
+            Completed
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
   </main>
 
-</div>
+</section>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  let selected = "John Doe";
+  let selectedStaff = {
+    id: 1,
+    name: "John Doe"
+  };
 
-  const assignBtn = document.getElementById("assign");
+  /* =====================================
+     ROUTING
+  ====================================== */
+  const go = (id, url) => {
+    const el = document.getElementById(id);
 
-  function wire(){
-    const go = (id,url)=>{
-      const el=document.getElementById(id);
-      if(el) el.onclick=()=>window.location.href=url;
-    };
+    if(!el) return;
 
-    go("addstaff","/addstaff");
-    go("addtask","/addtask");
-    go("timeclock-btn","/timeclock");
-    go("reports-btn","/staff-reports");
-
-    if(assignBtn){
-      assignBtn.onclick = () => {
-        alert("Assigning task to: " + selected);
-      };
-    }
-  }
-
-  document.querySelectorAll(".person").forEach(p=>{
-    p.addEventListener("click", ()=>{
-      document.querySelectorAll(".person").forEach(x=>x.classList.remove("active"));
-      p.classList.add("active");
-      selected = p.dataset.name;
+    el.addEventListener("click", () => {
+      window.location.href = url;
     });
+  };
+
+  go("addstaff", "/addstaff");
+  go("addtask", "/addtask");
+  go("timeclock-btn", "/timeclock");
+  go("reports-btn", "/staff-reports");
+
+  /* =====================================
+     STAFF SELECTION
+  ====================================== */
+  const rows = document.querySelectorAll(".staff-row");
+
+  const title = document.getElementById("assignment-title");
+  const sub = document.getElementById("assignment-sub");
+
+  rows.forEach(row => {
+
+    row.addEventListener("click", () => {
+
+      rows.forEach(r => r.classList.remove("active"));
+      row.classList.add("active");
+
+      selectedStaff = {
+        id: row.dataset.id,
+        name: row.dataset.name
+      };
+
+      title.innerText = "Assignment Stream";
+      sub.innerText =
+        "Active work assigned to " + selectedStaff.name;
+
+      /*
+        Future:
+        fetch('/api/staff/' + selectedStaff.id + '/assignments')
+      */
+
+    });
+
   });
 
-  wire();
+  /* =====================================
+     SEARCH
+  ====================================== */
+  const searchInput =
+    document.getElementById("staff-search-input");
+
+  searchInput?.addEventListener("input", (e) => {
+
+    const q = e.target.value.toLowerCase();
+
+    rows.forEach(row => {
+
+      const name =
+        row.dataset.name.toLowerCase();
+
+      row.style.display =
+        name.includes(q) ? "flex" : "none";
+
+    });
+
+  });
+
+  /* =====================================
+     ASSIGN TASK
+  ====================================== */
+  const assignBtn =
+    document.getElementById("assign-task");
+
+  assignBtn?.addEventListener("click", () => {
+
+    alert(
+      "Assigning work to " + selectedStaff.name
+    );
+
+  });
+
 });
 </script>
 
