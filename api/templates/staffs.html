@@ -2,12 +2,13 @@
 
 <style>
 :root{
-  --bg:#f5f7fb;
+  --bg:#f6f8fc;
   --card:#ffffff;
   --text:#0f172a;
   --muted:#6b7280;
-  --line:#eaeef5;
+  --line:#e5e7eb;
   --blue:#2563eb;
+  --soft:#eff6ff;
 }
 
 body{
@@ -17,7 +18,9 @@ body{
   color:var(--text);
 }
 
-/* TOP BAR — ultra light */
+/* =======================
+   TOP COMMAND BAR
+======================= */
 .topbar{
   display:flex;
   justify-content:space-between;
@@ -35,6 +38,7 @@ body{
 .actions{
   display:flex;
   gap:8px;
+  flex-wrap:wrap;
 }
 
 .btn{
@@ -52,17 +56,26 @@ body{
   color:var(--blue);
 }
 
-/* MAIN */
-.container{
+/* =======================
+   MAIN LAYOUT
+======================= */
+.grid{
   display:grid;
-  grid-template-columns:240px 1fr;
-  gap:18px;
-  padding:0 18px 18px;
+  grid-template-columns:2.2fr 1fr;
+  gap:14px;
+  padding:0 14px 14px;
+  height:calc(100vh - 70px);
 }
 
-/* LEFT = SOFT LIST (NOT PANEL) */
+/* =======================
+   LEFT (WHO)
+======================= */
 .left{
-  padding-top:6px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  overflow:auto;
 }
 
 .search{
@@ -71,18 +84,19 @@ body{
   border-radius:10px;
   border:1px solid var(--line);
   font-size:13px;
-  margin-bottom:10px;
+  margin-bottom:12px;
   outline:none;
-  background:white;
 }
 
-/* softer list items */
 .person{
-  padding:10px 10px;
-  border-radius:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  border-radius:12px;
   cursor:pointer;
+  margin-bottom:8px;
   transition:.15s;
-  margin-bottom:6px;
 }
 
 .person:hover{
@@ -90,7 +104,8 @@ body{
 }
 
 .person.active{
-  background:#eef5ff;
+  background:var(--soft);
+  border:1px solid #bfdbfe;
 }
 
 .name{
@@ -99,45 +114,47 @@ body{
 }
 
 .role{
-  font-size:12px;
+  font-size:11px;
   color:var(--muted);
 }
 
-/* RIGHT = HERO FOCUS AREA */
+/* =======================
+   RIGHT (WHAT)
+======================= */
 .right{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:12px;
 }
 
-/* HERO (soft focus card) */
+/* HERO */
 .hero{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:18px;
-  padding:22px;
+  border-radius:16px;
+  padding:18px;
 }
 
 .hero h1{
   margin:0;
-  font-size:20px;
+  font-size:18px;
   font-weight:600;
 }
 
 .meta{
-  font-size:13px;
+  font-size:12px;
   color:var(--muted);
   margin-top:4px;
 }
 
-/* KPIs — very soft */
+/* KPI */
 .kpis{
-  display:flex;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
 
 .kpi{
-  flex:1;
   background:var(--card);
   border:1px solid var(--line);
   border-radius:14px;
@@ -154,7 +171,7 @@ body{
   color:var(--muted);
 }
 
-/* CONTENT — no harsh grid feeling */
+/* PANELS */
 .content{
   display:flex;
   gap:12px;
@@ -185,13 +202,16 @@ body{
   margin-bottom:6px;
 }
 
-/* MOBILE */
+/* =======================
+   MOBILE
+======================= */
 @media(max-width:900px){
-  .container{
+  .grid{
     grid-template-columns:1fr;
+    height:auto;
   }
   .kpis{
-    flex-direction:column;
+    grid-template-columns:1fr;
   }
   .content{
     flex-direction:column;
@@ -199,66 +219,95 @@ body{
 }
 </style>
 
-<!-- TOP -->
+<!-- =======================
+     TOP BAR (CONTEXT-AWARE)
+======================= -->
 <div class="topbar">
-  <div class="title">Staff Operations</div>
 
-  <div class="actions">
+  <div class="title" id="context-title">
+    Staff Operations Console
+  </div>
+
+  <div class="actions" id="command-bar">
+
+    <!-- GLOBAL MODE DEFAULT -->
+    <button class="btn" id="addtask">Add Task</button>
     <button class="btn" id="addstaff">Add Staff</button>
+    <button class="btn" id="bulk-assign">Bulk Assign</button>
     <button class="btn" id="timeclock-btn">Timeclock</button>
     <button class="btn" id="payroll-btn">Payroll</button>
     <button class="btn" id="reports-btn">Reports</button>
+
   </div>
+
 </div>
 
-<!-- BODY -->
-<div class="container">
+<!-- =======================
+     MAIN GRID
+======================= -->
+<div class="grid">
 
-  <!-- LEFT -->
+  <!-- LEFT: WHO -->
   <aside class="left">
+
     <input class="search" placeholder="Search staff...">
 
-    <div class="person active">
-      <div class="name">John Doe</div>
-      <div class="role">General Manager</div>
+    <div class="person active" data-name="John Doe">
+      <div>
+        <div class="name">John Doe</div>
+        <div class="role">General Manager</div>
+      </div>
+      <div class="role">92%</div>
     </div>
 
-    <div class="person">
-      <div class="name">Jane Smith</div>
-      <div class="role">Staff</div>
+    <div class="person" data-name="Jane Smith">
+      <div>
+        <div class="name">Jane Smith</div>
+        <div class="role">Staff</div>
+      </div>
+      <div class="role">88%</div>
     </div>
 
-    <div class="person">
-      <div class="name">Rachel Ying</div>
-      <div class="role">Manager</div>
+    <div class="person" data-name="Rachel Ying">
+      <div>
+        <div class="name">Rachel Ying</div>
+        <div class="role">Manager</div>
+      </div>
+      <div class="role">95%</div>
     </div>
+
   </aside>
 
-  <!-- RIGHT -->
+  <!-- RIGHT: WHAT -->
   <main class="right">
 
+    <!-- HERO -->
     <div class="hero">
-      <h1>John Doe</h1>
-      <div class="meta">General Manager • Active • HR Core Unit</div>
+      <h1 id="selected-name">John Doe</h1>
+      <div class="meta" id="selected-meta">
+        General Manager • Active • HR Core Unit
+      </div>
     </div>
 
+    <!-- KPI -->
     <div class="kpis">
       <div class="kpi">
+        <div class="v">4 Tasks</div>
+        <div class="l">Active workload</div>
+      </div>
+
+      <div class="kpi">
         <div class="v">92%</div>
-        <div class="l">Task Completion</div>
+        <div class="l">Completion rate</div>
       </div>
 
       <div class="kpi">
         <div class="v">88%</div>
-        <div class="l">On-time Rate</div>
-      </div>
-
-      <div class="kpi">
-        <div class="v">4</div>
-        <div class="l">Active Tasks</div>
+        <div class="l">On-time rate</div>
       </div>
     </div>
 
+    <!-- CONTENT -->
     <div class="content">
 
       <div class="card">
@@ -270,7 +319,7 @@ body{
       <div class="card">
         <h3>Evaluation</h3>
         <div style="font-size:12px;color:var(--muted);line-height:1.6;">
-          Strong execution consistency. Minor slowdown under peak workload conditions.
+          Strong execution consistency with minor delays under peak workload.
         </div>
       </div>
 
@@ -280,17 +329,93 @@ body{
 
 </div>
 
+<!-- =======================
+     CONTEXT ENGINE
+======================= -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const go = (id,url)=>{
-    const el=document.getElementById(id);
-    if(el) el.onclick=()=>window.location.href=url;
-  };
 
-  go("addstaff","/addstaff");
-  go("timeclock-btn","/timeclock");
-  go("payroll-btn","/payroll");
-  go("reports-btn","/staff-reports");
+  let selected = "John Doe";
+
+  const title = document.getElementById("context-title");
+  const nameEl = document.getElementById("selected-name");
+  const metaEl = document.getElementById("selected-meta");
+  const bar = document.getElementById("command-bar");
+
+  function setGlobalMode(){
+    title.innerText = "Staff Operations Console";
+    nameEl.innerText = "All Staff";
+    metaEl.innerText = "Workforce Overview • Global Mode";
+
+    bar.innerHTML = `
+      <button class="btn" id="addtask">Add Task</button>
+      <button class="btn" id="addstaff">Add Staff</button>
+      <button class="btn" id="bulk-assign">Bulk Assign</button>
+      <button class="btn" id="timeclock-btn">Timeclock</button>
+      <button class="btn" id="payroll-btn">Payroll</button>
+      <button class="btn" id="reports-btn">Reports</button>
+    `;
+
+    wire();
+  }
+
+  function setPersonMode(name){
+    selected = name;
+
+    title.innerText = "Staff Focus Mode";
+    nameEl.innerText = name;
+    metaEl.innerText = "Individual Performance & Task Control";
+
+    bar.innerHTML = `
+      <button class="btn" id="addtask">Add Task</button>
+      <button class="btn" id="assign">Assign to ${name}</button>
+      <button class="btn" id="evaluate">Evaluate</button>
+      <button class="btn" id="message">Message</button>
+      <button class="btn" id="timeclock-btn">Timeclock</button>
+    `;
+
+    wire();
+  }
+
+  function wire(){
+
+    const go = (id,url)=>{
+      const el=document.getElementById(id);
+      if(el) el.onclick=()=>window.location.href=url;
+    };
+
+    go("addstaff","/addstaff");
+    go("addtask","/addtask");
+    go("bulk-assign","/assign");
+    go("timeclock-btn","/timeclock");
+    go("payroll-btn","/payroll");
+    go("reports-btn","/staff-reports");
+
+    const assign = document.getElementById("assign");
+    if(assign){
+      assign.onclick = ()=>alert("Assigning task to " + selected);
+    }
+
+    const evalBtn = document.getElementById("evaluate");
+    if(evalBtn){
+      evalBtn.onclick = ()=>alert("Evaluating " + selected);
+    }
+
+    const msg = document.getElementById("message");
+    if(msg){
+      msg.onclick = ()=>alert("Messaging " + selected);
+    }
+  }
+
+  document.querySelectorAll(".person").forEach(p=>{
+    p.addEventListener("click", ()=>{
+      document.querySelectorAll(".person").forEach(x=>x.classList.remove("active"));
+      p.classList.add("active");
+      setPersonMode(p.dataset.name);
+    });
+  });
+
+  wire();
 });
 </script>
 
