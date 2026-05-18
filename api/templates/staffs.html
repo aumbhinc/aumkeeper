@@ -2,13 +2,13 @@
 
 <style>
 :root{
-  --bg:#f6f8fc;
+  --bg:#f5f7fb;
   --card:#ffffff;
   --text:#0f172a;
   --muted:#6b7280;
-  --line:#e5e7eb;
+  --line:#e6eaf0;
   --blue:#2563eb;
-  --soft:#eff6ff;
+  --soft:#eef5ff;
 }
 
 body{
@@ -18,7 +18,7 @@ body{
   color:var(--text);
 }
 
-/* TOP BAR */
+/* TOP BAR (minimal, premium SaaS feel) */
 .topbar{
   display:flex;
   justify-content:space-between;
@@ -27,8 +27,8 @@ body{
 }
 
 .title{
-  font-size:12px;
-  letter-spacing:.14em;
+  font-size:11px;
+  letter-spacing:.16em;
   text-transform:uppercase;
   color:var(--muted);
 }
@@ -40,46 +40,60 @@ body{
 
 .btn{
   font-size:12px;
-  padding:6px 10px;
+  padding:6px 12px;
   border-radius:999px;
   border:1px solid var(--line);
   background:white;
   cursor:pointer;
+  transition:.15s;
 }
 
-/* MAIN LAYOUT */
+.btn:hover{
+  border-color:var(--blue);
+  color:var(--blue);
+}
+
+/* MAIN GRID (LEFT BIGGER NOW) */
 .grid{
   display:grid;
-  grid-template-columns:320px 1fr; /* LEFT dominates control clarity */
+  grid-template-columns:1.8fr 1fr; /* 🔥 LEFT DOMINATES */
   gap:14px;
   padding:0 14px 14px;
   height:calc(100vh - 70px);
 }
 
-/* LEFT = WHO */
+/* =======================
+   LEFT = WHO (PRIMARY ZONE)
+======================= */
 .left{
   background:white;
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
+  border-radius:18px;
+  padding:16px;
   overflow:auto;
 }
 
+/* search minimal */
 .search{
   width:100%;
-  padding:10px;
-  border-radius:10px;
+  padding:11px;
+  border-radius:12px;
   border:1px solid var(--line);
   font-size:13px;
-  margin-bottom:10px;
+  margin-bottom:14px;
+  outline:none;
 }
 
+/* STAFF LIST = premium rows (not cards) */
 .person{
-  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 12px;
   border-radius:12px;
   cursor:pointer;
-  margin-bottom:8px;
   transition:.15s;
+  margin-bottom:6px;
 }
 
 .person:hover{
@@ -88,60 +102,77 @@ body{
 
 .person.active{
   background:var(--soft);
-  border:1px solid #bfdbfe;
 }
 
 .name{
-  font-size:13px;
+  font-size:14px;
   font-weight:600;
 }
 
 .role{
-  font-size:11px;
+  font-size:12px;
   color:var(--muted);
 }
 
-/* RIGHT = TASK STREAM ONLY */
+.score{
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* =======================
+   RIGHT = TASK STREAM ONLY
+======================= */
 .right{
   background:white;
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
+  border-radius:18px;
+  padding:16px;
   overflow:auto;
 }
 
 /* HEADER */
-.task-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.header{
   margin-bottom:12px;
 }
 
-.task-header h2{
+.header h2{
   margin:0;
   font-size:16px;
+  font-weight:600;
 }
 
 .sub{
   font-size:12px;
   color:var(--muted);
+  margin-top:4px;
 }
 
-/* TASKS ONLY FOCUS */
+/* TASK STREAM (flow style, not boxed UI) */
 .task{
-  padding:12px;
-  border-left:3px solid var(--blue);
-  background:#f8fafc;
-  border-radius:10px;
-  margin-bottom:8px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.task-title{
   font-size:13px;
+  font-weight:500;
 }
 
 .task-meta{
   font-size:11px;
   color:var(--muted);
-  margin-top:4px;
+  margin-top:3px;
+}
+
+/* priority indicator */
+.dot{
+  display:inline-block;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--blue);
+  margin-right:6px;
+  vertical-align:middle;
 }
 
 /* MOBILE */
@@ -154,7 +185,7 @@ body{
 
 <!-- TOP -->
 <div class="topbar">
-  <div class="title">Staff Operations</div>
+  <div class="title">Staff Operations Console</div>
 
   <div class="actions">
     <button class="btn">Add Task</button>
@@ -167,51 +198,58 @@ body{
 <!-- GRID -->
 <div class="grid">
 
-  <!-- LEFT: WHO -->
+  <!-- LEFT (BIG WHO SPACE) -->
   <aside class="left">
 
     <input class="search" placeholder="Search staff...">
 
     <div class="person active">
-      <div class="name">John Doe</div>
-      <div class="role">General Manager</div>
+      <div>
+        <div class="name">John Doe</div>
+        <div class="role">General Manager</div>
+      </div>
+      <div class="score">92%</div>
     </div>
 
     <div class="person">
-      <div class="name">Jane Smith</div>
-      <div class="role">Staff</div>
+      <div>
+        <div class="name">Jane Smith</div>
+        <div class="role">Staff</div>
+      </div>
+      <div class="score">88%</div>
     </div>
 
     <div class="person">
-      <div class="name">Rachel Ying</div>
-      <div class="role">Manager</div>
+      <div>
+        <div class="name">Rachel Ying</div>
+        <div class="role">Manager</div>
+      </div>
+      <div class="score">95%</div>
     </div>
 
   </aside>
 
-  <!-- RIGHT: TASK STREAM ONLY -->
+  <!-- RIGHT (TASK STREAM ONLY) -->
   <main class="right">
 
-    <div class="task-header">
-      <div>
-        <h2>Tasks</h2>
-        <div class="sub">Assigned to selected staff</div>
-      </div>
+    <div class="header">
+      <h2>Task Stream</h2>
+      <div class="sub">Assigned work for selected staff</div>
     </div>
 
     <div class="task">
-      Design UI system
-      <div class="task-meta">Due: Tomorrow • High Priority</div>
+      <div class="task-title"><span class="dot"></span>Design UI system</div>
+      <div class="task-meta">Due tomorrow • High priority</div>
     </div>
 
     <div class="task">
-      Review onboarding flow
-      <div class="task-meta">Due: 3 days • Medium Priority</div>
+      <div class="task-title"><span class="dot"></span>Review onboarding flow</div>
+      <div class="task-meta">Due in 3 days • Medium priority</div>
     </div>
 
     <div class="task">
-      Fix dashboard renderer bug
-      <div class="task-meta">Due: Today • Critical</div>
+      <div class="task-title"><span class="dot"></span>Fix dashboard renderer bug</div>
+      <div class="task-meta">Due today • Critical</div>
     </div>
 
   </main>
