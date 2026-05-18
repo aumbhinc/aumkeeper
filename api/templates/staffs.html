@@ -1,224 +1,251 @@
 {{ define "staffs" }}
 
 <style>
-.staffs-header{
-  display:flex;
-  flex-direction:column;
-  gap:1rem;
-  margin-bottom:1.5rem;
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --primary:#2563eb;
+  --shadow:0 10px 25px rgba(0,0,0,.06);
 }
 
-.center-title{
-  font-size:1.6rem;
-  font-weight:600;
-  color:#0f172a;
+body{
+  background:var(--bg);
 }
 
-/* Search form */
-.search-form{
+/* TOP ACTION BAR */
+.staffs-topbar{
   display:flex;
-  flex-wrap:wrap;
-  gap:.5rem;
+  justify-content:space-between;
   align-items:center;
-}
-
-#search-input{
-  padding:.5rem;
-  border-radius:.5rem;
-  border:1px solid #cbd5e1;
-}
-
-#search-button{
-  padding:.5rem .8rem;
-  border-radius:.6rem;
-  border:none;
-  background:#2563eb;
-  color:white;
-  cursor:pointer;
-  transition:.25s;
-}
-#search-button:hover{ background:#1d4ed8; }
-
-/* Action buttons outside form */
-.staff-action-buttons{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.5rem;
-  margin-top:.5rem;
-}
-
-.add-staff-button{
-  background:#0f172a;
-  color:white;
-  border:none;
-  padding:.5rem .8rem;
-  border-radius:.6rem;
-  cursor:pointer;
-  font-size:.85rem;
-  display:flex;
-  align-items:center;
-  gap:.3rem;
-  transition:.25s;
-}
-.add-staff-button:hover{
-  background:#1e293b;
-  transform:translateY(-1px);
-}
-
-#open-tasks{
-  margin-top:1rem;
-}
-
-#staff-list{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
   gap:1rem;
-  list-style:none;
-  padding:0;
-}
-
-.staff-item{
+  padding:1rem;
   background:white;
   border-radius:1rem;
+  box-shadow:var(--shadow);
+  margin-bottom:1rem;
+}
+
+.top-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+
+.btn{
+  padding:.5rem .8rem;
+  border-radius:.6rem;
+  border:none;
+  cursor:pointer;
+  font-size:.85rem;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  transition:.2s;
+}
+
+.btn-primary{background:#0f172a;color:white;}
+.btn-primary:hover{background:#1e293b;}
+
+.btn-blue{background:var(--primary);color:white;}
+.btn-blue:hover{background:#1d4ed8;}
+
+/* MAIN LAYOUT */
+.staffs-layout{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:1rem;
+}
+
+/* LEFT PANEL (WHO) */
+.staffs-left{
+  background:white;
+  border-radius:1rem;
+  box-shadow:var(--shadow);
   padding:1rem;
-  box-shadow:0 10px 20px rgba(0,0,0,.05);
+  height:calc(100vh - 140px);
+  overflow:auto;
+}
+
+.search-box{
+  width:100%;
+  padding:.5rem;
+  border:1px solid #e2e8f0;
+  border-radius:.6rem;
+  margin-bottom:.8rem;
+}
+
+.staff-list{
   display:flex;
   flex-direction:column;
   gap:.5rem;
-  transition:.25s;
-}
-.staff-item:hover{
-  transform:translateY(-2px);
-  box-shadow:0 12px 22px rgba(0,0,0,.08);
 }
 
-.staff-details p{
+.staff-card{
+  padding:.8rem;
+  border-radius:.8rem;
+  cursor:pointer;
+  transition:.2s;
+  border:1px solid transparent;
+}
+
+.staff-card:hover{
+  background:#f8fafc;
+}
+
+.staff-card.active{
+  border:1px solid var(--primary);
+  background:#eff6ff;
+}
+
+/* RIGHT PANEL (WHAT) */
+.staffs-right{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+
+.panel{
+  background:white;
+  border-radius:1rem;
+  box-shadow:var(--shadow);
+  padding:1rem;
+}
+
+.staff-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.badge{
+  font-size:.75rem;
+  padding:.2rem .5rem;
+  border-radius:999px;
+  background:#e2e8f0;
+}
+
+/* TASKS */
+.task{
+  padding:.6rem;
+  border-left:3px solid var(--primary);
+  margin-bottom:.5rem;
+  background:#f8fafc;
+  border-radius:.5rem;
+}
+
+.small{
   font-size:.85rem;
-  color:#334155;
+  color:var(--muted);
 }
 
-.staff-item h3{
-  font-size:.9rem;
-  margin-top:.5rem;
-  color:#0f172a;
-}
-
-.staff-item p{
-  font-size:.8rem;
-  color:#475569;
-}
-
-@media(max-width:600px){
-  .search-form, .staff-action-buttons{flex-direction:column;align-items:stretch;}
-  #search-input{width:100%;}
+/* MOBILE */
+@media(max-width:900px){
+  .staffs-layout{
+    grid-template-columns:1fr;
+  }
+  .staffs-left{
+    height:auto;
+  }
 }
 </style>
 
-<section class="staffs-header">
-  <h1 class="center-title">Staffs Manager</h1>
+<!-- TOP BAR -->
+<section class="staffs-topbar">
+  <h2 style="margin:0;font-size:1.2rem;">Staffs Manager</h2>
 
-  <!-- SEARCH FORM -->
-  <form class="search-form" autocomplete="off">
-    <input type="search" id="search-input" placeholder="Search staffs...">
-    <button type="button" id="search-button">Search</button>
-  </form>
+  <div class="top-actions">
+    <button class="btn btn-blue" id="addstaff">
+      <span class="material-icons-sharp">person_add</span> Add Staff
+    </button>
 
-  <!-- ACTION BUTTONS OUTSIDE FORM -->
-  <div class="staff-action-buttons">
-    <button type="button" id="addstaff" class="add-staff-button">
-      <span class="material-icons-sharp">person_add</span>Add Staff
-    </button>
-    <button type="button" id="schedule-btn" class="add-staff-button">
-      <span class="material-icons-sharp">schedule</span>Schedule
-    </button>
-    <button type="button" id="timeclock-btn" class="add-staff-button">
-      <span class="material-icons-sharp">access_time</span>Timeclock
-    </button>
-    <button type="button" id="hiring-btn" class="add-staff-button">
-      <span class="material-icons-sharp">person_add</span>Hiring
-    </button>
-    <button type="button" id="payroll-btn" class="add-staff-button">
-      <span class="material-icons-sharp">payments</span>Payroll
-    </button>
-    <button type="button" id="reports-btn" class="add-staff-button">
-      <span class="material-icons-sharp">analytics</span>Reports
-    </button>
+    <button class="btn btn-primary" id="timeclock-btn">Timeclock</button>
+    <button class="btn btn-primary" id="payroll-btn">Payroll</button>
+    <button class="btn btn-primary" id="reports-btn">Reports</button>
   </div>
 </section>
 
-<section id="open-tasks">
-  <h2 id="opentasktitle">Active Staffs</h2>
+<!-- MAIN LAYOUT -->
+<section class="staffs-layout">
 
-  <ul id="staff-list">
-    <li class="staff-item">
-      <div class="staff-details">
-        <p><strong>Name:</strong> John Doe</p>
-        <p><strong>Role:</strong> General Manager</p>
-        <p><strong>Task Score:</strong> 90/91</p>
-        <p><strong>Pay:</strong> $9000/month</p>
-      </div>
-      <h3>Task Assigned</h3>
-      <p>Design the user interface for the new project.</p>
-    </li>
+  <!-- LEFT: WHO -->
+  <aside class="staffs-left">
+    <input class="search-box" id="search-input" placeholder="Search staff...">
 
-    <li class="staff-item">
-      <div class="staff-details">
-        <p><strong>Name:</strong> Jane Smith</p>
-        <p><strong>Role:</strong> Staff</p>
-        <p><strong>Task Score:</strong> 90/91</p>
-        <p><strong>Pay:</strong> $17/hour</p>
-      </div>
-      <h3>Task Assigned</h3>
-      <p>Design the user interface for the new project.</p>
-    </li>
+    <div class="staff-list" id="staff-list">
 
-    <li class="staff-item">
-      <div class="staff-details">
-        <p><strong>Name:</strong> Rachel Ying</p>
-        <p><strong>Role:</strong> Manager</p>
-        <p><strong>Task Score:</strong> 100/91</p>
-        <p><strong>Pay:</strong> $5000/month</p>
+      <div class="staff-card active">
+        <strong>John Doe</strong>
+        <div class="small">General Manager</div>
       </div>
-      <h3>Task Assigned</h3>
-      <p>Design the user interface for the new project.</p>
-    </li>
-  </ul>
+
+      <div class="staff-card">
+        <strong>Jane Smith</strong>
+        <div class="small">Staff</div>
+      </div>
+
+      <div class="staff-card">
+        <strong>Rachel Ying</strong>
+        <div class="small">Manager</div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- RIGHT: WHAT -->
+  <main class="staffs-right">
+
+    <!-- OVERVIEW -->
+    <div class="panel">
+      <div class="staff-header">
+        <div>
+          <h3 style="margin:0;">John Doe</h3>
+          <div class="small">General Manager • Active</div>
+        </div>
+        <span class="badge">Task Score: 90%</span>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="panel">
+      <h4 style="margin-top:0;">Assigned Tasks</h4>
+
+      <div class="task">
+        Design UI for new project
+      </div>
+
+      <div class="task">
+        Review onboarding pipeline
+      </div>
+
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="panel">
+      <h4 style="margin-top:0;">Performance</h4>
+      <div class="small">Completion Rate: 92%</div>
+      <div class="small">On-time Rate: 88%</div>
+    </div>
+
+  </main>
+
 </section>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const redirectButton = (id, url) => {
-    const btn = document.getElementById(id);
-    if(!btn) return;
-    const handler = (e)=>{
-      e.preventDefault(); 
-      window.location.href = url;
-    };
-    btn.addEventListener("click", handler);
-    btn.addEventListener("touchstart", handler);
-  }
 
-  // Action buttons
-  redirectButton("addstaff","/addstaff");
-  redirectButton("schedule-btn","/schedule");
-  redirectButton("timeclock-btn","/timeclock");
-  redirectButton("hiring-btn","/hiring");
-  redirectButton("payroll-btn","/payroll");
-  redirectButton("reports-btn","/staff-reports");
+  const redirect = (id, url) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.onclick = () => window.location.href = url;
+  };
 
-  // Search functionality
-  const searchBtn = document.getElementById("search-button");
-  const searchInput = document.getElementById("search-input");
-  searchBtn?.addEventListener("click", (e)=>{
-    e.preventDefault();
-    const query = searchInput.value.toLowerCase();
-    const staffItems = document.querySelectorAll(".staff-item");
-    staffItems.forEach(item=>{
-      const nameElem = item.querySelector(".staff-details p strong");
-      const name = nameElem ? nameElem.parentNode.textContent.toLowerCase() : "";
-      item.style.display = name.includes(query) ? "flex" : "none";
-    });
-  });
+  redirect("addstaff","/addstaff");
+  redirect("timeclock-btn","/timeclock");
+  redirect("payroll-btn","/payroll");
+  redirect("reports-btn","/staff-reports");
+
 });
 </script>
 
