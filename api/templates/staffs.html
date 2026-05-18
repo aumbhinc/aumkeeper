@@ -8,7 +8,7 @@
   --muted:#64748b;
   --line:#e5e7eb;
   --blue:#2563eb;
-  --blue-soft:#eff6ff;
+  --soft:#eff6ff;
 }
 
 body{
@@ -52,41 +52,45 @@ body{
   color:var(--blue);
 }
 
-/* MAIN GRID */
+/* MAIN GRID (LEFT HEAVY) */
 .grid{
   display:grid;
-  grid-template-columns:280px 1fr;
+  grid-template-columns:2.2fr 1fr; /* 🔥 LEFT BIGGER */
   gap:14px;
   height:calc(100vh - 70px);
   padding:0 14px 14px 14px;
 }
 
-/* LEFT: PEOPLE */
+/* LEFT = WHO (PRIMARY) */
 .left{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px;
+  border-radius:16px;
+  padding:14px;
   overflow:auto;
 }
 
+/* search stays minimal */
 .search{
   width:100%;
   padding:10px;
   border-radius:10px;
   border:1px solid var(--line);
+  margin-bottom:12px;
   font-size:13px;
-  margin-bottom:10px;
-  outline:none;
 }
 
+/* BIGGER STAFF CARDS (IMPORTANT UX SHIFT) */
 .person{
-  padding:10px;
-  border-radius:10px;
-  cursor:pointer;
-  margin-bottom:6px;
-  transition:.15s;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  border-radius:12px;
   border:1px solid transparent;
+  cursor:pointer;
+  margin-bottom:8px;
+  transition:.15s;
 }
 
 .person:hover{
@@ -94,41 +98,38 @@ body{
 }
 
 .person.active{
-  background:var(--blue-soft);
+  background:var(--soft);
   border:1px solid #bfdbfe;
 }
 
-.name{
-  font-size:13px;
+.left .name{
+  font-size:14px;
   font-weight:600;
 }
 
 .role{
-  font-size:11px;
+  font-size:12px;
   color:var(--muted);
 }
 
-/* RIGHT: FOCUS WORKSPACE */
-.workspace{
+/* RIGHT = WHAT (INSPECTOR) */
+.right{
   display:flex;
   flex-direction:column;
   gap:12px;
 }
 
-/* HERO CARD */
+/* HERO */
 .hero{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:18px;
-  padding:18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
+  border-radius:16px;
+  padding:14px;
 }
 
 .hero h1{
   margin:0;
-  font-size:20px;
+  font-size:18px;
   font-weight:600;
 }
 
@@ -138,22 +139,22 @@ body{
   margin-top:4px;
 }
 
-/* KPI ROW */
+/* KPI compact */
 .kpis{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
+  grid-template-columns:1fr;
+  gap:8px;
 }
 
 .kpi{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px;
+  border-radius:12px;
+  padding:10px;
 }
 
 .kpi .v{
-  font-size:16px;
+  font-size:15px;
   font-weight:600;
 }
 
@@ -162,56 +163,34 @@ body{
   color:var(--muted);
 }
 
-/* CONTENT GRID */
-.content{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-/* PANELS */
+/* TASKS */
 .panel{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:14px;
+  border-radius:12px;
   padding:12px;
 }
 
 .panel h3{
   margin:0 0 10px 0;
-  font-size:12px;
-  letter-spacing:.08em;
+  font-size:11px;
+  letter-spacing:.12em;
   text-transform:uppercase;
   color:var(--muted);
 }
 
-/* TASKS */
 .task{
   font-size:12px;
   padding:8px;
   border-left:2px solid var(--blue);
   background:#f8fafc;
-  margin-bottom:6px;
   border-radius:6px;
-}
-
-/* EVAL TEXT */
-.eval{
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5;
+  margin-bottom:6px;
 }
 
 /* MOBILE */
 @media(max-width:900px){
   .grid{
-    grid-template-columns:1fr;
-    height:auto;
-  }
-  .kpis{
-    grid-template-columns:1fr;
-  }
-  .content{
     grid-template-columns:1fr;
   }
 }
@@ -219,11 +198,11 @@ body{
 
 <!-- TOP -->
 <div class="topbar">
-  <div class="title">Staff Operations Console</div>
+  <div class="title">HR Operations Console</div>
 
   <div class="actions">
-    <button class="btn" id="addstaff">Add Staff</button>
-    <button class="btn" id="timeclock-btn">Time</button>
+    <button class="btn" id="addstaff">Add</button>
+    <button class="btn" id="timeclock-btn">Clock</button>
     <button class="btn" id="payroll-btn">Payroll</button>
     <button class="btn" id="reports-btn">Reports</button>
   </div>
@@ -232,76 +211,71 @@ body{
 <!-- GRID -->
 <div class="grid">
 
-  <!-- LEFT: PEOPLE -->
+  <!-- LEFT: WHO (PRIMARY) -->
   <aside class="left">
 
     <input class="search" placeholder="Search staff...">
 
     <div class="person active">
-      <div class="name">John Doe</div>
-      <div class="role">General Manager</div>
+      <div>
+        <div class="name">John Doe</div>
+        <div class="role">General Manager</div>
+      </div>
+      <div class="role">92%</div>
     </div>
 
     <div class="person">
-      <div class="name">Jane Smith</div>
-      <div class="role">Staff</div>
+      <div>
+        <div class="name">Jane Smith</div>
+        <div class="role">Staff</div>
+      </div>
+      <div class="role">88%</div>
     </div>
 
     <div class="person">
-      <div class="name">Rachel Ying</div>
-      <div class="role">Manager</div>
+      <div>
+        <div class="name">Rachel Ying</div>
+        <div class="role">Manager</div>
+      </div>
+      <div class="role">95%</div>
     </div>
 
   </aside>
 
-  <!-- RIGHT: WORKSPACE -->
-  <main class="workspace">
+  <!-- RIGHT: WHAT (INSPECTOR) -->
+  <aside class="right">
 
-    <!-- HERO -->
     <div class="hero">
-      <div>
-        <h1>John Doe</h1>
-        <div class="meta">General Manager • Active • Hattiesburg Operations</div>
-      </div>
+      <h1>John Doe</h1>
+      <div class="meta">General Manager • Active</div>
     </div>
 
-    <!-- KPI -->
     <div class="kpis">
       <div class="kpi">
-        <div class="v">92%</div>
-        <div class="l">Task Completion</div>
+        <div class="v">4 Active Tasks</div>
+        <div class="l">Current workload</div>
       </div>
 
       <div class="kpi">
-        <div class="v">88%</div>
-        <div class="l">On-time Rate</div>
-      </div>
-
-      <div class="kpi">
-        <div class="v">4</div>
-        <div class="l">Active Tasks</div>
+        <div class="v">92% Completion</div>
+        <div class="l">Performance score</div>
       </div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content">
-
-      <div class="panel">
-        <h3>Tasks</h3>
-        <div class="task">Design UI system</div>
-        <div class="task">Review onboarding flow</div>
-      </div>
-
-      <div class="panel">
-        <h3>Evaluation</h3>
-        <div class="eval">
-          Strong execution consistency. Needs improvement in turnaround speed under workload spikes.
-        </div>
-      </div>
-
+    <div class="panel">
+      <h3>Tasks</h3>
+      <div class="task">Design UI system</div>
+      <div class="task">Review onboarding flow</div>
     </div>
 
-  </main>
+    <div class="panel">
+      <h3>Evaluation</h3>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;">
+        Strong execution consistency. Minor delays under peak load.
+      </div>
+    </div>
+
+  </aside>
 
 </div>
 
