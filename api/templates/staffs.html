@@ -2,22 +2,22 @@
 
 <style>
 :root{
-  --bg:#f6f8fc;
+  --bg:#f5f7fb;
   --card:#ffffff;
   --text:#0f172a;
-  --muted:#64748b;
-  --line:#e5e7eb;
+  --muted:#6b7280;
+  --line:#eaeef5;
   --blue:#2563eb;
-  --soft:#eff6ff;
 }
 
 body{
+  margin:0;
   background:var(--bg);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   color:var(--text);
 }
 
-/* TOP BAR */
+/* TOP BAR — ultra light */
 .topbar{
   display:flex;
   justify-content:space-between;
@@ -44,7 +44,7 @@ body{
   border:1px solid var(--line);
   background:white;
   cursor:pointer;
-  transition:.2s;
+  transition:.15s;
 }
 
 .btn:hover{
@@ -52,45 +52,37 @@ body{
   color:var(--blue);
 }
 
-/* MAIN GRID (LEFT HEAVY) */
-.grid{
+/* MAIN */
+.container{
   display:grid;
-  grid-template-columns:2.2fr 1fr; /* 🔥 LEFT BIGGER */
-  gap:14px;
-  height:calc(100vh - 70px);
-  padding:0 14px 14px 14px;
+  grid-template-columns:240px 1fr;
+  gap:18px;
+  padding:0 18px 18px;
 }
 
-/* LEFT = WHO (PRIMARY) */
+/* LEFT = SOFT LIST (NOT PANEL) */
 .left{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
-  overflow:auto;
+  padding-top:6px;
 }
 
-/* search stays minimal */
 .search{
   width:100%;
   padding:10px;
   border-radius:10px;
   border:1px solid var(--line);
-  margin-bottom:12px;
   font-size:13px;
+  margin-bottom:10px;
+  outline:none;
+  background:white;
 }
 
-/* BIGGER STAFF CARDS (IMPORTANT UX SHIFT) */
+/* softer list items */
 .person{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid transparent;
+  padding:10px 10px;
+  border-radius:10px;
   cursor:pointer;
-  margin-bottom:8px;
   transition:.15s;
+  margin-bottom:6px;
 }
 
 .person:hover{
@@ -98,12 +90,11 @@ body{
 }
 
 .person.active{
-  background:var(--soft);
-  border:1px solid #bfdbfe;
+  background:#eef5ff;
 }
 
-.left .name{
-  font-size:14px;
+.name{
+  font-size:13px;
   font-weight:600;
 }
 
@@ -112,45 +103,45 @@ body{
   color:var(--muted);
 }
 
-/* RIGHT = WHAT (INSPECTOR) */
+/* RIGHT = HERO FOCUS AREA */
 .right{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:14px;
 }
 
-/* HERO */
+/* HERO (soft focus card) */
 .hero{
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
+  border-radius:18px;
+  padding:22px;
 }
 
 .hero h1{
   margin:0;
-  font-size:18px;
+  font-size:20px;
   font-weight:600;
 }
 
 .meta{
-  font-size:12px;
+  font-size:13px;
   color:var(--muted);
   margin-top:4px;
 }
 
-/* KPI compact */
+/* KPIs — very soft */
 .kpis{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
+  display:flex;
+  gap:10px;
 }
 
 .kpi{
+  flex:1;
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:12px;
-  padding:10px;
+  border-radius:14px;
+  padding:12px;
 }
 
 .kpi .v{
@@ -163,15 +154,21 @@ body{
   color:var(--muted);
 }
 
-/* TASKS */
-.panel{
+/* CONTENT — no harsh grid feeling */
+.content{
+  display:flex;
+  gap:12px;
+}
+
+.card{
+  flex:1;
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:12px;
+  border-radius:14px;
   padding:12px;
 }
 
-.panel h3{
+.card h3{
   margin:0 0 10px 0;
   font-size:11px;
   letter-spacing:.12em;
@@ -190,98 +187,101 @@ body{
 
 /* MOBILE */
 @media(max-width:900px){
-  .grid{
+  .container{
     grid-template-columns:1fr;
+  }
+  .kpis{
+    flex-direction:column;
+  }
+  .content{
+    flex-direction:column;
   }
 }
 </style>
 
 <!-- TOP -->
 <div class="topbar">
-  <div class="title">HR Operations Console</div>
+  <div class="title">Staff Operations</div>
 
   <div class="actions">
-    <button class="btn" id="addstaff">Add</button>
-    <button class="btn" id="timeclock-btn">Clock</button>
+    <button class="btn" id="addstaff">Add Staff</button>
+    <button class="btn" id="timeclock-btn">Timeclock</button>
     <button class="btn" id="payroll-btn">Payroll</button>
     <button class="btn" id="reports-btn">Reports</button>
   </div>
 </div>
 
-<!-- GRID -->
-<div class="grid">
+<!-- BODY -->
+<div class="container">
 
-  <!-- LEFT: WHO (PRIMARY) -->
+  <!-- LEFT -->
   <aside class="left">
-
     <input class="search" placeholder="Search staff...">
 
     <div class="person active">
-      <div>
-        <div class="name">John Doe</div>
-        <div class="role">General Manager</div>
-      </div>
-      <div class="role">92%</div>
+      <div class="name">John Doe</div>
+      <div class="role">General Manager</div>
     </div>
 
     <div class="person">
-      <div>
-        <div class="name">Jane Smith</div>
-        <div class="role">Staff</div>
-      </div>
-      <div class="role">88%</div>
+      <div class="name">Jane Smith</div>
+      <div class="role">Staff</div>
     </div>
 
     <div class="person">
-      <div>
-        <div class="name">Rachel Ying</div>
-        <div class="role">Manager</div>
-      </div>
-      <div class="role">95%</div>
+      <div class="name">Rachel Ying</div>
+      <div class="role">Manager</div>
     </div>
-
   </aside>
 
-  <!-- RIGHT: WHAT (INSPECTOR) -->
-  <aside class="right">
+  <!-- RIGHT -->
+  <main class="right">
 
     <div class="hero">
       <h1>John Doe</h1>
-      <div class="meta">General Manager • Active</div>
+      <div class="meta">General Manager • Active • HR Core Unit</div>
     </div>
 
     <div class="kpis">
       <div class="kpi">
-        <div class="v">4 Active Tasks</div>
-        <div class="l">Current workload</div>
+        <div class="v">92%</div>
+        <div class="l">Task Completion</div>
       </div>
 
       <div class="kpi">
-        <div class="v">92% Completion</div>
-        <div class="l">Performance score</div>
+        <div class="v">88%</div>
+        <div class="l">On-time Rate</div>
+      </div>
+
+      <div class="kpi">
+        <div class="v">4</div>
+        <div class="l">Active Tasks</div>
       </div>
     </div>
 
-    <div class="panel">
-      <h3>Tasks</h3>
-      <div class="task">Design UI system</div>
-      <div class="task">Review onboarding flow</div>
-    </div>
+    <div class="content">
 
-    <div class="panel">
-      <h3>Evaluation</h3>
-      <div style="font-size:12px;color:var(--muted);line-height:1.5;">
-        Strong execution consistency. Minor delays under peak load.
+      <div class="card">
+        <h3>Tasks</h3>
+        <div class="task">Design UI system</div>
+        <div class="task">Review onboarding flow</div>
       </div>
+
+      <div class="card">
+        <h3>Evaluation</h3>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">
+          Strong execution consistency. Minor slowdown under peak workload conditions.
+        </div>
+      </div>
+
     </div>
 
-  </aside>
+  </main>
 
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
   const go = (id,url)=>{
     const el=document.getElementById(id);
     if(el) el.onclick=()=>window.location.href=url;
@@ -291,7 +291,6 @@ document.addEventListener("DOMContentLoaded", () => {
   go("timeclock-btn","/timeclock");
   go("payroll-btn","/payroll");
   go("reports-btn","/staff-reports");
-
 });
 </script>
 
