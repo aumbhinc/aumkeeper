@@ -6,112 +6,259 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 
 <style>
 
+/* =========================================
+   ROOT
+========================================= */
+
 :root{
     --primary:#0ea5e9;
     --primary-dark:#0284c7;
 
     --bg:#f4f7fb;
     --card:#ffffff;
-    --border:#dbe4ee;
+    --border:#e6edf5;
 
     --text:#0f172a;
     --muted:#64748b;
 
     --success:#10b981;
-    --warning:#f59e0b;
 
     --shadow:
         0 1px 2px rgba(0,0,0,.04),
         0 10px 30px rgba(15,23,42,.06);
 
-    --radius:22px;
+    --radius:18px;
 }
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    min-width:0;
 }
+
+/* =========================================
+   PAGE
+========================================= */
 
 .staffs-page{
     display:flex;
     flex-direction:column;
-    gap:24px;
+    gap:16px;
 }
 
 /* =========================================
-   HEADER
+   COMMAND CENTER
 ========================================= */
 
-.staffs-header{
-    position:sticky;
-    top:14px;
-    z-index:100;
-
+.hr-command{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:20px;
+    align-items:center;
+    gap:18px;
 
-    padding:18px 22px;
+    padding:18px 20px;
 
-    background:rgba(255,255,255,.78);
-    backdrop-filter:blur(18px);
-
-    border:1px solid rgba(255,255,255,.6);
-    border-radius:24px;
+    background:white;
+    border:1px solid var(--border);
+    border-radius:22px;
 
     box-shadow:var(--shadow);
 }
 
-.header-left{
-    display:flex;
-    align-items:center;
-    gap:16px;
+.hr-title{
+    font-size:1.2rem;
+    font-weight:800;
+    color:var(--text);
 }
 
-.header-icon{
-    width:58px;
-    height:58px;
+.hr-sub{
+    font-size:.85rem;
+    color:var(--muted);
+    margin-top:4px;
+}
 
+.command-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.hr-search{
+    width:280px;
+    padding:12px 14px;
+
+    border-radius:14px;
+    border:1px solid var(--border);
+    outline:none;
+}
+
+.hr-search:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(14,165,233,.15);
+}
+
+/* =========================================
+   KPI STRIP
+========================================= */
+
+.hr-kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+}
+
+.kpi{
+    background:white;
+    border:1px solid var(--border);
     border-radius:18px;
+    padding:14px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #0ea5e9,
-            #2563eb
-        );
+    box-shadow:var(--shadow);
+}
+
+.kpi-value{
+    font-size:1.4rem;
+    font-weight:800;
+    color:var(--text);
+}
+
+.kpi-label{
+    font-size:.78rem;
+    color:var(--muted);
+}
+
+/* =========================================
+   HR TABLE
+========================================= */
+
+.hr-table{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+/* ROW */
+.hr-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px 16px;
+
+    background:white;
+    border:1px solid var(--border);
+    border-radius:16px;
+
+    transition:.2s ease;
+}
+
+.hr-row:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 25px rgba(15,23,42,.08);
+}
+
+/* LEFT */
+.row-main{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:220px;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+
+    border-radius:14px;
+    background:linear-gradient(135deg,#38bdf8,#2563eb);
+
+    color:white;
+    font-weight:700;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.row-info .name{
+    font-weight:700;
+    color:var(--text);
+}
+
+.row-info .meta{
+    font-size:.78rem;
+    color:var(--muted);
+}
+
+/* CHIPS */
+.chips{
+    display:flex;
+    gap:6px;
+    margin-top:4px;
+}
+
+.chip{
+    font-size:.7rem;
+    padding:3px 8px;
+    border-radius:999px;
+
+    background:#f1f5f9;
+    color:#475569;
+    border:1px solid #e2e8f0;
+}
+
+/* MIDDLE */
+.row-metrics{
+    display:flex;
+    gap:22px;
+    flex:1;
+    justify-content:center;
+}
+
+.metric{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.metric .label{
+    font-size:.7rem;
+    color:var(--muted);
+}
+
+.metric .value{
+    font-size:.9rem;
+    font-weight:700;
+}
+
+.good{
+    color:var(--success);
+}
+
+/* RIGHT */
+.row-actions{
+    display:flex;
+    gap:8px;
+}
+
+.icon-btn{
+    width:36px;
+    height:36px;
+
+    border-radius:10px;
+    border:1px solid var(--border);
+
+    background:#f8fafc;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    color:white;
+    cursor:pointer;
 }
 
-.header-icon .material-symbols-rounded{
-    font-size:28px;
-}
-
-.header-text h1{
-    font-size:1.4rem;
-    font-weight:700;
-    color:var(--text);
-}
-
-.header-text p{
-    margin-top:4px;
-
-    font-size:.92rem;
-    color:var(--muted);
-}
-
-.header-actions{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
+.icon-btn:hover{
+    background:#eef2f7;
 }
 
 /* =========================================
@@ -121,24 +268,15 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 .btn{
     border:none;
     border-radius:14px;
-
-    padding:12px 16px;
+    padding:10px 14px;
 
     display:flex;
     align-items:center;
-    justify-content:center;
     gap:8px;
 
     cursor:pointer;
-
-    font-size:.9rem;
     font-weight:600;
-
-    transition:.2s ease;
-}
-
-.btn:hover{
-    transform:translateY(-1px);
+    font-size:.9rem;
 }
 
 .btn-primary{
@@ -151,300 +289,8 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 }
 
 .btn-secondary{
-    background:white;
-    border:1px solid var(--border);
-    color:var(--text);
-}
-
-.btn-ghost{
     background:#f8fafc;
-    border:1px solid #eef2f7;
-    color:#334155;
-}
-
-/* =========================================
-   TOOLBAR
-========================================= */
-
-.staff-toolbar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
-.search-box{
-    position:relative;
-    flex:1;
-    min-width:280px;
-}
-
-.search-box input{
-    width:100%;
-
     border:1px solid var(--border);
-    border-radius:16px;
-
-    background:white;
-
-    padding:15px 18px 15px 48px;
-
-    font-size:.95rem;
-
-    transition:.2s ease;
-}
-
-.search-box input:focus{
-    outline:none;
-    border-color:var(--primary);
-
-    box-shadow:
-        0 0 0 4px rgba(14,165,233,.10);
-}
-
-.search-box .material-symbols-rounded{
-    position:absolute;
-    left:16px;
-    top:50%;
-    transform:translateY(-50%);
-
-    color:var(--muted);
-    font-size:22px;
-}
-
-.toolbar-actions{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-/* =========================================
-   SUMMARY
-========================================= */
-
-.staff-summary{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
-}
-
-.summary-card{
-    background:white;
-
-    border-radius:22px;
-    padding:22px;
-
-    box-shadow:var(--shadow);
-
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:16px;
-}
-
-.summary-left{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-}
-
-.summary-label{
-    font-size:.82rem;
-    color:var(--muted);
-}
-
-.summary-value{
-    font-size:1.9rem;
-    font-weight:700;
-    color:var(--text);
-}
-
-.summary-sub{
-    font-size:.82rem;
-    color:var(--success);
-}
-
-.summary-icon{
-    width:54px;
-    height:54px;
-
-    border-radius:18px;
-
-    background:#eff6ff;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    color:var(--primary);
-}
-
-/* =========================================
-   STAFF GRID
-========================================= */
-
-.staff-grid{
-    display:grid;
-    grid-template-columns:
-        repeat(auto-fill,minmax(360px,1fr));
-
-    gap:24px;
-}
-
-.staff-card{
-    background:white;
-
-    border-radius:26px;
-    padding:24px;
-
-    box-shadow:var(--shadow);
-
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-
-    overflow:hidden;
-
-    transition:.22s ease;
-}
-
-.staff-card:hover{
-    transform:translateY(-2px);
-
-    box-shadow:
-        0 14px 34px rgba(15,23,42,.10);
-}
-
-/* =========================================
-   CARD TOP
-========================================= */
-
-.staff-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-}
-
-.staff-profile{
-    display:flex;
-    align-items:center;
-    gap:14px;
-}
-
-.avatar{
-    width:58px;
-    height:58px;
-
-    border-radius:18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #38bdf8,
-            #2563eb
-        );
-
-    color:white;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-weight:700;
-    font-size:1rem;
-}
-
-.staff-name{
-    font-size:1rem;
-    font-weight:700;
-    color:var(--text);
-}
-
-.staff-role{
-    margin-top:4px;
-
-    font-size:.84rem;
-    color:var(--muted);
-}
-
-.status{
-    padding:8px 12px;
-
-    border-radius:999px;
-
-    background:#ecfdf5;
-    color:#059669;
-
-    font-size:.74rem;
-    font-weight:700;
-}
-
-/* =========================================
-   DETAILS
-========================================= */
-
-.staff-details{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-}
-
-.detail-box{
-    background:#f8fafc;
-
-    border:1px solid #eef2f7;
-    border-radius:18px;
-
-    padding:14px;
-}
-
-.detail-label{
-    font-size:.72rem;
-    color:var(--muted);
-
-    margin-bottom:6px;
-}
-
-.detail-value{
-    font-size:.92rem;
-    font-weight:600;
-    color:var(--text);
-}
-
-/* =========================================
-   TASK
-========================================= */
-
-.task-box{
-    border-top:1px solid #eef2f7;
-    padding-top:16px;
-}
-
-.task-label{
-    font-size:.78rem;
-    color:var(--muted);
-
-    margin-bottom:8px;
-}
-
-.task-text{
-    font-size:.92rem;
-    color:var(--text);
-}
-
-/* =========================================
-   FOOTER
-========================================= */
-
-.staff-footer{
-    display:flex;
-    gap:10px;
-}
-
-.footer-btn{
-    flex:1;
 }
 
 /* =========================================
@@ -453,579 +299,144 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 
 @media(max-width:900px){
 
-    .staffs-header{
+    .hr-command{
         flex-direction:column;
         align-items:flex-start;
     }
 
-    .header-actions{
+    .command-actions{
         width:100%;
     }
 
-}
-
-@media(max-width:700px){
-
-    .staff-grid{
-        grid-template-columns:1fr;
-    }
-
-    .staff-details{
-        grid-template-columns:1fr;
-    }
-
-    .header-actions,
-    .toolbar-actions{
+    .hr-search{
         width:100%;
     }
 
-    .btn{
-        flex:1;
+    .hr-kpis{
+        grid-template-columns:repeat(2,1fr);
     }
 
+    .hr-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+
+    .row-metrics{
+        justify-content:flex-start;
+        flex-wrap:wrap;
+    }
 }
 
 </style>
 
 <div class="staffs-page">
 
-    <!-- =========================================
-         HEADER
-    ========================================= -->
+    <!-- COMMAND CENTER -->
+    <section class="hr-command">
 
-    <section class="staffs-header">
-
-        <div class="header-left">
-
-            <div class="header-icon">
-                <span class="material-symbols-rounded">groups</span>
-            </div>
-
-            <div class="header-text">
-                <h1>Staff Manager</h1>
-
-                <p>
-                    Workforce management, payroll operations,
-                    scheduling, and staff performance analytics.
-                </p>
-            </div>
-
+        <div>
+            <div class="hr-title">Workforce Control Center</div>
+            <div class="hr-sub">Search, filter, and manage staff in real time</div>
         </div>
 
-        <div class="header-actions">
-
-            <button
-                type="button"
-                id="schedule-btn"
-                class="btn btn-secondary">
-
-                <span class="material-symbols-rounded">
-                    calendar_month
-                </span>
-
-                Schedule
-
-            </button>
-
-            <button
-                type="button"
-                id="payroll-btn"
-                class="btn btn-secondary">
-
-                <span class="material-symbols-rounded">
-                    payments
-                </span>
-
-                Payroll
-
-            </button>
-
-            <button
-                type="button"
-                id="addstaff"
-                class="btn btn-primary">
-
-                <span class="material-symbols-rounded">
-                    person_add
-                </span>
-
-                Add Staff
-
-            </button>
-
-        </div>
-
-    </section>
-
-    <!-- =========================================
-         TOOLBAR
-    ========================================= -->
-
-    <section class="staff-toolbar">
-
-        <div class="search-box">
-
-            <span class="material-symbols-rounded">
-                search
-            </span>
+        <div class="command-actions">
 
             <input
-                type="search"
                 id="search-input"
-                placeholder="Search staff members, departments, payroll...">
+                class="hr-search"
+                placeholder="Search staff, role, department..." />
 
-        </div>
-
-        <div class="toolbar-actions">
-
-            <button
-                type="button"
-                id="timeclock-btn"
-                class="btn btn-ghost">
-
-                <span class="material-symbols-rounded">
-                    access_time
-                </span>
-
-                Timeclock
-
+            <button class="btn btn-secondary">
+                <span class="material-symbols-rounded">filter_list</span>
+                Filters
             </button>
 
-            <button
-                type="button"
-                id="reports-btn"
-                class="btn btn-ghost">
-
-                <span class="material-symbols-rounded">
-                    analytics
-                </span>
-
-                Reports
-
+            <button class="btn btn-primary" id="addstaff">
+                <span class="material-symbols-rounded">person_add</span>
+                Add Staff
             </button>
 
         </div>
 
     </section>
 
-    <!-- =========================================
-         SUMMARY
-    ========================================= -->
+    <!-- KPI STRIP -->
+    <section class="hr-kpis">
 
-    <section class="staff-summary">
-
-        <div class="summary-card">
-
-            <div class="summary-left">
-                <div class="summary-label">
-                    Total Staff
-                </div>
-
-                <div class="summary-value">
-                    48
-                </div>
-
-                <div class="summary-sub">
-                    +12% workforce growth
-                </div>
-            </div>
-
-            <div class="summary-icon">
-                <span class="material-symbols-rounded">
-                    groups
-                </span>
-            </div>
-
+        <div class="kpi">
+            <div class="kpi-value">48</div>
+            <div class="kpi-label">Total Staff</div>
         </div>
 
-        <div class="summary-card">
-
-            <div class="summary-left">
-                <div class="summary-label">
-                    Active Today
-                </div>
-
-                <div class="summary-value">
-                    39
-                </div>
-
-                <div class="summary-sub">
-                    81% attendance rate
-                </div>
-            </div>
-
-            <div class="summary-icon">
-                <span class="material-symbols-rounded">
-                    verified_user
-                </span>
-            </div>
-
+        <div class="kpi">
+            <div class="kpi-value">39</div>
+            <div class="kpi-label">Active Today</div>
         </div>
 
-        <div class="summary-card">
+        <div class="kpi">
+            <div class="kpi-value">$82K</div>
+            <div class="kpi-label">Payroll Cycle</div>
+        </div>
 
-            <div class="summary-left">
-                <div class="summary-label">
-                    Payroll Estimate
-                </div>
-
-                <div class="summary-value">
-                    $82K
-                </div>
-
-                <div class="summary-sub">
-                    Current payroll cycle
-                </div>
-            </div>
-
-            <div class="summary-icon">
-                <span class="material-symbols-rounded">
-                    account_balance_wallet
-                </span>
-            </div>
-
+        <div class="kpi">
+            <div class="kpi-value">91%</div>
+            <div class="kpi-label">Avg Performance</div>
         </div>
 
     </section>
 
-    <!-- =========================================
-         STAFF GRID
-    ========================================= -->
+    <!-- TABLE -->
+    <section class="hr-table" id="staff-grid">
 
-    <section
-        class="staff-grid"
-        id="staff-grid">
+        <!-- STAFF ROW -->
+        <div class="hr-row">
 
-        <!-- CARD -->
+            <div class="row-main">
 
-        <div class="staff-card">
+                <div class="avatar">JD</div>
 
-            <div class="staff-top">
+                <div class="row-info">
 
-                <div class="staff-profile">
+                    <div class="name">John Doe</div>
+                    <div class="meta">General Manager</div>
 
-                    <div class="avatar">JD</div>
-
-                    <div>
-
-                        <div class="staff-name">
-                            John Doe
-                        </div>
-
-                        <div class="staff-role">
-                            General Manager
-                        </div>
-
+                    <div class="chips">
+                        <span class="chip">Operations</span>
+                        <span class="chip">Morning Shift</span>
                     </div>
 
-                </div>
-
-                <div class="status">
-                    Active
                 </div>
 
             </div>
 
-            <div class="staff-details">
+            <div class="row-metrics">
 
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Compensation
-                    </div>
-
-                    <div class="detail-value">
-                        $9,000 / month
-                    </div>
+                <div class="metric">
+                    <div class="label">Performance</div>
+                    <div class="value good">90</div>
                 </div>
 
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Department
-                    </div>
-
-                    <div class="detail-value">
-                        Operations
-                    </div>
+                <div class="metric">
+                    <div class="label">Pay</div>
+                    <div class="value">$9K</div>
                 </div>
 
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Performance
-                    </div>
-
-                    <div class="detail-value">
-                        90 / 100
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Shift
-                    </div>
-
-                    <div class="detail-value">
-                        Morning
-                    </div>
+                <div class="metric">
+                    <div class="label">Status</div>
+                    <div class="value good">Active</div>
                 </div>
 
             </div>
 
-            <div class="task-box">
+            <div class="row-actions">
 
-                <div class="task-label">
-                    Current Task
-                </div>
-
-                <div class="task-text">
-                    Overseeing ERP operational deployment.
-                </div>
-
-            </div>
-
-            <div class="staff-footer">
-
-                <button class="btn btn-primary footer-btn">
-
-                    <span class="material-symbols-rounded">
-                        visibility
-                    </span>
-
-                    Profile
-
+                <button class="icon-btn">
+                    <span class="material-symbols-rounded">visibility</span>
                 </button>
 
-                <button class="btn btn-secondary footer-btn">
-
-                    <span class="material-symbols-rounded">
-                        edit
-                    </span>
-
-                    Edit
-
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- CARD -->
-
-        <div class="staff-card">
-
-            <div class="staff-top">
-
-                <div class="staff-profile">
-
-                    <div class="avatar">JS</div>
-
-                    <div>
-
-                        <div class="staff-name">
-                            Jane Smith
-                        </div>
-
-                        <div class="staff-role">
-                            Warehouse Staff
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="status">
-                    Active
-                </div>
-
-            </div>
-
-            <div class="staff-details">
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Compensation
-                    </div>
-
-                    <div class="detail-value">
-                        $17 / hour
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Department
-                    </div>
-
-                    <div class="detail-value">
-                        Inventory
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Performance
-                    </div>
-
-                    <div class="detail-value">
-                        91 / 100
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Shift
-                    </div>
-
-                    <div class="detail-value">
-                        Evening
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="task-box">
-
-                <div class="task-label">
-                    Current Task
-                </div>
-
-                <div class="task-text">
-                    Managing inventory intake operations.
-                </div>
-
-            </div>
-
-            <div class="staff-footer">
-
-                <button class="btn btn-primary footer-btn">
-
-                    <span class="material-symbols-rounded">
-                        visibility
-                    </span>
-
-                    Profile
-
-                </button>
-
-                <button class="btn btn-secondary footer-btn">
-
-                    <span class="material-symbols-rounded">
-                        edit
-                    </span>
-
-                    Edit
-
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- CARD -->
-
-        <div class="staff-card">
-
-            <div class="staff-top">
-
-                <div class="staff-profile">
-
-                    <div class="avatar">RY</div>
-
-                    <div>
-
-                        <div class="staff-name">
-                            Rachel Ying
-                        </div>
-
-                        <div class="staff-role">
-                            Finance Manager
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="status">
-                    Active
-                </div>
-
-            </div>
-
-            <div class="staff-details">
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Compensation
-                    </div>
-
-                    <div class="detail-value">
-                        $5,000 / month
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Department
-                    </div>
-
-                    <div class="detail-value">
-                        Finance
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Performance
-                    </div>
-
-                    <div class="detail-value">
-                        100 / 100
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">
-                        Shift
-                    </div>
-
-                    <div class="detail-value">
-                        Executive
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="task-box">
-
-                <div class="task-label">
-                    Current Task
-                </div>
-
-                <div class="task-text">
-                    Managing payroll reconciliation reporting.
-                </div>
-
-            </div>
-
-            <div class="staff-footer">
-
-                <button class="btn btn-primary footer-btn">
-
-                    <span class="material-symbols-rounded">
-                        visibility
-                    </span>
-
-                    Profile
-
-                </button>
-
-                <button class="btn btn-secondary footer-btn">
-
-                    <span class="material-symbols-rounded">
-                        edit
-                    </span>
-
-                    Edit
-
+                <button class="icon-btn">
+                    <span class="material-symbols-rounded">edit</span>
                 </button>
 
             </div>
@@ -1040,45 +451,27 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const redirectButton = (id, url) => {
-
-        const btn = document.getElementById(id);
-
-        if(!btn) return;
-
-        btn.addEventListener("click", () => {
-            window.location.href = url;
-        });
-
+    const redirect = (id, url) => {
+        const el = document.getElementById(id);
+        if(el){
+            el.addEventListener("click", () => {
+                window.location.href = url;
+            });
+        }
     };
 
-    redirectButton("addstaff", "/addstaff");
-    redirectButton("schedule-btn", "/schedule");
-    redirectButton("timeclock-btn", "/timeclock");
-    redirectButton("payroll-btn", "/payroll");
-    redirectButton("reports-btn", "/staff-reports");
-
-    // SEARCH
+    redirect("addstaff", "/addstaff");
 
     const searchInput = document.getElementById("search-input");
-    const cards = document.querySelectorAll(".staff-card");
+    const cards = document.querySelectorAll(".hr-row");
 
     searchInput?.addEventListener("input", () => {
-
-        const query = searchInput.value.toLowerCase();
+        const q = searchInput.value.toLowerCase();
 
         cards.forEach(card => {
-
             const text = card.innerText.toLowerCase();
-
-            if(text.includes(query)){
-                card.style.display = "flex";
-            } else {
-                card.style.display = "none";
-            }
-
+            card.style.display = text.includes(q) ? "flex" : "none";
         });
-
     });
 
 });
