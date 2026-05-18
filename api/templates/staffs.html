@@ -6,10 +6,6 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 
 <style>
 
-/* =========================================
-   SYSTEM TOKENS (ENTERPRISE CONSISTENCY)
-========================================= */
-
 :root{
     --primary:#0ea5e9;
     --primary-dark:#0284c7;
@@ -22,12 +18,13 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
     --muted:#64748b;
 
     --success:#10b981;
+    --warning:#f59e0b;
 
     --shadow:
         0 1px 2px rgba(0,0,0,.04),
-        0 12px 30px rgba(15,23,42,.08);
+        0 10px 30px rgba(15,23,42,.06);
 
-    --radius:18px;
+    --radius:22px;
 }
 
 *{
@@ -37,18 +34,14 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
     min-width:0;
 }
 
-/* =========================================
-   PAGE SYSTEM
-========================================= */
-
 .staffs-page{
     display:flex;
     flex-direction:column;
-    gap:18px;
+    gap:24px;
 }
 
 /* =========================================
-   COMMAND CENTER (CTO CONTROL LAYER)
+   HEADER
 ========================================= */
 
 .staffs-header{
@@ -57,34 +50,39 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
     z-index:100;
 
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    justify-content:space-between;
     gap:20px;
 
-    padding:18px 20px;
+    padding:18px 22px;
 
-    background:rgba(255,255,255,.85);
+    background:rgba(255,255,255,.78);
     backdrop-filter:blur(18px);
 
-    border:1px solid rgba(255,255,255,.7);
-    border-radius:22px;
+    border:1px solid rgba(255,255,255,.6);
+    border-radius:24px;
 
     box-shadow:var(--shadow);
 }
 
 .header-left{
     display:flex;
-    gap:14px;
     align-items:center;
+    gap:16px;
 }
 
 .header-icon{
-    width:52px;
-    height:52px;
+    width:58px;
+    height:58px;
 
-    border-radius:16px;
+    border-radius:18px;
 
-    background:linear-gradient(135deg,#38bdf8,#2563eb);
+    background:
+        linear-gradient(
+            135deg,
+            #0ea5e9,
+            #2563eb
+        );
 
     display:flex;
     align-items:center;
@@ -93,36 +91,50 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
     color:white;
 }
 
+.header-icon .material-symbols-rounded{
+    font-size:28px;
+}
+
 .header-text h1{
-    font-size:1.25rem;
-    font-weight:800;
+    font-size:1.4rem;
+    font-weight:700;
     color:var(--text);
 }
 
 .header-text p{
-    font-size:.85rem;
+    margin-top:4px;
+
+    font-size:.92rem;
     color:var(--muted);
-    margin-top:3px;
+}
+
+.header-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
 }
 
 /* =========================================
-   BUTTON SYSTEM
+   BUTTONS
 ========================================= */
 
 .btn{
     border:none;
-    border-radius:12px;
+    border-radius:14px;
 
-    padding:10px 14px;
+    padding:12px 16px;
 
     display:flex;
     align-items:center;
+    justify-content:center;
     gap:8px;
 
-    font-weight:600;
     cursor:pointer;
 
-    transition:.18s ease;
+    font-size:.9rem;
+    font-weight:600;
+
+    transition:.2s ease;
 }
 
 .btn:hover{
@@ -141,223 +153,297 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 .btn-secondary{
     background:white;
     border:1px solid var(--border);
+    color:var(--text);
+}
+
+.btn-ghost{
+    background:#f8fafc;
+    border:1px solid #eef2f7;
+    color:#334155;
 }
 
 /* =========================================
-   TOOLBAR (SEARCH CONTROL LAYER)
+   TOOLBAR
 ========================================= */
 
 .staff-toolbar{
     display:flex;
+    align-items:center;
     justify-content:space-between;
-    gap:14px;
+    gap:20px;
     flex-wrap:wrap;
 }
 
 .search-box{
     position:relative;
     flex:1;
-    min-width:260px;
+    min-width:280px;
 }
 
 .search-box input{
     width:100%;
-    padding:12px 14px 12px 44px;
 
     border:1px solid var(--border);
-    border-radius:14px;
-
-    outline:none;
-}
-
-.search-box input:focus{
-    border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(14,165,233,.12);
-}
-
-/* =========================================
-   KPI STRIP (SYSTEM HEALTH LAYER)
-========================================= */
-
-.staff-summary{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-}
-
-.summary-card{
-    background:white;
-    border:1px solid var(--border);
-
     border-radius:16px;
-    padding:14px;
 
-    box-shadow:var(--shadow);
-}
-
-.summary-value{
-    font-size:1.3rem;
-    font-weight:800;
-}
-
-.summary-label{
-    font-size:.78rem;
-    color:var(--muted);
-}
-
-/* =========================================
-   STAFF GRID (ENTERPRISE CARD SYSTEM)
-========================================= */
-
-.staff-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
-    gap:18px;
-}
-
-/* =========================================
-   STAFF CARD (REDUCED NOISE DESIGN)
-========================================= */
-
-.staff-card{
     background:white;
-    border:1px solid var(--border);
 
-    border-radius:20px;
-    padding:18px;
+    padding:15px 18px 15px 48px;
 
-    display:flex;
-    flex-direction:column;
-    gap:14px;
+    font-size:.95rem;
 
     transition:.2s ease;
 }
 
-.staff-card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 18px 40px rgba(15,23,42,.10);
+.search-box input:focus{
+    outline:none;
+    border-color:var(--primary);
+
+    box-shadow:
+        0 0 0 4px rgba(14,165,233,.10);
 }
 
-/* TOP */
-.staff-top{
+.search-box .material-symbols-rounded{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+
+    color:var(--muted);
+    font-size:22px;
+}
+
+.toolbar-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.staff-summary{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+
+.summary-card{
+    background:white;
+
+    border-radius:22px;
+    padding:22px;
+
+    box-shadow:var(--shadow);
+
     display:flex;
     justify-content:space-between;
-    align-items:center;
+    align-items:flex-start;
+    gap:16px;
 }
 
-.staff-profile{
+.summary-left{
     display:flex;
-    gap:12px;
-    align-items:center;
+    flex-direction:column;
+    gap:8px;
 }
 
-.avatar{
-    width:44px;
-    height:44px;
+.summary-label{
+    font-size:.82rem;
+    color:var(--muted);
+}
 
-    border-radius:14px;
-    background:linear-gradient(135deg,#38bdf8,#2563eb);
+.summary-value{
+    font-size:1.9rem;
+    font-weight:700;
+    color:var(--text);
+}
+
+.summary-sub{
+    font-size:.82rem;
+    color:var(--success);
+}
+
+.summary-icon{
+    width:54px;
+    height:54px;
+
+    border-radius:18px;
+
+    background:#eff6ff;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    color:white;
-    font-weight:700;
+    color:var(--primary);
 }
 
-/* META */
+/* =========================================
+   STAFF GRID
+========================================= */
+
+.staff-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(auto-fill,minmax(360px,1fr));
+
+    gap:24px;
+}
+
+.staff-card{
+    background:white;
+
+    border-radius:26px;
+    padding:24px;
+
+    box-shadow:var(--shadow);
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+    overflow:hidden;
+
+    transition:.22s ease;
+}
+
+.staff-card:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 14px 34px rgba(15,23,42,.10);
+}
+
+/* =========================================
+   CARD TOP
+========================================= */
+
+.staff-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+}
+
+.staff-profile{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.avatar{
+    width:58px;
+    height:58px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #38bdf8,
+            #2563eb
+        );
+
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight:700;
+    font-size:1rem;
+}
+
 .staff-name{
-    font-weight:800;
+    font-size:1rem;
+    font-weight:700;
     color:var(--text);
 }
 
 .staff-role{
-    font-size:.8rem;
+    margin-top:4px;
+
+    font-size:.84rem;
     color:var(--muted);
 }
 
-/* STATUS */
 .status{
-    padding:6px 10px;
+    padding:8px 12px;
+
     border-radius:999px;
 
     background:#ecfdf5;
     color:#059669;
 
+    font-size:.74rem;
+    font-weight:700;
+}
+
+/* =========================================
+   DETAILS
+========================================= */
+
+.staff-details{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+}
+
+.detail-box{
+    background:#f8fafc;
+
+    border:1px solid #eef2f7;
+    border-radius:18px;
+
+    padding:14px;
+}
+
+.detail-label{
     font-size:.72rem;
-    font-weight:700;
-}
-
-/* =========================================
-   PERFORMANCE CORE (KEY SIGNAL)
-========================================= */
-
-.performance{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-}
-
-.bar{
-    height:6px;
-    background:#e2e8f0;
-    border-radius:999px;
-    overflow:hidden;
-}
-
-.bar > div{
-    height:100%;
-    width:90%;
-    background:linear-gradient(90deg,#0ea5e9,#2563eb);
-}
-
-/* =========================================
-   METRICS ROW (SCANNABLE DATA)
-========================================= */
-
-.metrics{
-    display:flex;
-    justify-content:space-between;
-}
-
-.metric{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-}
-
-.metric span:first-child{
-    font-size:.7rem;
     color:var(--muted);
+
+    margin-bottom:6px;
 }
 
-.metric span:last-child{
-    font-weight:700;
-    font-size:.85rem;
-}
-
-/* =========================================
-   TASK (SOFT CONTEXT LAYER)
-========================================= */
-
-.task{
-    font-size:.85rem;
+.detail-value{
+    font-size:.92rem;
+    font-weight:600;
     color:var(--text);
-    padding-top:10px;
-    border-top:1px solid #eef2f7;
 }
 
 /* =========================================
-   ACTIONS (MINIMAL CTA LAYER)
+   TASK
 ========================================= */
 
-.actions{
+.task-box{
+    border-top:1px solid #eef2f7;
+    padding-top:16px;
+}
+
+.task-label{
+    font-size:.78rem;
+    color:var(--muted);
+
+    margin-bottom:8px;
+}
+
+.task-text{
+    font-size:.92rem;
+    color:var(--text);
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.staff-footer{
     display:flex;
     gap:10px;
 }
 
-.actions button{
+.footer-btn{
     flex:1;
 }
 
@@ -367,13 +453,13 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 
 @media(max-width:900px){
 
-    .staff-summary{
-        grid-template-columns:repeat(2,1fr);
-    }
-
     .staffs-header{
         flex-direction:column;
         align-items:flex-start;
+    }
+
+    .header-actions{
+        width:100%;
     }
 
 }
@@ -384,119 +470,564 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
         grid-template-columns:1fr;
     }
 
+    .staff-details{
+        grid-template-columns:1fr;
+    }
+
+    .header-actions,
+    .toolbar-actions{
+        width:100%;
+    }
+
+    .btn{
+        flex:1;
+    }
+
 }
 
 </style>
 
 <div class="staffs-page">
 
-    <!-- COMMAND CENTER -->
+    <!-- =========================================
+         HEADER
+    ========================================= -->
+
     <section class="staffs-header">
 
         <div class="header-left">
+
             <div class="header-icon">
                 <span class="material-symbols-rounded">groups</span>
             </div>
 
             <div class="header-text">
-                <h1>Workforce Control Center</h1>
-                <p>Enterprise HR OS • Payroll • Scheduling • Analytics</p>
+                <h1>Staff Manager</h1>
+
+                <p>
+                    Workforce management, payroll operations,
+                    scheduling, and staff performance analytics.
+                </p>
             </div>
+
         </div>
 
         <div class="header-actions">
-            <button class="btn btn-secondary" id="schedule-btn">
-                <span class="material-symbols-rounded">calendar_month</span>
+
+            <button
+                type="button"
+                id="schedule-btn"
+                class="btn btn-secondary">
+
+                <span class="material-symbols-rounded">
+                    calendar_month
+                </span>
+
                 Schedule
+
             </button>
 
-            <button class="btn btn-secondary" id="payroll-btn">
-                <span class="material-symbols-rounded">payments</span>
+            <button
+                type="button"
+                id="payroll-btn"
+                class="btn btn-secondary">
+
+                <span class="material-symbols-rounded">
+                    payments
+                </span>
+
                 Payroll
+
             </button>
 
-            <button class="btn btn-primary" id="addstaff">
-                <span class="material-symbols-rounded">person_add</span>
+            <button
+                type="button"
+                id="addstaff"
+                class="btn btn-primary">
+
+                <span class="material-symbols-rounded">
+                    person_add
+                </span>
+
                 Add Staff
+
             </button>
+
         </div>
 
     </section>
 
-    <!-- KPI LAYER -->
+    <!-- =========================================
+         TOOLBAR
+    ========================================= -->
+
+    <section class="staff-toolbar">
+
+        <div class="search-box">
+
+            <span class="material-symbols-rounded">
+                search
+            </span>
+
+            <input
+                type="search"
+                id="search-input"
+                placeholder="Search staff members, departments, payroll...">
+
+        </div>
+
+        <div class="toolbar-actions">
+
+            <button
+                type="button"
+                id="timeclock-btn"
+                class="btn btn-ghost">
+
+                <span class="material-symbols-rounded">
+                    access_time
+                </span>
+
+                Timeclock
+
+            </button>
+
+            <button
+                type="button"
+                id="reports-btn"
+                class="btn btn-ghost">
+
+                <span class="material-symbols-rounded">
+                    analytics
+                </span>
+
+                Reports
+
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- =========================================
+         SUMMARY
+    ========================================= -->
+
     <section class="staff-summary">
 
         <div class="summary-card">
-            <div class="summary-value">48</div>
-            <div class="summary-label">Total Staff</div>
+
+            <div class="summary-left">
+                <div class="summary-label">
+                    Total Staff
+                </div>
+
+                <div class="summary-value">
+                    48
+                </div>
+
+                <div class="summary-sub">
+                    +12% workforce growth
+                </div>
+            </div>
+
+            <div class="summary-icon">
+                <span class="material-symbols-rounded">
+                    groups
+                </span>
+            </div>
+
         </div>
 
         <div class="summary-card">
-            <div class="summary-value">39</div>
-            <div class="summary-label">Active Today</div>
+
+            <div class="summary-left">
+                <div class="summary-label">
+                    Active Today
+                </div>
+
+                <div class="summary-value">
+                    39
+                </div>
+
+                <div class="summary-sub">
+                    81% attendance rate
+                </div>
+            </div>
+
+            <div class="summary-icon">
+                <span class="material-symbols-rounded">
+                    verified_user
+                </span>
+            </div>
+
         </div>
 
         <div class="summary-card">
-            <div class="summary-value">$82K</div>
-            <div class="summary-label">Payroll Cycle</div>
-        </div>
 
-        <div class="summary-card">
-            <div class="summary-value">91%</div>
-            <div class="summary-label">Avg Performance</div>
+            <div class="summary-left">
+                <div class="summary-label">
+                    Payroll Estimate
+                </div>
+
+                <div class="summary-value">
+                    $82K
+                </div>
+
+                <div class="summary-sub">
+                    Current payroll cycle
+                </div>
+            </div>
+
+            <div class="summary-icon">
+                <span class="material-symbols-rounded">
+                    account_balance_wallet
+                </span>
+            </div>
+
         </div>
 
     </section>
 
-    <!-- GRID -->
-    <section class="staff-grid" id="staff-grid">
+    <!-- =========================================
+         STAFF GRID
+    ========================================= -->
 
-        <!-- STAFF CARD -->
+    <section
+        class="staff-grid"
+        id="staff-grid">
+
+        <!-- CARD -->
+
         <div class="staff-card">
 
             <div class="staff-top">
 
                 <div class="staff-profile">
+
                     <div class="avatar">JD</div>
 
                     <div>
-                        <div class="staff-name">John Doe</div>
-                        <div class="staff-role">General Manager</div>
+
+                        <div class="staff-name">
+                            John Doe
+                        </div>
+
+                        <div class="staff-role">
+                            General Manager
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="status">
+                    Active
+                </div>
+
+            </div>
+
+            <div class="staff-details">
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Compensation
+                    </div>
+
+                    <div class="detail-value">
+                        $9,000 / month
                     </div>
                 </div>
 
-                <div class="status">Active</div>
-
-            </div>
-
-            <div class="performance">
-                <div class="metrics">
-                    <div class="metric">
-                        <span>Pay</span>
-                        <span>$9K</span>
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Department
                     </div>
 
-                    <div class="metric">
-                        <span>Shift</span>
-                        <span>Morning</span>
-                    </div>
-
-                    <div class="metric">
-                        <span>Score</span>
-                        <span>90</span>
+                    <div class="detail-value">
+                        Operations
                     </div>
                 </div>
 
-                <div class="bar"><div></div></div>
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Performance
+                    </div>
+
+                    <div class="detail-value">
+                        90 / 100
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Shift
+                    </div>
+
+                    <div class="detail-value">
+                        Morning
+                    </div>
+                </div>
+
             </div>
 
-            <div class="task">
-                Overseeing ERP operational deployment
+            <div class="task-box">
+
+                <div class="task-label">
+                    Current Task
+                </div>
+
+                <div class="task-text">
+                    Overseeing ERP operational deployment.
+                </div>
+
             </div>
 
-            <div class="actions">
-                <button class="btn btn-primary">Profile</button>
-                <button class="btn btn-secondary">Edit</button>
+            <div class="staff-footer">
+
+                <button class="btn btn-primary footer-btn">
+
+                    <span class="material-symbols-rounded">
+                        visibility
+                    </span>
+
+                    Profile
+
+                </button>
+
+                <button class="btn btn-secondary footer-btn">
+
+                    <span class="material-symbols-rounded">
+                        edit
+                    </span>
+
+                    Edit
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- CARD -->
+
+        <div class="staff-card">
+
+            <div class="staff-top">
+
+                <div class="staff-profile">
+
+                    <div class="avatar">JS</div>
+
+                    <div>
+
+                        <div class="staff-name">
+                            Jane Smith
+                        </div>
+
+                        <div class="staff-role">
+                            Warehouse Staff
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="status">
+                    Active
+                </div>
+
+            </div>
+
+            <div class="staff-details">
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Compensation
+                    </div>
+
+                    <div class="detail-value">
+                        $17 / hour
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Department
+                    </div>
+
+                    <div class="detail-value">
+                        Inventory
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Performance
+                    </div>
+
+                    <div class="detail-value">
+                        91 / 100
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Shift
+                    </div>
+
+                    <div class="detail-value">
+                        Evening
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="task-box">
+
+                <div class="task-label">
+                    Current Task
+                </div>
+
+                <div class="task-text">
+                    Managing inventory intake operations.
+                </div>
+
+            </div>
+
+            <div class="staff-footer">
+
+                <button class="btn btn-primary footer-btn">
+
+                    <span class="material-symbols-rounded">
+                        visibility
+                    </span>
+
+                    Profile
+
+                </button>
+
+                <button class="btn btn-secondary footer-btn">
+
+                    <span class="material-symbols-rounded">
+                        edit
+                    </span>
+
+                    Edit
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- CARD -->
+
+        <div class="staff-card">
+
+            <div class="staff-top">
+
+                <div class="staff-profile">
+
+                    <div class="avatar">RY</div>
+
+                    <div>
+
+                        <div class="staff-name">
+                            Rachel Ying
+                        </div>
+
+                        <div class="staff-role">
+                            Finance Manager
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="status">
+                    Active
+                </div>
+
+            </div>
+
+            <div class="staff-details">
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Compensation
+                    </div>
+
+                    <div class="detail-value">
+                        $5,000 / month
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Department
+                    </div>
+
+                    <div class="detail-value">
+                        Finance
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Performance
+                    </div>
+
+                    <div class="detail-value">
+                        100 / 100
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">
+                        Shift
+                    </div>
+
+                    <div class="detail-value">
+                        Executive
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="task-box">
+
+                <div class="task-label">
+                    Current Task
+                </div>
+
+                <div class="task-text">
+                    Managing payroll reconciliation reporting.
+                </div>
+
+            </div>
+
+            <div class="staff-footer">
+
+                <button class="btn btn-primary footer-btn">
+
+                    <span class="material-symbols-rounded">
+                        visibility
+                    </span>
+
+                    Profile
+
+                </button>
+
+                <button class="btn btn-secondary footer-btn">
+
+                    <span class="material-symbols-rounded">
+                        edit
+                    </span>
+
+                    Edit
+
+                </button>
+
             </div>
 
         </div>
@@ -509,23 +1040,45 @@ href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wgh
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const go = (id,url)=>{
-        const el=document.getElementById(id);
-        if(el) el.onclick=()=>window.location.href=url;
+    const redirectButton = (id, url) => {
+
+        const btn = document.getElementById(id);
+
+        if(!btn) return;
+
+        btn.addEventListener("click", () => {
+            window.location.href = url;
+        });
+
     };
 
-    go("addstaff","/addstaff");
-    go("schedule-btn","/schedule");
-    go("payroll-btn","/payroll");
+    redirectButton("addstaff", "/addstaff");
+    redirectButton("schedule-btn", "/schedule");
+    redirectButton("timeclock-btn", "/timeclock");
+    redirectButton("payroll-btn", "/payroll");
+    redirectButton("reports-btn", "/staff-reports");
 
-    const search=document.getElementById("search-input");
-    const cards=document.querySelectorAll(".staff-card");
+    // SEARCH
 
-    search?.addEventListener("input",()=>{
-        const q=search.value.toLowerCase();
-        cards.forEach(c=>{
-            c.style.display=c.innerText.toLowerCase().includes(q)?"flex":"none";
+    const searchInput = document.getElementById("search-input");
+    const cards = document.querySelectorAll(".staff-card");
+
+    searchInput?.addEventListener("input", () => {
+
+        const query = searchInput.value.toLowerCase();
+
+        cards.forEach(card => {
+
+            const text = card.innerText.toLowerCase();
+
+            if(text.includes(query)){
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+
         });
+
     });
 
 });
