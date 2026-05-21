@@ -7,10 +7,422 @@
 
 <title>Add Staff • AumKeeper ERP</title>
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+/>
 
 <style>
-/* (KEEP YOUR ENTIRE EXISTING CSS — NO CHANGES) */
+
+:root{
+    --primary:#0ea5e9;
+    --primary-dark:#0284c7;
+
+    --danger:#ef4444;
+    --success:#10b981;
+
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --border:#dbe4ee;
+
+    --text:#0f172a;
+    --muted:#64748b;
+
+    --shadow:
+        0 1px 2px rgba(15,23,42,.04),
+        0 10px 30px rgba(15,23,42,.06);
+
+    --radius:20px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background:var(--bg);
+    color:var(--text);
+
+    line-height:1.5;
+
+    padding:32px 18px 90px;
+}
+
+/* =======================================================
+LAYOUT
+======================================================= */
+
+.staff-editor{
+    width:100%;
+    max-width:1400px;
+    margin:auto;
+}
+
+.content{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 340px;
+    gap:24px;
+
+    align-items:start;
+}
+
+.main-form{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+
+    min-width:0;
+}
+
+.sidebar{
+    position:sticky;
+    top:110px;
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+/* =======================================================
+TOP ACTION BAR
+======================================================= */
+
+.sticky-banner{
+    position:sticky;
+    top:14px;
+    z-index:999;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+
+    margin-bottom:24px;
+
+    padding:16px 18px;
+
+    background:rgba(255,255,255,.82);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.7);
+
+    border-radius:22px;
+
+    box-shadow:var(--shadow);
+}
+
+.banner-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.logo-badge{
+    width:54px;
+    height:54px;
+
+    border-radius:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0ea5e9,
+            #2563eb
+        );
+
+    color:white;
+}
+
+.logo-badge .material-icons{
+    font-size:28px;
+}
+
+.banner-title h1{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+}
+
+.banner-title p{
+    margin-top:2px;
+
+    font-size:13px;
+    color:var(--muted);
+}
+
+.banner-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    flex-wrap:wrap;
+}
+
+/* =======================================================
+BUTTONS
+======================================================= */
+
+.btn{
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px 18px;
+
+    cursor:pointer;
+
+    font-size:14px;
+    font-weight:600;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    transition:all .18s ease;
+}
+
+.btn:hover{
+    transform:translateY(-1px);
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-primary:hover{
+    background:var(--primary-dark);
+}
+
+.btn-secondary{
+    background:white;
+    border:1px solid var(--border);
+    color:var(--text);
+}
+
+.btn-danger{
+    background:#fff5f5;
+    color:var(--danger);
+    border:1px solid #fecaca;
+}
+
+/* =======================================================
+CARDS
+======================================================= */
+
+.card{
+    background:var(--card);
+
+    border-radius:var(--radius);
+
+    padding:30px;
+
+    box-shadow:var(--shadow);
+}
+
+.card-header{
+    margin-bottom:24px;
+}
+
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:18px;
+    font-weight:700;
+
+    letter-spacing:-0.01em;
+}
+
+.card-title .material-icons{
+    color:var(--primary);
+}
+
+.card-subtitle{
+    margin-top:4px;
+
+    color:var(--muted);
+    font-size:14px;
+}
+
+/* =======================================================
+FORMS
+======================================================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:20px;
+}
+
+.form-row-full{
+    grid-column:1 / -1;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+
+    min-width:0;
+}
+
+label{
+    margin-bottom:8px;
+
+    font-size:14px;
+    font-weight:600;
+
+    color:#334155;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+
+    background:white;
+
+    padding:14px 16px;
+
+    font-size:15px;
+
+    color:var(--text);
+
+    transition:all .18s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+
+    border-color:var(--primary);
+
+    box-shadow:
+        0 0 0 4px rgba(14,165,233,.10);
+}
+
+textarea{
+    min-height:140px;
+    resize:vertical;
+}
+
+.error-msg{
+    margin-top:6px;
+
+    font-size:13px;
+    color:var(--danger);
+}
+
+/* =======================================================
+SIDEBAR
+======================================================= */
+
+.info-box{
+    background:white;
+
+    border-radius:var(--radius);
+
+    padding:24px;
+
+    box-shadow:var(--shadow);
+}
+
+.info-box h3{
+    margin-bottom:16px;
+
+    font-size:16px;
+    font-weight:700;
+}
+
+.info-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.info-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+}
+
+.info-item .material-icons{
+    color:var(--primary);
+    font-size:20px;
+}
+
+.info-item p{
+    color:var(--muted);
+    font-size:14px;
+}
+
+/* =======================================================
+RESPONSIVE
+======================================================= */
+
+@media(max-width:1100px){
+
+    .content{
+        grid-template-columns:1fr;
+    }
+
+    .sidebar{
+        position:relative;
+        top:0;
+    }
+
+}
+
+@media(max-width:760px){
+
+    body{
+        padding:14px 10px 80px;
+    }
+
+    .sticky-banner{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .banner-actions{
+        width:100%;
+    }
+
+    .banner-actions .btn{
+        flex:1;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .card{
+        padding:22px 18px;
+    }
+
+}
+
 </style>
 </head>
 
@@ -18,7 +430,10 @@
 
 <div class="staff-editor">
 
-    <!-- HEADER -->
+    <!-- =======================================================
+    HEADER
+    ======================================================== -->
+
     <div class="sticky-banner">
 
         <div class="banner-left">
@@ -29,81 +444,158 @@
 
             <div class="banner-title">
                 <h1>Add New Staff</h1>
-                <p>Create employee onboarding record for AumKeeper ERP</p>
+                <p>
+                    Create employee onboarding record for AumKeeper ERP
+                </p>
             </div>
 
         </div>
 
         <div class="banner-actions">
 
-            <button type="button" class="btn btn-secondary" id="goBackBtn">
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="goBackBtn">
+
                 <span class="material-icons">arrow_back</span>
                 Back
+
             </button>
 
-            <button type="button" class="btn btn-danger" id="discardBtn">
+            <button
+                type="button"
+                class="btn btn-danger"
+                id="discardBtn">
+
                 <span class="material-icons">delete</span>
                 Discard
+
             </button>
 
-            <button type="submit" form="newStaffForm" class="btn btn-primary">
+            <button
+                type="submit"
+                form="newStaffForm"
+                class="btn btn-primary">
+
                 <span class="material-icons">save</span>
                 Save Staff
+
             </button>
 
         </div>
 
     </div>
 
-    <!-- CONTENT -->
+    <!-- =======================================================
+    MAIN CONTENT
+    ======================================================== -->
+
     <div class="content">
 
-        <form id="newStaffForm" class="main-form" action="/addstaff" method="POST">
+        <!-- =======================================================
+        FORM
+        ======================================================== -->
+
+        <form
+            id="newStaffForm"
+            class="main-form"
+            action="/addstaff"
+            method="POST">
 
             <!-- PERSONAL -->
+
             <div class="card">
 
                 <div class="card-header">
+
                     <div class="card-title">
                         <span class="material-icons">person</span>
                         Personal Information
                     </div>
 
                     <div class="card-subtitle">
-                        Basic identity and contact information
+                        Basic employee identity and contact information
                     </div>
+
                 </div>
 
                 <div class="form-grid">
 
                     <div class="form-group">
-                        <label>First Name *</label>
-                        <input type="text" name="first_name" value="{{ .FormData.FirstName }}" required />
+                        <label for="firstName">First Name</label>
+
+                        <input
+                            type="text"
+                            id="firstName"
+                            name="firstName"
+                            value="{{ .FormData.FirstName }}"
+                            required
+                        />
+
+                        {{ with index .Errors "firstName" }}
+                        <div class="error-msg">{{ . }}</div>
+                        {{ end }}
                     </div>
 
                     <div class="form-group">
-                        <label>Middle Name</label>
-                        <input type="text" name="middle_name" value="{{ .FormData.MiddleName }}" />
+                        <label for="middleName">Middle Name</label>
+
+                        <input
+                            type="text"
+                            id="middleName"
+                            name="middleName"
+                            value="{{ .FormData.MiddleName }}"
+                        />
                     </div>
 
                     <div class="form-group">
-                        <label>Last Name *</label>
-                        <input type="text" name="last_name" value="{{ .FormData.LastName }}" required />
+                        <label for="lastName">Last Name</label>
+
+                        <input
+                            type="text"
+                            id="lastName"
+                            name="lastName"
+                            value="{{ .FormData.LastName }}"
+                            required
+                        />
                     </div>
 
                     <div class="form-group">
-                        <label>Job Role</label>
-                        <input type="text" name="role" value="{{ .FormData.Role }}" />
+                        <label for="role">Job Role</label>
+
+                        <input
+                            type="text"
+                            id="role"
+                            name="role"
+                            value="{{ .FormData.Role }}"
+                            placeholder="Store Manager"
+                            required
+                        />
                     </div>
 
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" name="email" value="{{ .FormData.Email }}" />
+                        <label for="email">Email Address</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ .FormData.Email }}"
+                            required
+                        />
                     </div>
 
                     <div class="form-group">
-                        <label>Phone Number *</label>
-                        <input type="text" name="phone_number" value="{{ .FormData.PhoneNumber }}" required />
+                        <label for="phoneNumber">Phone Number</label>
+
+                        <input
+                            type="text"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value="{{ .FormData.PhoneNumber }}"
+                            required
+                        />
                     </div>
 
                 </div>
@@ -111,57 +603,158 @@
             </div>
 
             <!-- ADDRESS -->
+
             <div class="card">
 
                 <div class="card-header">
+
                     <div class="card-title">
                         <span class="material-icons">location_on</span>
                         Address Information
                     </div>
 
                     <div class="card-subtitle">
-                        Optional residential details
+                        Residential and mailing address details
                     </div>
+
                 </div>
 
                 <div class="form-grid">
 
                     <div class="form-group form-row-full">
-                        <label>Street</label>
-                        <input type="text" name="street" value="{{ .FormData.Street }}" />
+
+                        <label for="street">
+                            Street Address
+                        </label>
+
+                        <input
+                            type="text"
+                            id="street"
+                            name="street"
+                            value="{{ .FormData.Street }}"
+                            required
+                        />
+
                     </div>
 
                     <div class="form-group">
-                        <label>City</label>
-                        <input type="text" name="city" value="{{ .FormData.City }}" />
+
+                        <label for="city">City</label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            value="{{ .FormData.City }}"
+                            required
+                        />
+
                     </div>
 
                     <div class="form-group">
-                        <label>State</label>
-                        <input type="text" name="state" value="{{ .FormData.State }}" />
+
+                        <label for="state">State</label>
+
+                        <select
+                            id="state"
+                            name="state"
+                            required>
+
+                            <option value="">
+                                Select State
+                            </option>
+
+                            <option>Alabama</option>
+                            <option>Alaska</option>
+                            <option>Arizona</option>
+                            <option>Arkansas</option>
+                            <option>California</option>
+                            <option>Colorado</option>
+                            <option>Connecticut</option>
+                            <option>Delaware</option>
+                            <option>Florida</option>
+                            <option>Georgia</option>
+                            <option>Hawaii</option>
+                            <option>Idaho</option>
+                            <option>Illinois</option>
+                            <option>Indiana</option>
+                            <option>Iowa</option>
+                            <option>Kansas</option>
+                            <option>Kentucky</option>
+                            <option>Louisiana</option>
+                            <option>Maine</option>
+                            <option>Maryland</option>
+                            <option>Massachusetts</option>
+                            <option>Michigan</option>
+                            <option>Minnesota</option>
+                            <option>Mississippi</option>
+                            <option>Missouri</option>
+                            <option>Montana</option>
+                            <option>Nebraska</option>
+                            <option>Nevada</option>
+                            <option>New Hampshire</option>
+                            <option>New Jersey</option>
+                            <option>New Mexico</option>
+                            <option>New York</option>
+                            <option>North Carolina</option>
+                            <option>North Dakota</option>
+                            <option>Ohio</option>
+                            <option>Oklahoma</option>
+                            <option>Oregon</option>
+                            <option>Pennsylvania</option>
+                            <option>Rhode Island</option>
+                            <option>South Carolina</option>
+                            <option>South Dakota</option>
+                            <option>Tennessee</option>
+                            <option>Texas</option>
+                            <option>Utah</option>
+                            <option>Vermont</option>
+                            <option>Virginia</option>
+                            <option>Washington</option>
+                            <option>West Virginia</option>
+                            <option>Wisconsin</option>
+                            <option>Wyoming</option>
+
+                        </select>
+
                     </div>
 
                     <div class="form-group">
-                        <label>ZIP Code</label>
-                        <input type="text" name="zip_code" value="{{ .FormData.ZipCode }}" />
+
+                        <label for="zipCode">
+                            ZIP Code
+                        </label>
+
+                        <input
+                            type="text"
+                            id="zipCode"
+                            name="zipCode"
+                            value="{{ .FormData.ZipCode }}"
+                            required
+                        />
+
                     </div>
 
                 </div>
 
             </div>
 
-            <!-- PAYROLL (OPTIONAL UI ONLY) -->
+            <!-- PAYROLL -->
+
             <div class="card">
 
                 <div class="card-header">
 
                     <div class="card-title">
-                        <span class="material-icons">receipt_long</span>
+                        <span class="material-icons">
+                            receipt_long
+                        </span>
+
                         Tax & Payroll Information
                     </div>
 
                     <div class="card-subtitle">
-                        Optional — not required for onboarding MVP
+                        IRS and payroll processing details
                     </div>
 
                 </div>
@@ -169,35 +762,105 @@
                 <div class="form-grid">
 
                     <div class="form-group">
-                        <label>SSN</label>
-                        <input type="text" name="ssn" />
+
+                        <label for="ssn">
+                            SSN
+                        </label>
+
+                        <input
+                            type="text"
+                            id="ssn"
+                            name="ssn"
+                            value="{{ .FormData.SSN }}"
+                            placeholder="XXX-XX-XXXX"
+                            required
+                        />
+
                     </div>
 
                     <div class="form-group">
-                        <label>Dependents</label>
-                        <input type="number" name="dependent_claims" />
+
+                        <label for="dependentClaims">
+                            Dependents Claimed
+                        </label>
+
+                        <input
+                            type="number"
+                            id="dependentClaims"
+                            name="dependentClaims"
+                            value="{{ .FormData.DependentClaims }}"
+                        />
+
                     </div>
 
                     <div class="form-group">
-                        <label>Wage / Salary</label>
-                        <input type="number" step="0.01" name="wage" />
+
+                        <label for="wage">
+                            Wage / Salary
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            id="wage"
+                            name="wage"
+                            value="{{ .FormData.Wage }}"
+                            required
+                        />
+
                     </div>
 
                     <div class="form-group">
-                        <label>Payment Frequency</label>
-                        <select name="payment_frequency">
-                            <option value="">Select</option>
-                            <option value="hourly">Hourly</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="biweekly">Bi-Weekly</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="salary">Salary</option>
+
+                        <label for="paymentFrequency">
+                            Payment Frequency
+                        </label>
+
+                        <select
+                            id="paymentFrequency"
+                            name="paymentFrequency"
+                            required>
+
+                            <option value="">
+                                Select Frequency
+                            </option>
+
+                            <option value="hourly">
+                                Hourly
+                            </option>
+
+                            <option value="weekly">
+                                Weekly
+                            </option>
+
+                            <option value="biweekly">
+                                Bi-Weekly
+                            </option>
+
+                            <option value="monthly">
+                                Monthly
+                            </option>
+
+                            <option value="salary">
+                                Salary
+                            </option>
+
                         </select>
+
                     </div>
 
                     <div class="form-group form-row-full">
-                        <label>Internal Notes</label>
-                        <textarea name="comments">{{ .FormData.Comments }}</textarea>
+
+                        <label for="comments">
+                            Internal Notes
+                        </label>
+
+                        <textarea
+                            id="comments"
+                            name="comments"
+                            placeholder="Employee notes, onboarding remarks, restrictions, or HR comments..."
+                        >{{ .FormData.Comments }}</textarea>
+
                     </div>
 
                 </div>
@@ -206,45 +869,128 @@
 
         </form>
 
-        <!-- SIDEBAR -->
+        <!-- =======================================================
+        SIDEBAR
+        ======================================================== -->
+
         <aside class="sidebar">
 
             <div class="info-box">
-                <h3>Onboarding Checklist</h3>
+
+                <h3>
+                    Onboarding Checklist
+                </h3>
 
                 <div class="info-list">
+
                     <div class="info-item">
-                        <span class="material-icons">check_circle</span>
-                        <p>Verify identity (manual or future integration)</p>
+                        <span class="material-icons">
+                            check_circle
+                        </span>
+
+                        <p>
+                            Verify government identification
+                        </p>
                     </div>
 
                     <div class="info-item">
-                        <span class="material-icons">check_circle</span>
-                        <p>Assign role and operational responsibility</p>
+                        <span class="material-icons">
+                            check_circle
+                        </span>
+
+                        <p>
+                            Collect W-4 payroll tax form
+                        </p>
                     </div>
 
                     <div class="info-item">
-                        <span class="material-icons">check_circle</span>
-                        <p>Enable timeclock access</p>
+                        <span class="material-icons">
+                            check_circle
+                        </span>
+
+                        <p>
+                            Complete I-9 employment verification
+                        </p>
                     </div>
+
+                    <div class="info-item">
+                        <span class="material-icons">
+                            check_circle
+                        </span>
+
+                        <p>
+                            Assign department and permissions
+                        </p>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="material-icons">
+                            check_circle
+                        </span>
+
+                        <p>
+                            Configure timeclock access
+                        </p>
+                    </div>
+
                 </div>
+
+            </div>
+
+            <div class="info-box">
+
+                <h3>
+                    AumKeeper ERP
+                </h3>
+
+                <div class="info-list">
+
+                    <div class="info-item">
+
+                        <span class="material-icons">
+                            security
+                        </span>
+
+                        <p>
+                            Staff records are securely managed and
+                            ready for payroll, scheduling, and ERP
+                            integration.
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </aside>
 
     </div>
+
 </div>
 
 <script>
 
-document.getElementById("goBackBtn").addEventListener("click", () => {
+document
+.getElementById("goBackBtn")
+.addEventListener("click", () => {
     window.history.back();
 });
 
-document.getElementById("discardBtn").addEventListener("click", () => {
-    if(confirm("Discard all changes?")) {
-        document.getElementById("newStaffForm").reset();
+document
+.getElementById("discardBtn")
+.addEventListener("click", () => {
+
+    const confirmed = confirm(
+        "Discard all unsaved changes?"
+    );
+
+    if(confirmed){
+        document
+        .getElementById("newStaffForm")
+        .reset();
     }
+
 });
 
 </script>
