@@ -773,6 +773,7 @@ RESPONSIVE
                             name="ssn"
                             value="{{ .FormData.SSN }}"
                             placeholder="XXX-XX-XXXX"
+                            required
                         />
 
                     </div>
@@ -804,6 +805,7 @@ RESPONSIVE
                             id="wage"
                             name="wage"
                             value="{{ .FormData.Wage }}"
+                            required
                         />
 
                     </div>
@@ -817,7 +819,7 @@ RESPONSIVE
                         <select
                             id="paymentFrequency"
                             name="paymentFrequency"
-                            >
+                            required>
 
                             <option value="">
                                 Select Frequency
