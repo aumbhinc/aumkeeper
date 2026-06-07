@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
+
 	"aumkeeper/internal/domain"
 	"aumkeeper/internal/render"
 	"aumkeeper/internal/services"
@@ -28,6 +30,9 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 
 	case http.MethodGet:
+
+		log.Println("🟢 GET /addstaff")
+
 		h.Renderer.OK(w, "addstaff", &render.RenderData{
 			Title:       "Add Staff",
 			Description: "Create employee onboarding record",
@@ -39,10 +44,19 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodPost:
 
+		log.Println("🔥 POST /addstaff HIT")
+
 		if err := r.ParseForm(); err != nil {
+			log.Println("❌ ParseForm error:", err)
 			h.renderError(w, "Invalid form data", domain.Staff{})
 			return
 		}
+
+		log.Println("📩 Raw form received:",
+			r.FormValue("firstName"),
+			r.FormValue("phoneNumber"),
+			r.FormValue("email"),
+		)
 
 		staff := domain.Staff{
 			FirstName:  r.FormValue("firstName"),
@@ -67,14 +81,20 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Comments:         r.FormValue("comments"),
 		}
 
+		log.Println("🧠 Mapped Staff Struct:",
+			staff.FirstName,
+			staff.PhoneNumber,
+			staff.Role,
+		)
+
 		created, err := h.StaffService.CreateStaff(r.Context(), staff)
 		if err != nil {
+			log.Println("❌ StaffService.CreateStaff error:", err)
 			h.renderError(w, err.Error(), staff)
 			return
 		}
 
-		// optional: you can log or inspect created staff here
-		_ = created
+		log.Println("✅ Staff created successfully, ID:", created)
 
 		http.Redirect(w, r, "/staffs", http.StatusSeeOther)
 		return
@@ -82,65 +102,4 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
-}
-
-func (h *AddStaffHandler) renderError(
-	w http.ResponseWriter,
-	msg string,
-	form domain.Staff,
-) {
-	h.Renderer.OK(w, "addstaff", &render.RenderData{
-		Title:       "Add Staff",
-		Description: msg,
-		Page:        "addstaff",
-
-		FormData: render.FormData{
-			FirstName:  form.FirstName,
-			MiddleName: form.MiddleName,
-			LastName:   form.LastName,
-			Role:       form.Role,
-
-			Email:       form.Email,
-			PhoneNumber: form.PhoneNumber,
-
-			Street: form.Street,
-			City:   form.City,
-			State:  form.State,
-			ZipCode: form.ZipCode,
-
-			SSN: form.SSN,
-
-			DependentClaims: intToString(form.DependentClaims),
-			Wage:            floatToString(form.Wage),
-
-			PaymentFrequency: form.PaymentFrequency,
-			Comments:         form.Comments,
-		},
-
-		Errors: map[string]string{
-			"form": msg,
-		},
-	})
-}
-
-// ============================
-// Helpers (safe parsing)
-// ============================
-
-func parseInt(s string) int {
-	v, _ := strconv.Atoi(s)
-	return v
-}
-
-func parseFloat(s string) float64 {
-	v, _ := strconv.ParseFloat(s, 64)
-	return v
-}
-
-func intToString(i int) string {
-	return strconv.Itoa(i)
-}
-
-func floatToString(f float64) string {
-	return strconv.FormatFloat(f, 'f', 2, 64)
 }
