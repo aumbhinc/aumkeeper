@@ -25,8 +25,10 @@ func NewAddStaffHandler(
 	}
 }
 
-func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
+func (h *AddStaffHandler) ServeHTTP(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	switch r.Method {
 
 	case http.MethodGet:
@@ -48,15 +50,14 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		if err := r.ParseForm(); err != nil {
 			log.Println("❌ ParseForm error:", err)
-			h.renderError(w, "Invalid form data", domain.Staff{})
+
+			h.renderError(
+				w,
+				"Invalid form submission",
+				domain.Staff{},
+			)
 			return
 		}
-
-		log.Println("📩 Raw form received:",
-			r.FormValue("firstName"),
-			r.FormValue("phoneNumber"),
-			r.FormValue("email"),
-		)
 
 		staff := domain.Staff{
 			FirstName:  r.FormValue("firstName"),
@@ -67,39 +68,143 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Email:       r.FormValue("email"),
 			PhoneNumber: r.FormValue("phoneNumber"),
 
-			Street: r.FormValue("street"),
-			City:   r.FormValue("city"),
-			State:  r.FormValue("state"),
+			Street:  r.FormValue("street"),
+			City:    r.FormValue("city"),
+			State:   r.FormValue("state"),
 			ZipCode: r.FormValue("zipCode"),
 
 			SSN: r.FormValue("ssn"),
 
-			DependentClaims: parseInt(r.FormValue("dependentClaims")),
-			Wage:            parseFloat(r.FormValue("wage")),
+			DependentClaims: parseInt(
+				r.FormValue("dependentClaims"),
+			),
+
+			Wage: parseFloat(
+				r.FormValue("wage"),
+			),
 
 			PaymentFrequency: r.FormValue("paymentFrequency"),
 			Comments:         r.FormValue("comments"),
 		}
 
-		log.Println("🧠 Mapped Staff Struct:",
+		log.Printf(
+			"📩 Staff Submission: %s %s | Phone=%s | Role=%s",
 			staff.FirstName,
+			staff.LastName,
 			staff.PhoneNumber,
 			staff.Role,
 		)
 
-		created, err := h.StaffService.CreateStaff(r.Context(), staff)
+		created, err := h.StaffService.CreateStaff(
+			r.Context(),
+			staff,
+		)
+
 		if err != nil {
-			log.Println("❌ StaffService.CreateStaff error:", err)
-			h.renderError(w, err.Error(), staff)
+			log.Println(
+				"❌ StaffService.CreateStaff error:",
+				err,
+			)
+
+			h.renderError(
+				w,
+				err.Error(),
+				staff,
+			)
 			return
 		}
 
-		log.Println("✅ Staff created successfully, ID:", created)
+		log.Printf(
+			"✅ Staff Created: %+v",
+			created,
+		)
 
-		http.Redirect(w, r, "/staffs", http.StatusSeeOther)
+		http.Redirect(
+			w,
+			r,
+			"/staffs",
+			http.StatusSeeOther,
+		)
 		return
 
 	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
+		http.Error(
+			w,
+			"Method Not Allowed",
+			http.StatusMethodNotAllowed,
+		)
 	}
+}
+
+func (h *AddStaffHandler) renderError(
+	w http.ResponseWriter,
+	msg string,
+	staff domain.Staff,
+) {
+	h.Renderer.OK(w, "addstaff", &render.RenderData{
+		Title:       "Add Staff",
+		Description: msg,
+		Page:        "addstaff",
+
+		FormData: render.FormData{
+			FirstName:  staff.FirstName,
+			MiddleName: staff.MiddleName,
+			LastName:   staff.LastName,
+			Role:       staff.Role,
+
+			Email:       staff.Email,
+			PhoneNumber: staff.PhoneNumber,
+
+			Street:  staff.Street,
+			City:    staff.City,
+			State:   staff.State,
+			ZipCode: staff.ZipCode,
+
+			SSN: staff.SSN,
+
+			DependentClaims: strconv.Itoa(
+				staff.DependentClaims,
+			),
+
+			Wage: strconv.FormatFloat(
+				staff.Wage,
+				'f',
+				2,
+				64,
+			),
+
+			PaymentFrequency: staff.PaymentFrequency,
+			Comments:         staff.Comments,
+		},
+
+		Errors: map[string]string{
+			"form": msg,
+		},
+	})
+}
+
+func parseInt(s string) int {
+	if s == "" {
+		return 0
+	}
+
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+
+	return v
+}
+
+func parseFloat(s string) float64 {
+	if s == "" {
+		return 0
+	}
+
+	v, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return 0
+	}
+
+	return v
 }
