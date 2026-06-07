@@ -35,16 +35,15 @@ func (s *StaffService) CreateStaff(
 		return domain.Staff{}, fmt.Errorf("last name required")
 	}
 
-	if strings.TrimSpace(staff.Email) == "" {
-		return domain.Staff{}, fmt.Errorf("email required")
-	}
-
-	if strings.TrimSpace(staff.Role) == "" {
-		return domain.Staff{}, fmt.Errorf("role required")
+	if strings.TrimSpace(staff.PhoneNumber) == "" {
+		return domain.Staff{}, fmt.Errorf("phone number required")
 	}
 
 	staff.EmployeeCode = generateEmployeeCode()
-	staff.Status = "active"
+
+	if staff.Status == "" {
+		staff.Status = "active"
+	}
 
 	return s.repo.Create(ctx, staff)
 }
