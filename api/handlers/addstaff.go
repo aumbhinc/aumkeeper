@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"aumkeeper/internal/domain"
 	"aumkeeper/internal/render"
@@ -49,15 +48,14 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			FirstName:  r.FormValue("firstName"),
 			MiddleName: r.FormValue("middleName"),
 			LastName:   r.FormValue("lastName"),
-
-			Role: r.FormValue("role"),
+			Role:       r.FormValue("role"),
 
 			Email:       r.FormValue("email"),
 			PhoneNumber: r.FormValue("phoneNumber"),
 
-			Street:  r.FormValue("street"),
-			City:    r.FormValue("city"),
-			State:   r.FormValue("state"),
+			Street: r.FormValue("street"),
+			City:   r.FormValue("city"),
+			State:  r.FormValue("state"),
 			ZipCode: r.FormValue("zipCode"),
 
 			SSN: r.FormValue("ssn"),
@@ -66,15 +64,17 @@ func (h *AddStaffHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Wage:            parseFloat(r.FormValue("wage")),
 
 			PaymentFrequency: r.FormValue("paymentFrequency"),
-
-			Comments: r.FormValue("comments"),
+			Comments:         r.FormValue("comments"),
 		}
 
-		_, err := h.StaffService.CreateStaff(r.Context(), staff)
+		created, err := h.StaffService.CreateStaff(r.Context(), staff)
 		if err != nil {
 			h.renderError(w, err.Error(), staff)
 			return
 		}
+
+		// optional: you can log or inspect created staff here
+		_ = created
 
 		http.Redirect(w, r, "/staffs", http.StatusSeeOther)
 		return
@@ -98,25 +98,23 @@ func (h *AddStaffHandler) renderError(
 			FirstName:  form.FirstName,
 			MiddleName: form.MiddleName,
 			LastName:   form.LastName,
-
-			Role: form.Role,
+			Role:       form.Role,
 
 			Email:       form.Email,
 			PhoneNumber: form.PhoneNumber,
 
-			Street:  form.Street,
-			City:    form.City,
-			State:   form.State,
+			Street: form.Street,
+			City:   form.City,
+			State:  form.State,
 			ZipCode: form.ZipCode,
 
 			SSN: form.SSN,
 
-			DependentClaims: strconv.Itoa(form.DependentClaims),
-			Wage:            strconv.FormatFloat(form.Wage, 'f', 2, 64),
+			DependentClaims: intToString(form.DependentClaims),
+			Wage:            floatToString(form.Wage),
 
 			PaymentFrequency: form.PaymentFrequency,
-
-			Comments: form.Comments,
+			Comments:         form.Comments,
 		},
 
 		Errors: map[string]string{
@@ -124,6 +122,10 @@ func (h *AddStaffHandler) renderError(
 		},
 	})
 }
+
+// ============================
+// Helpers (safe parsing)
+// ============================
 
 func parseInt(s string) int {
 	v, _ := strconv.Atoi(s)
@@ -133,4 +135,12 @@ func parseInt(s string) int {
 func parseFloat(s string) float64 {
 	v, _ := strconv.ParseFloat(s, 64)
 	return v
+}
+
+func intToString(i int) string {
+	return strconv.Itoa(i)
+}
+
+func floatToString(f float64) string {
+	return strconv.FormatFloat(f, 'f', 2, 64)
 }

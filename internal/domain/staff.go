@@ -2,34 +2,46 @@ package domain
 
 import "time"
 
+// Staff is the core workforce entity in AumKeeper ERP.
+// It represents a full employee record used across:
+// - onboarding
+// - payroll
+// - scheduling
+// - execution tracking
 type Staff struct {
-	ID               int64     `json:"id"`
-	EmployeeCode     string    `json:"employee_code"`
+	ID           int
+	EmployeeCode string
 
-	FirstName        string    `json:"first_name"`
-	MiddleName       string    `json:"middle_name"`
-	LastName         string    `json:"last_name"`
+	// Identity
+	FirstName  string
+	MiddleName string
+	LastName   string
 
-	Role             string    `json:"role"`
+	// Job
+	Role string
 
-	Email            string    `json:"email"`
-	PhoneNumber      string    `json:"phone_number"`
+	// Contact
+	Email       string
+	PhoneNumber string
 
-	Street           string    `json:"street"`
-	City             string    `json:"city"`
-	State            string    `json:"state"`
-	ZipCode          string    `json:"zip_code"`
+	// Address
+	Street string
+	City   string
+	State  string
+	ZipCode string
 
-	SSN              string    `json:"ssn"`
-	TaxFileStatus    string    `json:"tax_file_status"`
-	DependentClaims  int       `json:"dependent_claims"`
+	// Compliance / Payroll
+	SSN              string
+	TaxFileStatus    string
+	DependentClaims  int
+	Wage             float64
+	PaymentFrequency string
 
-	Wage             float64   `json:"wage"`
-	PaymentFrequency string    `json:"payment_frequency"`
+	// Internal
+	Comments string
+	Status   string
 
-	Comments         string    `json:"comments"`
-
-	Status           string    `json:"status"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
+	// System timestamps
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

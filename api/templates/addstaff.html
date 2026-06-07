@@ -655,68 +655,62 @@ RESPONSIVE
 
                         <label for="state">State</label>
 
-                        <select
-                            id="state"
-                            name="state"
-                            required>
-
-                            <option value="">
-                                Select State
-                            </option>
-
-                            <option>Alabama</option>
-                            <option>Alaska</option>
-                            <option>Arizona</option>
-                            <option>Arkansas</option>
-                            <option>California</option>
-                            <option>Colorado</option>
-                            <option>Connecticut</option>
-                            <option>Delaware</option>
-                            <option>Florida</option>
-                            <option>Georgia</option>
-                            <option>Hawaii</option>
-                            <option>Idaho</option>
-                            <option>Illinois</option>
-                            <option>Indiana</option>
-                            <option>Iowa</option>
-                            <option>Kansas</option>
-                            <option>Kentucky</option>
-                            <option>Louisiana</option>
-                            <option>Maine</option>
-                            <option>Maryland</option>
-                            <option>Massachusetts</option>
-                            <option>Michigan</option>
-                            <option>Minnesota</option>
-                            <option>Mississippi</option>
-                            <option>Missouri</option>
-                            <option>Montana</option>
-                            <option>Nebraska</option>
-                            <option>Nevada</option>
-                            <option>New Hampshire</option>
-                            <option>New Jersey</option>
-                            <option>New Mexico</option>
-                            <option>New York</option>
-                            <option>North Carolina</option>
-                            <option>North Dakota</option>
-                            <option>Ohio</option>
-                            <option>Oklahoma</option>
-                            <option>Oregon</option>
-                            <option>Pennsylvania</option>
-                            <option>Rhode Island</option>
-                            <option>South Carolina</option>
-                            <option>South Dakota</option>
-                            <option>Tennessee</option>
-                            <option>Texas</option>
-                            <option>Utah</option>
-                            <option>Vermont</option>
-                            <option>Virginia</option>
-                            <option>Washington</option>
-                            <option>West Virginia</option>
-                            <option>Wisconsin</option>
-                            <option>Wyoming</option>
-
+                        <select id="state" name="state" required>
+                            <option value="">Select State</option>
+                        
+                            {{ $state := .FormData.State }}
+                        
+                            <option value="Alabama" {{ if eq $state "Alabama" }}selected{{ end }}>Alabama</option>
+                            <option value="Alaska" {{ if eq $state "Alaska" }}selected{{ end }}>Alaska</option>
+                            <option value="Arizona" {{ if eq $state "Arizona" }}selected{{ end }}>Arizona</option>
+                            <option value="Arkansas" {{ if eq $state "Arkansas" }}selected{{ end }}>Arkansas</option>
+                            <option value="California" {{ if eq $state "California" }}selected{{ end }}>California</option>
+                            <option value="Colorado" {{ if eq $state "Colorado" }}selected{{ end }}>Colorado</option>
+                            <option value="Connecticut" {{ if eq $state "Connecticut" }}selected{{ end }}>Connecticut</option>
+                            <option value="Delaware" {{ if eq $state "Delaware" }}selected{{ end }}>Delaware</option>
+                            <option value="Florida" {{ if eq $state "Florida" }}selected{{ end }}>Florida</option>
+                            <option value="Georgia" {{ if eq $state "Georgia" }}selected{{ end }}>Georgia</option>
+                            <option value="Hawaii" {{ if eq $state "Hawaii" }}selected{{ end }}>Hawaii</option>
+                            <option value="Idaho" {{ if eq $state "Idaho" }}selected{{ end }}>Idaho</option>
+                            <option value="Illinois" {{ if eq $state "Illinois" }}selected{{ end }}>Illinois</option>
+                            <option value="Indiana" {{ if eq $state "Indiana" }}selected{{ end }}>Indiana</option>
+                            <option value="Iowa" {{ if eq $state "Iowa" }}selected{{ end }}>Iowa</option>
+                            <option value="Kansas" {{ if eq $state "Kansas" }}selected{{ end }}>Kansas</option>
+                            <option value="Kentucky" {{ if eq $state "Kentucky" }}selected{{ end }}>Kentucky</option>
+                            <option value="Louisiana" {{ if eq $state "Louisiana" }}selected{{ end }}>Louisiana</option>
+                            <option value="Maine" {{ if eq $state "Maine" }}selected{{ end }}>Maine</option>
+                            <option value="Maryland" {{ if eq $state "Maryland" }}selected{{ end }}>Maryland</option>
+                            <option value="Massachusetts" {{ if eq $state "Massachusetts" }}selected{{ end }}>Massachusetts</option>
+                            <option value="Michigan" {{ if eq $state "Michigan" }}selected{{ end }}>Michigan</option>
+                            <option value="Minnesota" {{ if eq $state "Minnesota" }}selected{{ end }}>Minnesota</option>
+                            <option value="Mississippi" {{ if eq $state "Mississippi" }}selected{{ end }}>Mississippi</option>
+                            <option value="Missouri" {{ if eq $state "Missouri" }}selected{{ end }}>Missouri</option>
+                            <option value="Montana" {{ if eq $state "Montana" }}selected{{ end }}>Montana</option>
+                            <option value="Nebraska" {{ if eq $state "Nebraska" }}selected{{ end }}>Nebraska</option>
+                            <option value="Nevada" {{ if eq $state "Nevada" }}selected{{ end }}>Nevada</option>
+                            <option value="New Hampshire" {{ if eq $state "New Hampshire" }}selected{{ end }}>New Hampshire</option>
+                            <option value="New Jersey" {{ if eq $state "New Jersey" }}selected{{ end }}>New Jersey</option>
+                            <option value="New Mexico" {{ if eq $state "New Mexico" }}selected{{ end }}>New Mexico</option>
+                            <option value="New York" {{ if eq $state "New York" }}selected{{ end }}>New York</option>
+                            <option value="North Carolina" {{ if eq $state "North Carolina" }}selected{{ end }}>North Carolina</option>
+                            <option value="North Dakota" {{ if eq $state "North Dakota" }}selected{{ end }}>North Dakota</option>
+                            <option value="Ohio" {{ if eq $state "Ohio" }}selected{{ end }}>Ohio</option>
+                            <option value="Oklahoma" {{ if eq $state "Oklahoma" }}selected{{ end }}>Oklahoma</option>
+                            <option value="Oregon" {{ if eq $state "Oregon" }}selected{{ end }}>Oregon</option>
+                            <option value="Pennsylvania" {{ if eq $state "Pennsylvania" }}selected{{ end }}>Pennsylvania</option>
+                            <option value="Rhode Island" {{ if eq $state "Rhode Island" }}selected{{ end }}>Rhode Island</option>
+                            <option value="South Carolina" {{ if eq $state "South Carolina" }}selected{{ end }}>South Carolina</option>
+                            <option value="South Dakota" {{ if eq $state "South Dakota" }}selected{{ end }}>South Dakota</option>
+                            <option value="Tennessee" {{ if eq $state "Tennessee" }}selected{{ end }}>Tennessee</option>
+                            <option value="Texas" {{ if eq $state "Texas" }}selected{{ end }}>Texas</option>
+                            <option value="Utah" {{ if eq $state "Utah" }}selected{{ end }}>Utah</option>
+                            <option value="Vermont" {{ if eq $state "Vermont" }}selected{{ end }}>Vermont</option>
+                            <option value="Virginia" {{ if eq $state "Virginia" }}selected{{ end }}>Virginia</option>
+                            <option value="Washington" {{ if eq $state "Washington" }}selected{{ end }}>Washington</option>
+                            <option value="West Virginia" {{ if eq $state "West Virginia" }}selected{{ end }}>West Virginia</option>
+                            <option value="Wisconsin" {{ if eq $state "Wisconsin" }}selected{{ end }}>Wisconsin</option>
+                            <option value="Wyoming" {{ if eq $state "Wyoming" }}selected{{ end }}>Wyoming</option>
                         </select>
-
                     </div>
 
                     <div class="form-group">
